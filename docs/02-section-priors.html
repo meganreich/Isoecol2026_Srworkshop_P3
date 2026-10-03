@@ -5,7 +5,7 @@
 <meta name="generator" content="quarto-1.7.32">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="description" content="Shown in search results and link previews.">
-<title>1. Combining geolocation tools – Strontium isotope geolocation for terrestrial ecology: Part 3</title>
+<title>2. Combining geolocation tools – Strontium isotope geolocation for terrestrial ecology: Part 3</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -140,7 +140,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-section-template.html">Workshop</a></li><li class="breadcrumb-item"><a href="./02-section-priors.html">1. Combining geolocation tools</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-section-template.html">Workshop</a></li><li class="breadcrumb-item"><a href="./02-section-priors.html">2. Combining geolocation tools</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -174,13 +174,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./01-section-template.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">1. Geographic Assignment</span></a>
+ <span class="menu-text">1. Geographic assignment</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./02-section-priors.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">1. Combining geolocation tools</span></a>
+ <span class="menu-text">2. Combining geolocation tools</span></a>
   </div>
 </li>
       </ul>
@@ -214,8 +214,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-section-template.html">Workshop</a></li><li class="breadcrumb-item"><a href="./02-section-priors.html">1. Combining geolocation tools</a></li></ol></nav><div class="quarto-title">
-<h1 class="title">1. Combining geolocation tools</h1>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-section-template.html">Workshop</a></li><li class="breadcrumb-item"><a href="./02-section-priors.html">2. Combining geolocation tools</a></li></ol></nav><div class="quarto-title">
+<h1 class="title">2. Combining geolocation tools</h1>
 <p class="subtitle lead">multiple isotopes and priors</p>
 </div>
 
@@ -265,7 +265,9 @@ In this section
 <p>A short introduction to the topic: why it matters and what we’re going to do.</p>
 </section><section id="setting-up" class="level2"><h2 class="anchored" data-anchor-id="setting-up">Setting up</h2>
 <div class="cell">
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">assignR</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster">raster</a></span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section><section id="dual-isotope-assignment" class="level2"><h2 class="anchored" data-anchor-id="dual-isotope-assignment">Dual isotope assignment</h2>
 <p>Explain the idea in a sentence or two, then show the code.</p>
@@ -813,8 +815,8 @@ Key takeaways
     }
   });
   </script><nav class="page-navigation"><div class="nav-page nav-page-previous">
-      <a href="./01-section-template.html" class="pagination-link" aria-label="1. Geographic Assignment">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">1. Geographic Assignment</span>
+      <a href="./01-section-template.html" class="pagination-link" aria-label="1. Geographic assignment">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">1. Geographic assignment</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

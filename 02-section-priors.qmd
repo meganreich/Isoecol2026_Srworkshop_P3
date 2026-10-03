@@ -22,6 +22,8 @@ A short introduction to the topic: why it matters and what we're going to do.
 ```{r}
 #| label: setup
 library(tidyverse)
+library(assignR)
+library(raster)
 ```
 
 ## Dual isotope assignment

@@ -78,9 +78,7 @@ For simplicity, we will append d2H values for each butterfly and assume the meas
 #dual
 ```
 
-How do these posterior probability surfaces compare to the ones generated with strontium isotopes alone? Is there a smaller area of high probability?
-::: panel-tabset
-## tidyverse
+How do these posterior probability surfaces compare to the ones generated with strontium isotopes alone? Is there a smaller area of high probability? ::: panel-tabset \## tidyverse
 
 ```{r}
 #| label: tidy-version
@@ -93,13 +91,10 @@ How do these posterior probability surfaces compare to the ones generated with s
 #| label: base-version
 #plot(Sr_assign)
 ```
-:::
 
 ## Using a prior
 
 Tabsets are handy for showing alternatives side by side:
-
-
 
 ::: callout-warning
 ## Common mistake
@@ -141,7 +136,6 @@ A nudge in the right direction, hidden until clicked.
 -   Combining multiple geolocation tools can give spatially constrained estimates of origin
 -   Each geolocation tool comes with additional assumptions and uncertainty
 :::
-
 
 ```{r}
 #**Next:** [Section 2 →](02-next-section.qmd)

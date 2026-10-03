@@ -142,4 +142,7 @@ A nudge in the right direction, hidden until clicked.
 -   Each geolocation tool comes with additional assumptions and uncertainty
 :::
 
-**Next:** [Section 2 →](02-next-section.qmd)
+
+```{r}
+#**Next:** [Section 2 →](02-next-section.qmd)
+```

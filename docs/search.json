@@ -226,7 +226,7 @@
     "href": "02-section-priors.html#summary",
     "title": "2. Combining geolocation tools",
     "section": "Summary",
-    "text": "Summary\n\n\n\n\n\n\nKey takeaways\n\n\n\n\nCombining multiple geolocation tools can give spatially constrained estimates of origin\nEach geolocation tool comes with additional assumptions and uncertainty\n\n\n\nNext: Section 2 →",
+    "text": "Summary\n\n\n\n\n\n\nKey takeaways\n\n\n\n\nCombining multiple geolocation tools can give spatially constrained estimates of origin\nEach geolocation tool comes with additional assumptions and uncertainty\n\n\n\n\n#**Next:** [Section 2 →](02-next-section.qmd)",
     "crumbs": [
       "Home",
       "Workshop",

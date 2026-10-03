@@ -37,7 +37,7 @@
     "href": "index.html#schedule",
     "title": "IsoEcol 2026: Sr workshop",
     "section": "Schedule",
-    "text": "Schedule\n\n\nTime\nSection\n\n\n\nIn advance\nGetting started\n\n\n15:00 – 15:45\nSection 1: Geographic assignment\n\n\n15:45 – 16:15\nSection 2: Combining geolocation tools\n\n\n16:15 – 17:00\nSection 3: summarizing outputs",
+    "text": "Schedule\n\n\nTime\nSection\n\n\n\nIn advance\nGetting started\n\n\n15:00 – 15:45\nSection 1: Geographic assignment\n\n\n15:45 – 16:15\nSection 2: Combining geolocation tools\n\n\n16:15 – 17:00\nSection 3: Summarizing outputs",
     "crumbs": [
       "Home",
       "Welcome"
@@ -48,7 +48,7 @@
     "href": "index.html#before-the-workshop",
     "title": "IsoEcol 2026: Sr workshop",
     "section": "Before the workshop",
-    "text": "Before the workshop\n\n\n\n\n\n\nPlease set up before you arrive\n\n\n\n\nInstall a recent version of R.\nInstall RStudio Desktop.\nRun the code below in the RStudio console to install the packages we’ll use.\n\n\n\n\ninstall.packages(c(\"tidyverse\", \"assignR\",\"raster\"))",
+    "text": "Before the workshop\n\n\n\n\n\n\nPlease set up before you arrive\n\n\n\n\nInstall a recent version of R.\nInstall RStudio Desktop.\nRun the code below in the RStudio console to install the packages we’ll use.\n\n\n\n\ninstall.packages(c(\"tidyverse\", \"assignR\",\"raster\",\"isocat\"))",
     "crumbs": [
       "Home",
       "Welcome"

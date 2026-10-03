@@ -11,7 +11,7 @@ execute:
 website:
   title: "Strontium isotope geolocation for terrestrial ecology: Part 3"
   description: "A hands-on workshop on isotope-based geographic assignment"
-  site-url: https://your-username.github.io/your-repo   # update when you publish
+  site-url: https://meganreich.github.io/Isoecol2026_Srworkshop_P3/   # update when you publish
   page-navigation: true       # previous / next buttons at the bottom of each page
   back-to-top-navigation: true
   reader-mode: true           # lets students hide the sidebars to focus
@@ -25,7 +25,7 @@ website:
         text: Home
     right:
       - icon: github
-        href: https://github.com/your-username/your-repo
+        href: https://meganreich.github.io/Isoecol2026_Srworkshop_P3
         aria-label: GitHub
 
   sidebar:

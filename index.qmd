@@ -31,7 +31,7 @@ By the end of this workshop you will be able to:
 | In advance    | [Getting started](01-section-template.qmd) |
 | 15:00 – 15:45 | Section 1: Geographic assignment           |
 | 15:45 – 16:15 | Section 2: Combining geolocation tools     |
-| 16:15 – 17:00 | Section 3: summarizing outputs             |
+| 16:15 – 17:00 | Section 3: Summarizing outputs             |
 
 ## Before the workshop
 
@@ -46,7 +46,7 @@ By the end of this workshop you will be able to:
 ```{r}
 #| label: install-packages
 #| eval: false
-install.packages(c("tidyverse", "assignR","raster"))
+install.packages(c("tidyverse", "assignR","raster","isocat"))
 ```
 
 ## Getting help

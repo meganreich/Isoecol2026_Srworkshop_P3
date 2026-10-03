@@ -1,7 +1,7 @@
 ---
-title: "2. Combining geolocation tools"
-subtitle: "multiple isotopes and priors"
-description: "multiple isotopes and priors"
+title: "3. Summarizing outputs"
+subtitle: "Summarize posterior probability surfaces"
+description: "Summarize posterior probability surfaces"
 date-modified: last-modified
 ---
 
@@ -24,9 +24,10 @@ A short introduction to the topic: why it matters and what we're going to do.
 library(tidyverse)
 library(assignR)
 library(raster)
+library(isocat)
 ```
 
-## Dual isotope assignment
+## Odds ratio
 
 Explain the idea in a sentence or two, then show the code.
 
@@ -43,7 +44,7 @@ mtcars |>
 A helpful shortcut or good-practice note.
 :::
 
-### Hydrogen isoscape
+## Cluster analysis
 
 Hydrogen isotopes are commonly used for geographic assignment. Spatial variation in hydrogen isotopes is largely driven by patterns of precipitation. Since this pattern is independent of strontium isotopes, the two isotopes are great complementary geolocation tools.
 
@@ -57,7 +58,7 @@ How does the hydrogen isoscape compare to the strontium isoscape?
 
 It is important to use a hydrogen isoscape that has been calibrated to the material of interest. Here, I am giving you a hydrogen isoscape that has already been calibrated to insect wings.
 
-### Preparing for dual assignment
+## Spatial similarity with isocat
 
 For simplicity, we will append d2H values for each butterfly and assume the measurement uncertainty is 2 permille.
 
@@ -71,7 +72,7 @@ For simplicity, we will append d2H values for each butterfly and assume the meas
 
 ```
 
-### dual assignment
+## Odds ratio
 
 ```{r}
 #dual <- pdraster()
@@ -85,24 +86,7 @@ How do these posterior probability surfaces compare to the ones generated with s
 #plot(dual)
 ```
 
-## base R
 
-```{r}
-#| label: base-version
-#plot(Sr_assign)
-```
-
-## Using a prior
-
-Tabsets are handy for showing alternatives side by side:
-
-::: callout-warning
-## Common mistake
-
-Describe an error students often hit and how to fix it.
-:::
-
-### Ecological niche model
 
 ::: {.callout-tip icon="false"}
 ## 🧩 Your turn

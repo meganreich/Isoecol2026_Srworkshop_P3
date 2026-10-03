@@ -226,7 +226,7 @@
     "href": "02-section-priors.html#summary",
     "title": "2. Combining geolocation tools",
     "section": "Summary",
-    "text": "Summary\n\n\n\n\n\n\nKey takeaways\n\n\n\n\nCombining multiple geolocation tools can give spatially constrained estimates of origin\nEach geolocation tool comes with additional assumptions and uncertainty\n\n\n\n\n#**Next:** [Section 2 →](02-next-section.qmd)",
+    "text": "Summary\n\n\n\n\n\n\nKey takeaways\n\n\n\n\nCombining multiple geolocation tools can give spatially constrained estimates of origin\nEach geolocation tool comes with additional assumptions and uncertainty\n\n\n\nNext: Section 3 →",
     "crumbs": [
       "Home",
       "Workshop",
@@ -250,7 +250,7 @@
     "href": "02-section-priors.html#base-r",
     "title": "2. Combining geolocation tools",
     "section": "base R",
-    "text": "base R\n\n#plot(Sr_assign)\n\n:::",
+    "text": "base R\n\n#plot(Sr_assign)",
     "crumbs": [
       "Home",
       "Workshop",
@@ -303,6 +303,102 @@
       "Home",
       "Workshop",
       "1. Geographic assignment"
+    ]
+  },
+  {
+    "objectID": "03-section-summarising.html",
+    "href": "03-section-summarising.html",
+    "title": "3. Summarizing outputs",
+    "section": "",
+    "text": "In this section\n\n\n\n\n\nYou’ll learn: the key idea or skill\n\nYou’ll need: packages or data from earlier sections\n\nTime: about 30 minutes",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "3. Summarizing outputs"
+    ]
+  },
+  {
+    "objectID": "03-section-summarising.html#overview",
+    "href": "03-section-summarising.html#overview",
+    "title": "3. Summarizing outputs",
+    "section": "Overview",
+    "text": "Overview\nA short introduction to the topic: why it matters and what we’re going to do.",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "3. Summarizing outputs"
+    ]
+  },
+  {
+    "objectID": "03-section-summarising.html#setting-up",
+    "href": "03-section-summarising.html#setting-up",
+    "title": "3. Summarizing outputs",
+    "section": "Setting up",
+    "text": "Setting up\n\nlibrary(tidyverse)\nlibrary(assignR)\nlibrary(raster)\nlibrary(isocat)",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "3. Summarizing outputs"
+    ]
+  },
+  {
+    "objectID": "03-section-summarising.html#odds-ratio",
+    "href": "03-section-summarising.html#odds-ratio",
+    "title": "3. Summarizing outputs",
+    "section": "Odds ratio",
+    "text": "Odds ratio\nExplain the idea in a sentence or two, then show the code.\n\nmtcars |&gt;\n  group_by(cyl) |&gt;\n  summarise(mean_mpg = mean(mpg))\n\n\n  \n\n\n\n\n\n\n\n\n\nTip\n\n\n\nA helpful shortcut or good-practice note.",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "3. Summarizing outputs"
+    ]
+  },
+  {
+    "objectID": "03-section-summarising.html#cluster-analysis",
+    "href": "03-section-summarising.html#cluster-analysis",
+    "title": "3. Summarizing outputs",
+    "section": "Cluster analysis",
+    "text": "Cluster analysis\nHydrogen isotopes are commonly used for geographic assignment. Spatial variation in hydrogen isotopes is largely driven by patterns of precipitation. Since this pattern is independent of strontium isotopes, the two isotopes are great complementary geolocation tools.\nHow does the hydrogen isoscape compare to the strontium isoscape?\n\n#d2H_insect_isoscape &lt;- raster::rast(\"\")\n# how does the spatial pattern compare to strontium isotopes?\n#plot(d2H_insect_isoscape)\n\nIt is important to use a hydrogen isoscape that has been calibrated to the material of interest. Here, I am giving you a hydrogen isoscape that has already been calibrated to insect wings.",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "3. Summarizing outputs"
+    ]
+  },
+  {
+    "objectID": "03-section-summarising.html#spatial-similarity-with-isocat",
+    "href": "03-section-summarising.html#spatial-similarity-with-isocat",
+    "title": "3. Summarizing outputs",
+    "section": "Spatial similarity with isocat",
+    "text": "Spatial similarity with isocat\nFor simplicity, we will append d2H values for each butterfly and assume the measurement uncertainty is 2 permille.\n\n# append d2H values for each butterfly\n#d2H &lt;- c( )\n#d2H.sd &lt;- c()\n\n# arrange dataframe to assignR specifications",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "3. Summarizing outputs"
+    ]
+  },
+  {
+    "objectID": "03-section-summarising.html#odds-ratio-1",
+    "href": "03-section-summarising.html#odds-ratio-1",
+    "title": "3. Summarizing outputs",
+    "section": "Odds ratio",
+    "text": "Odds ratio\n\n#dual &lt;- pdraster()\n#dual\n\nHow do these posterior probability surfaces compare to the ones generated with strontium isotopes alone? Is there a smaller area of high probability? ::: panel-tabset ## tidyverse\n\n#plot(dual)\n\n\n\n\n\n\n\n🧩 Your turn\n\n\n\n\nFirst task\nSecond task\n\nStretch: an extra challenge for students who finish early\n\n\n\n\n\n\n\n\n\nHint\n\n\n\n\n\nA nudge in the right direction, hidden until clicked.\n\n\n\n\n\n\n\n\n\nSolution\n\n\n\n\n\n\n# Solution code here",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "3. Summarizing outputs"
+    ]
+  },
+  {
+    "objectID": "03-section-summarising.html#summary",
+    "href": "03-section-summarising.html#summary",
+    "title": "3. Summarizing outputs",
+    "section": "Summary",
+    "text": "Summary\n\n\n\n\n\n\nKey takeaways\n\n\n\n\nCombining multiple geolocation tools can give spatially constrained estimates of origin\nEach geolocation tool comes with additional assumptions and uncertainty\n\n\n\n\n#**Next:** [Section 2 →](02-next-section.qmd)",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "3. Summarizing outputs"
     ]
   }
 ]

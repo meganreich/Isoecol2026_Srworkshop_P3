@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.7.32">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="description" content="multiple isotopes and priors">
-<title>2. Combining geolocation tools – Strontium isotope geolocation for terrestrial ecology: Part 3</title>
+<meta name="description" content="Summarize posterior probability surfaces">
+<title>3. Summarizing outputs – Strontium isotope geolocation for terrestrial ecology: Part 3</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -62,8 +62,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./03-section-summarising.html" rel="next">
-<link href="./01-section-template.html" rel="prev">
+<link href="./02-section-priors.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -141,7 +140,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-section-template.html">Workshop</a></li><li class="breadcrumb-item"><a href="./02-section-priors.html">2. Combining geolocation tools</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-section-template.html">Workshop</a></li><li class="breadcrumb-item"><a href="./03-section-summarising.html">3. Summarizing outputs</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -180,13 +179,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./02-section-priors.html" class="sidebar-item-text sidebar-link active">
+  <a href="./02-section-priors.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">2. Combining geolocation tools</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./03-section-summarising.html" class="sidebar-item-text sidebar-link">
+  <a href="./03-section-summarising.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">3. Summarizing outputs</span></a>
   </div>
 </li>
@@ -202,33 +201,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
 <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
   <li><a href="#setting-up" id="toc-setting-up" class="nav-link" data-scroll-target="#setting-up">Setting up</a></li>
-  <li>
-<a href="#dual-isotope-assignment" id="toc-dual-isotope-assignment" class="nav-link" data-scroll-target="#dual-isotope-assignment">Dual isotope assignment</a>
-  <ul class="collapse">
-<li><a href="#hydrogen-isoscape" id="toc-hydrogen-isoscape" class="nav-link" data-scroll-target="#hydrogen-isoscape">Hydrogen isoscape</a></li>
-  <li><a href="#preparing-for-dual-assignment" id="toc-preparing-for-dual-assignment" class="nav-link" data-scroll-target="#preparing-for-dual-assignment">Preparing for dual assignment</a></li>
-  <li><a href="#dual-assignment" id="toc-dual-assignment" class="nav-link" data-scroll-target="#dual-assignment">dual assignment</a></li>
-  </ul>
-</li>
-  <li><a href="#base-r" id="toc-base-r" class="nav-link" data-scroll-target="#base-r">base R</a></li>
-  <li>
-<a href="#using-a-prior" id="toc-using-a-prior" class="nav-link" data-scroll-target="#using-a-prior">Using a prior</a>
-  <ul class="collapse">
-<li><a href="#ecological-niche-model" id="toc-ecological-niche-model" class="nav-link" data-scroll-target="#ecological-niche-model">Ecological niche model</a></li>
-  </ul>
-</li>
+  <li><a href="#odds-ratio" id="toc-odds-ratio" class="nav-link" data-scroll-target="#odds-ratio">Odds ratio</a></li>
+  <li><a href="#cluster-analysis" id="toc-cluster-analysis" class="nav-link" data-scroll-target="#cluster-analysis">Cluster analysis</a></li>
+  <li><a href="#spatial-similarity-with-isocat" id="toc-spatial-similarity-with-isocat" class="nav-link" data-scroll-target="#spatial-similarity-with-isocat">Spatial similarity with isocat</a></li>
+  <li><a href="#odds-ratio-1" id="toc-odds-ratio-1" class="nav-link" data-scroll-target="#odds-ratio-1">Odds ratio</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-section-template.html">Workshop</a></li><li class="breadcrumb-item"><a href="./02-section-priors.html">2. Combining geolocation tools</a></li></ol></nav><div class="quarto-title">
-<h1 class="title">2. Combining geolocation tools</h1>
-<p class="subtitle lead">multiple isotopes and priors</p>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-section-template.html">Workshop</a></li><li class="breadcrumb-item"><a href="./03-section-summarising.html">3. Summarizing outputs</a></li></ol></nav><div class="quarto-title">
+<h1 class="title">3. Summarizing outputs</h1>
+<p class="subtitle lead">Summarize posterior probability surfaces</p>
 </div>
 
 <div>
   <div class="description">
-    multiple isotopes and priors
+    Summarize posterior probability surfaces
   </div>
 </div>
 
@@ -274,14 +262,15 @@ In this section
 <div class="cell">
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">assignR</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster">raster</a></span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster">raster</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">isocat</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section><section id="dual-isotope-assignment" class="level2"><h2 class="anchored" data-anchor-id="dual-isotope-assignment">Dual isotope assignment</h2>
+</section><section id="odds-ratio" class="level2"><h2 class="anchored" data-anchor-id="odds-ratio">Odds ratio</h2>
 <p>Explain the idea in a sentence or two, then show the code.</p>
 <div class="cell">
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">mtcars</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>mean_mpg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">mpg</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>mean_mpg <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/summarize-generics.html">mean</a></span><span class="op">(</span><span class="va">mpg</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div data-pagedtable="false">
   <script data-pagedtable-source="" type="application/json">
@@ -303,7 +292,7 @@ Tip
 <p>A helpful shortcut or good-practice note.</p>
 </div>
 </div>
-<section id="hydrogen-isoscape" class="level3"><h3 class="anchored" data-anchor-id="hydrogen-isoscape">Hydrogen isoscape</h3>
+</section><section id="cluster-analysis" class="level2"><h2 class="anchored" data-anchor-id="cluster-analysis">Cluster analysis</h2>
 <p>Hydrogen isotopes are commonly used for geographic assignment. Spatial variation in hydrogen isotopes is largely driven by patterns of precipitation. Since this pattern is independent of strontium isotopes, the two isotopes are great complementary geolocation tools.</p>
 <p>How does the hydrogen isoscape compare to the strontium isoscape?</p>
 <div class="cell">
@@ -312,7 +301,7 @@ Tip
 <span><span class="co">#plot(d2H_insect_isoscape)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>It is important to use a hydrogen isoscape that has been calibrated to the material of interest. Here, I am giving you a hydrogen isoscape that has already been calibrated to insect wings.</p>
-</section><section id="preparing-for-dual-assignment" class="level3"><h3 class="anchored" data-anchor-id="preparing-for-dual-assignment">Preparing for dual assignment</h3>
+</section><section id="spatial-similarity-with-isocat" class="level2"><h2 class="anchored" data-anchor-id="spatial-similarity-with-isocat">Spatial similarity with isocat</h2>
 <p>For simplicity, we will append d2H values for each butterfly and assume the measurement uncertainty is 2 permille.</p>
 <div class="cell">
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># append d2H values for each butterfly</span></span>
@@ -321,7 +310,7 @@ Tip
 <span></span>
 <span><span class="co"># arrange dataframe to assignR specifications</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section><section id="dual-assignment" class="level3"><h3 class="anchored" data-anchor-id="dual-assignment">dual assignment</h3>
+</section><section id="odds-ratio-1" class="level2"><h2 class="anchored" data-anchor-id="odds-ratio-1">Odds ratio</h2>
 <div class="cell">
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#dual &lt;- pdraster()</span></span>
 <span><span class="co">#dual</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -330,26 +319,6 @@ Tip
 <div class="cell">
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#plot(dual)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section></section><section id="base-r" class="level2"><h2 class="anchored" data-anchor-id="base-r">base R</h2>
-<div class="cell">
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#plot(Sr_assign)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section><section id="using-a-prior" class="level2"><h2 class="anchored" data-anchor-id="using-a-prior">Using a prior</h2>
-<p>Tabsets are handy for showing alternatives side by side:</p>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Common mistake
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Describe an error students often hit and how to fix it.</p>
-</div>
-</div>
-<section id="ecological-niche-model" class="level3"><h3 class="anchored" data-anchor-id="ecological-niche-model">Ecological niche model</h3>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -369,7 +338,7 @@ Common mistake
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -378,14 +347,14 @@ Hint
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>A nudge in the right direction, hidden until clicked.</p>
 </div>
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -394,15 +363,15 @@ Solution
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Solution code here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Solution code here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
 </div>
-</section></section><section id="summary" class="level2"><h2 class="anchored" data-anchor-id="summary">Summary</h2>
+</section><section id="summary" class="level2"><h2 class="anchored" data-anchor-id="summary">Summary</h2>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -419,7 +388,9 @@ Key takeaways
 </ul>
 </div>
 </div>
-<p><strong>Next:</strong> <a href="./03-section-summarising.html">Section 3 →</a></p>
+<div class="cell">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#**Next:** [Section 2 →](02-next-section.qmd)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 
 
 </section><a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
@@ -821,14 +792,11 @@ Key takeaways
     }
   });
   </script><nav class="page-navigation"><div class="nav-page nav-page-previous">
-      <a href="./01-section-template.html" class="pagination-link" aria-label="1. Geographic assignment">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">1. Geographic assignment</span>
+      <a href="./02-section-priors.html" class="pagination-link" aria-label="2. Combining geolocation tools">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">2. Combining geolocation tools</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./03-section-summarising.html" class="pagination-link" aria-label="3. Summarizing outputs">
-        <span class="nav-page-text">3. Summarizing outputs</span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->

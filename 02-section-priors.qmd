@@ -138,5 +138,7 @@ A nudge in the right direction, hidden until clicked.
 :::
 
 ```{r}
-#**Next:** [Section 2 →](02-next-section.qmd)
+
 ```
+
+**Next:** [Section 3 →](03-section-summarising.qmd)

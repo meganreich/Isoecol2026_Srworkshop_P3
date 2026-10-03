@@ -38,7 +38,7 @@ website:
         contents:
           - 01-section-template.qmd
           - 02-section-priors.qmd
-          # - 03-visualisation.qmd
+          - 03-section-summarising.qmd
           # - 04-modelling.qmd
 
   page-footer:

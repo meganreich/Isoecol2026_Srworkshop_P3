@@ -119,4 +119,4 @@ A nudge in the right direction, hidden until clicked.
 -   Second key point
 :::
 
-**Next:** [Section 2 →](02-next-section.qmd)
+**Next:** [Section 2 →](02-section-priors.qmd)

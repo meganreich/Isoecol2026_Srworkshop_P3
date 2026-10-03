@@ -1,5 +1,5 @@
 ---
-title: "1. Geographic Assignment"
+title: "1. Geographic assignment"
 subtitle: "Using the assignR package to estimate geographic origin"
 description: "Shown in search results and link previews."
 date-modified: last-modified

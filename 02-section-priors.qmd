@@ -1,5 +1,5 @@
 ---
-title: "1. Combining geolocation tools"
+title: "2. Combining geolocation tools"
 subtitle: "multiple isotopes and priors"
 description: "Shown in search results and link previews."
 date-modified: last-modified

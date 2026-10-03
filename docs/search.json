@@ -1,0 +1,308 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "IsoEcol 2026: Sr workshop",
+    "section": "",
+    "text": "Welcome to Part 3 of our workshop, “Strontium isotope geolocation for terrestrial ecology,” held at The 14th International Conference on the Applications of Stable Isotope Techniques to Ecological Studies (ISOECOL 2026) in Hong Kong!\n\n\n\n\n\n\nHow to use this site\n\n\n\nEach section of the workshop has its own page, listed in the sidebar on the left. We’ll go through them together, but you’re welcome to work at your own pace. If you get lost, use the sidebar or the search box to find the section we’re on.",
+    "crumbs": [
+      "Home",
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#welcome",
+    "href": "index.html#welcome",
+    "title": "IsoEcol 2026: Sr workshop",
+    "section": "",
+    "text": "Welcome to Part 3 of our workshop, “Strontium isotope geolocation for terrestrial ecology,” held at The 14th International Conference on the Applications of Stable Isotope Techniques to Ecological Studies (ISOECOL 2026) in Hong Kong!\n\n\n\n\n\n\nHow to use this site\n\n\n\nEach section of the workshop has its own page, listed in the sidebar on the left. We’ll go through them together, but you’re welcome to work at your own pace. If you get lost, use the sidebar or the search box to find the section we’re on.",
+    "crumbs": [
+      "Home",
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#what-youll-learn",
+    "href": "index.html#what-youll-learn",
+    "title": "IsoEcol 2026: Sr workshop",
+    "section": "What you’ll learn",
+    "text": "What you’ll learn\nBy the end of this workshop you will be able to:\n\nUse the assignR package to estimate geographic origin\nIntegrate information from multiple isotopes or other informative priors\nSummarize posterior probability surfaces",
+    "crumbs": [
+      "Home",
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#schedule",
+    "href": "index.html#schedule",
+    "title": "IsoEcol 2026: Sr workshop",
+    "section": "Schedule",
+    "text": "Schedule\n\n\nTime\nSection\n\n\n\nIn advance\nGetting started\n\n\n15:00 – 15:45\nSection 1: Geographic assignment\n\n\n15:45 – 16:15\nSection 2: Combining geolocation tools\n\n\n16:15 – 17:00\nSection 3: summarizing outputs",
+    "crumbs": [
+      "Home",
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#before-the-workshop",
+    "href": "index.html#before-the-workshop",
+    "title": "IsoEcol 2026: Sr workshop",
+    "section": "Before the workshop",
+    "text": "Before the workshop\n\n\n\n\n\n\nPlease set up before you arrive\n\n\n\n\nInstall a recent version of R.\nInstall RStudio Desktop.\nRun the code below in the RStudio console to install the packages we’ll use.\n\n\n\n\ninstall.packages(c(\"tidyverse\", \"assignR\",\"raster\"))",
+    "crumbs": [
+      "Home",
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#getting-help",
+    "href": "index.html#getting-help",
+    "title": "IsoEcol 2026: Sr workshop",
+    "section": "Getting help",
+    "text": "Getting help\nDuring the workshop, put up your hand or ask Megan, Clement, or Chris for help. Afterwards, contact Megan Reich at mreich@uow.edu.au.",
+    "crumbs": [
+      "Home",
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "01-section-template.html",
+    "href": "01-section-template.html",
+    "title": "1. Geographic Assignment",
+    "section": "",
+    "text": "In this section\n\n\n\n\n\nYou’ll learn: the key idea or skill\n\nYou’ll need: packages or data from earlier sections\n\nTime: about 30 minutes",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "1. Geographic Assignment"
+    ]
+  },
+  {
+    "objectID": "01-section-template.html#overview",
+    "href": "01-section-template.html#overview",
+    "title": "1. Geographic Assignment",
+    "section": "Overview",
+    "text": "Overview\nA short introduction to the topic: why it matters and what we’re going to do.",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "1. Geographic Assignment"
+    ]
+  },
+  {
+    "objectID": "01-section-template.html#setting-up",
+    "href": "01-section-template.html#setting-up",
+    "title": "1. Geographic Assignment",
+    "section": "Setting up",
+    "text": "Setting up\n\nlibrary(tidyverse)\nlibrary(assignR)\nlibrary(raster)",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "1. Geographic Assignment"
+    ]
+  },
+  {
+    "objectID": "01-section-template.html#first-concept",
+    "href": "01-section-template.html#first-concept",
+    "title": "1. Section Title",
+    "section": "First concept",
+    "text": "First concept\nExplain the idea in a sentence or two, then show the code.\n\nmtcars |&gt;\n  group_by(cyl) |&gt;\n  summarise(mean_mpg = mean(mpg))\n\n\n  \n\n\n\n\n\n\n\n\n\nTip\n\n\n\nA helpful shortcut or good-practice note.\n\n\nA sub-step\nUse ### headings for smaller steps. They appear nested in the table of contents.",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "1. Section Title"
+    ]
+  },
+  {
+    "objectID": "01-section-template.html#second-concept",
+    "href": "01-section-template.html#second-concept",
+    "title": "1. Section Title",
+    "section": "Second concept",
+    "text": "Second concept\nTabsets are handy for showing alternatives side by side:\n\n\ntidyverse\nbase R\n\n\n\n\nmtcars |&gt; filter(mpg &gt; 25)\n\n\n  \n\n\n\n\n\n\nmtcars[mtcars$mpg &gt; 25, ]\n\n\n  \n\n\n\n\n\n\n\n\n\n\n\n\nCommon mistake\n\n\n\nDescribe an error students often hit and how to fix it.",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "1. Section Title"
+    ]
+  },
+  {
+    "objectID": "01-section-template.html#exercise",
+    "href": "01-section-template.html#exercise",
+    "title": "1. Geographic Assignment",
+    "section": "Exercise",
+    "text": "Exercise\n\n\n\n\n\n\n🧩 Your turn\n\n\n\n\nFirst task\nSecond task\nStretch: an extra challenge for students who finish early\n\n\n\n\n\n\n\n\n\nHint\n\n\n\n\n\nA nudge in the right direction, hidden until clicked.\n\n\n\n\n\n\n\n\n\nSolution\n\n\n\n\n\n\n# Solution code here",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "1. Geographic Assignment"
+    ]
+  },
+  {
+    "objectID": "01-section-template.html#summary",
+    "href": "01-section-template.html#summary",
+    "title": "1. Geographic Assignment",
+    "section": "Summary",
+    "text": "Summary\n\n\n\n\n\n\nKey takeaways\n\n\n\n\nFirst key point\nSecond key point\n\n\n\nNext: Section 2 →",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "1. Geographic Assignment"
+    ]
+  },
+  {
+    "objectID": "02-section-priors.html",
+    "href": "02-section-priors.html",
+    "title": "1. Combining geolocation tools",
+    "section": "",
+    "text": "In this section\n\n\n\n\n\nYou’ll learn: the key idea or skill\n\nYou’ll need: packages or data from earlier sections\n\nTime: about 30 minutes",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "1. Combining geolocation tools"
+    ]
+  },
+  {
+    "objectID": "02-section-priors.html#overview",
+    "href": "02-section-priors.html#overview",
+    "title": "1. Combining geolocation tools",
+    "section": "Overview",
+    "text": "Overview\nA short introduction to the topic: why it matters and what we’re going to do.",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "1. Combining geolocation tools"
+    ]
+  },
+  {
+    "objectID": "02-section-priors.html#setting-up",
+    "href": "02-section-priors.html#setting-up",
+    "title": "1. Combining geolocation tools",
+    "section": "Setting up",
+    "text": "Setting up\n\nlibrary(tidyverse)",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "1. Combining geolocation tools"
+    ]
+  },
+  {
+    "objectID": "02-section-priors.html#first-concept",
+    "href": "02-section-priors.html#first-concept",
+    "title": "1. Section Title",
+    "section": "First concept",
+    "text": "First concept\nExplain the idea in a sentence or two, then show the code.\n\nmtcars |&gt;\n  group_by(cyl) |&gt;\n  summarise(mean_mpg = mean(mpg))\n\n\n  \n\n\n\n\n\n\n\n\n\nTip\n\n\n\nA helpful shortcut or good-practice note.\n\n\nA sub-step\nUse ### headings for smaller steps. They appear nested in the table of contents.",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "1. Section Title"
+    ]
+  },
+  {
+    "objectID": "02-section-priors.html#second-concept",
+    "href": "02-section-priors.html#second-concept",
+    "title": "1. Section Title",
+    "section": "Second concept",
+    "text": "Second concept\nTabsets are handy for showing alternatives side by side:\n\n\ntidyverse\nbase R\n\n\n\n\nmtcars |&gt; filter(mpg &gt; 25)\n\n\n  \n\n\n\n\n\n\nmtcars[mtcars$mpg &gt; 25, ]\n\n\n  \n\n\n\n\n\n\n\n\n\n\n\n\nCommon mistake\n\n\n\nDescribe an error students often hit and how to fix it.",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "1. Section Title"
+    ]
+  },
+  {
+    "objectID": "02-section-priors.html#exercise",
+    "href": "02-section-priors.html#exercise",
+    "title": "1. Section Title",
+    "section": "Exercise",
+    "text": "Exercise\n\n\n\n\n\n\n🧩 Your turn\n\n\n\n\nFirst task\nSecond task\n\nStretch: an extra challenge for students who finish early\n\n\n\n\n\n\n\n\n\nHint\n\n\n\n\n\nA nudge in the right direction, hidden until clicked.\n\n\n\n\n\n\n\n\n\nSolution\n\n\n\n\n\n\n# Solution code here",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "1. Section Title"
+    ]
+  },
+  {
+    "objectID": "02-section-priors.html#summary",
+    "href": "02-section-priors.html#summary",
+    "title": "1. Combining geolocation tools",
+    "section": "Summary",
+    "text": "Summary\n\n\n\n\n\n\nKey takeaways\n\n\n\n\nCombining multiple geolocation tools can give spatially constrained estimates of origin\nEach geolocation tool comes with additional assumptions and uncertainty\n\n\n\nNext: Section 2 →",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "1. Combining geolocation tools"
+    ]
+  },
+  {
+    "objectID": "02-section-priors.html#dual-isotope-assignment",
+    "href": "02-section-priors.html#dual-isotope-assignment",
+    "title": "1. Combining geolocation tools",
+    "section": "Dual isotope assignment",
+    "text": "Dual isotope assignment\nExplain the idea in a sentence or two, then show the code.\n\nmtcars |&gt;\n  group_by(cyl) |&gt;\n  summarise(mean_mpg = mean(mpg))\n\n\n  \n\n\n\n\n\n\n\n\n\nTip\n\n\n\nA helpful shortcut or good-practice note.\n\n\nHydrogen isoscape\nHydrogen isotopes are commonly used for geographic assignment. Spatial variation in hydrogen isotopes is largely driven by patterns of precipitation. Since this pattern is independent of strontium isotopes, the two isotopes are great complementary geolocation tools.\nHow does the hydrogen isoscape compare to the strontium isoscape?\n\n#d2H_insect_isoscape &lt;- raster::rast(\"\")\n# how does the spatial pattern compare to strontium isotopes?\n#plot(d2H_insect_isoscape)\n\nIt is important to use a hydrogen isoscape that has been calibrated to the material of interest. Here, I am giving you a hydrogen isoscape that has already been calibrated to insect wings.\nPreparing for dual assignment\nFor simplicity, we will append d2H values for each butterfly and assume the measurement uncertainty is 2 permille.\n\n# append d2H values for each butterfly\n#d2H &lt;- c( )\n#d2H.sd &lt;- c()\n\n# arrange dataframe to assignR specifications\n\ndual assignment\n\n#dual &lt;- pdraster()\n#dual\n\nHow do these posterior probability surfaces compare to the ones generated with strontium isotopes alone? Is there a smaller area of high probability? ::: panel-tabset ## tidyverse\n\n#plot(dual)",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "1. Combining geolocation tools"
+    ]
+  },
+  {
+    "objectID": "02-section-priors.html#base-r",
+    "href": "02-section-priors.html#base-r",
+    "title": "1. Combining geolocation tools",
+    "section": "base R",
+    "text": "base R\n\n#plot(Sr_assign)\n\n:::",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "1. Combining geolocation tools"
+    ]
+  },
+  {
+    "objectID": "02-section-priors.html#using-a-prior",
+    "href": "02-section-priors.html#using-a-prior",
+    "title": "1. Combining geolocation tools",
+    "section": "Using a prior",
+    "text": "Using a prior\nTabsets are handy for showing alternatives side by side:\n\n\n\n\n\n\nCommon mistake\n\n\n\nDescribe an error students often hit and how to fix it.\n\n\nEcological niche model\n\n\n\n\n\n\n🧩 Your turn\n\n\n\n\nFirst task\nSecond task\n\nStretch: an extra challenge for students who finish early\n\n\n\n\n\n\n\n\n\nHint\n\n\n\n\n\nA nudge in the right direction, hidden until clicked.\n\n\n\n\n\n\n\n\n\nSolution\n\n\n\n\n\n\n# Solution code here",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "1. Combining geolocation tools"
+    ]
+  },
+  {
+    "objectID": "01-section-template.html#unknown-origin-data",
+    "href": "01-section-template.html#unknown-origin-data",
+    "title": "1. Geographic Assignment",
+    "section": "Unknown origin data",
+    "text": "Unknown origin data\nExplain the idea in a sentence or two, then show the code.\n\nmtcars |&gt;\n  group_by(cyl) |&gt;\n  summarise(mean_mpg = mean(mpg))\n\n\n  \n\n\n\n\n\n\n\n\n\nTip\n\n\n\nA helpful shortcut or good-practice note.\n\n\nA sub-step\nUse ### headings for smaller steps. They appear nested in the table of contents.",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "1. Geographic Assignment"
+    ]
+  },
+  {
+    "objectID": "01-section-template.html#strontium-isoscape",
+    "href": "01-section-template.html#strontium-isoscape",
+    "title": "1. Geographic Assignment",
+    "section": "Strontium isoscape",
+    "text": "Strontium isoscape\nTabsets are handy for showing alternatives side by side:\n\n\ntidyverse\nbase R\n\n\n\n\nmtcars |&gt; filter(mpg &gt; 25)\n\n\n  \n\n\n\n\n\n\nmtcars[mtcars$mpg &gt; 25, ]\n\n\n  \n\n\n\n\n\n\n\n\n\n\n\n\nCommon mistake\n\n\n\nDescribe an error students often hit and how to fix it.",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "1. Geographic Assignment"
+    ]
+  },
+  {
+    "objectID": "01-section-template.html#isotope-based-geographic-assignment",
+    "href": "01-section-template.html#isotope-based-geographic-assignment",
+    "title": "1. Geographic Assignment",
+    "section": "Isotope-based geographic assignment",
+    "text": "Isotope-based geographic assignment\nTabsets are handy for showing alternatives side by side:",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "1. Geographic Assignment"
+    ]
+  }
+]

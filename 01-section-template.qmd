@@ -1,0 +1,122 @@
+---
+title: "1. Geographic Assignment"
+subtitle: "Using the assignR package to estimate geographic origin"
+description: "Shown in search results and link previews."
+date-modified: last-modified
+---
+
+::: {.callout-note appearance="simple" icon="false"}
+## In this section
+
+-   **You'll learn:** the key idea or skill
+-   **You'll need:** packages or data from earlier sections
+-   **Time:** about 30 minutes
+:::
+
+## Overview
+
+A short introduction to the topic: why it matters and what we're going to do.
+
+## Setting up
+
+```{r}
+#| label: setup
+library(tidyverse)
+library(assignR)
+library(raster)
+```
+
+## Unknown origin data
+
+Explain the idea in a sentence or two, then show the code.
+
+```{r}
+#| label: first-example
+mtcars |>
+  group_by(cyl) |>
+  summarise(mean_mpg = mean(mpg))
+```
+
+::: callout-tip
+## Tip
+
+A helpful shortcut or good-practice note.
+:::
+
+### A sub-step
+
+Use `###` headings for smaller steps. They appear nested in the table of contents.
+
+## Strontium isoscape
+
+Tabsets are handy for showing alternatives side by side:
+
+::: panel-tabset
+## tidyverse
+
+```{r}
+#| label: tidy-version
+mtcars |> filter(mpg > 25)
+```
+
+## base R
+
+```{r}
+#| label: base-version
+mtcars[mtcars$mpg > 25, ]
+```
+:::
+
+::: callout-warning
+## Common mistake
+
+Describe an error students often hit and how to fix it.
+:::
+
+## Isotope-based geographic assignment
+
+Tabsets are handy for showing alternatives side by side:
+
+## Exercise
+
+::: {.callout-tip icon="false"}
+## 🧩 Your turn
+
+1.  First task
+
+2.  Second task
+
+3.  **Stretch:** an extra challenge for students who finish early
+
+    ```{r}
+
+
+    ```
+:::
+
+::: {.callout-caution collapse="true"}
+## Hint
+
+A nudge in the right direction, hidden until clicked.
+:::
+
+::: {.callout-caution collapse="true"}
+## Solution
+
+```{r}
+#| label: exercise-solution
+#| eval: false
+# Solution code here
+```
+:::
+
+## Summary
+
+::: {.callout-note appearance="simple"}
+## Key takeaways
+
+-   First key point
+-   Second key point
+:::
+
+**Next:** [Section 2 →](02-next-section.qmd)

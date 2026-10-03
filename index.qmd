@@ -1,0 +1,54 @@
+---
+title: "IsoEcol 2026: Sr workshop"
+subtitle: "Part 3: isotope-based geographic assignment"
+author: "Megan Reich"
+date: "2026-10-03"
+toc: true
+---
+
+## Welcome
+
+Welcome to Part 3 of our workshop, "Strontium isotope geolocation for terrestrial ecology," held at The 14th International Conference on the Applications of Stable Isotope Techniques to Ecological Studies (ISOECOL 2026) in Hong Kong!
+
+::: {.callout-note appearance="simple"}
+## How to use this site
+
+Each section of the workshop has its own page, listed in the sidebar on the left. We'll go through them together, but you're welcome to work at your own pace. If you get lost, use the sidebar or the search box to find the section we're on.
+:::
+
+## What you'll learn
+
+By the end of this workshop you will be able to:
+
+-   Use the assignR package to estimate geographic origin
+-   Integrate information from multiple isotopes or other informative priors
+-   Summarize posterior probability surfaces
+
+## Schedule
+
+| Time          | Section                                    |
+|---------------|--------------------------------------------|
+| In advance    | [Getting started](01-section-template.qmd) |
+| 15:00 – 15:45 | Section 1: Geographic assignment           |
+| 15:45 – 16:15 | Section 2: Combining geolocation tools     |
+| 16:15 – 17:00 | Section 3: summarizing outputs             |
+
+## Before the workshop
+
+::: callout-important
+## Please set up before you arrive
+
+1.  Install a recent version of [R](https://cran.r-project.org/).
+2.  Install [RStudio Desktop](https://posit.co/download/rstudio-desktop/).
+3.  Run the code below in the RStudio console to install the packages we'll use.
+:::
+
+```{r}
+#| label: install-packages
+#| eval: false
+install.packages(c("tidyverse", "assignR","raster"))
+```
+
+## Getting help
+
+During the workshop, put up your hand or ask Megan, Clement, or Chris for help. Afterwards, contact Megan Reich at [mreich\@uow.edu.au](mailto:mreich@uow.edu.au).

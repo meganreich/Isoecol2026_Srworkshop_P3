@@ -1,0 +1,143 @@
+---
+title: "1. Combining geolocation tools"
+subtitle: "multiple isotopes and priors"
+description: "Shown in search results and link previews."
+date-modified: last-modified
+---
+
+::: {.callout-note appearance="simple" icon="false"}
+## In this section
+
+-   **You'll learn:** the key idea or skill
+-   **You'll need:** packages or data from earlier sections
+-   **Time:** about 30 minutes
+:::
+
+## Overview
+
+A short introduction to the topic: why it matters and what we're going to do.
+
+## Setting up
+
+```{r}
+#| label: setup
+library(tidyverse)
+```
+
+## Dual isotope assignment
+
+Explain the idea in a sentence or two, then show the code.
+
+```{r}
+#| label: first-example
+mtcars |>
+  group_by(cyl) |>
+  summarise(mean_mpg = mean(mpg))
+```
+
+::: callout-tip
+## Tip
+
+A helpful shortcut or good-practice note.
+:::
+
+### Hydrogen isoscape
+
+Hydrogen isotopes are commonly used for geographic assignment. Spatial variation in hydrogen isotopes is largely driven by patterns of precipitation. Since this pattern is independent of strontium isotopes, the two isotopes are great complementary geolocation tools.
+
+How does the hydrogen isoscape compare to the strontium isoscape?
+
+```{r}
+#d2H_insect_isoscape <- raster::rast("")
+# how does the spatial pattern compare to strontium isotopes?
+#plot(d2H_insect_isoscape)
+```
+
+It is important to use a hydrogen isoscape that has been calibrated to the material of interest. Here, I am giving you a hydrogen isoscape that has already been calibrated to insect wings.
+
+### Preparing for dual assignment
+
+For simplicity, we will append d2H values for each butterfly and assume the measurement uncertainty is 2 permille.
+
+```{r}
+# append d2H values for each butterfly
+#d2H <- c( )
+#d2H.sd <- c()
+
+# arrange dataframe to assignR specifications
+
+
+```
+
+### dual assignment
+
+```{r}
+#dual <- pdraster()
+#dual
+```
+
+How do these posterior probability surfaces compare to the ones generated with strontium isotopes alone? Is there a smaller area of high probability?
+::: panel-tabset
+## tidyverse
+
+```{r}
+#| label: tidy-version
+#plot(dual)
+```
+
+## base R
+
+```{r}
+#| label: base-version
+#plot(Sr_assign)
+```
+:::
+
+## Using a prior
+
+Tabsets are handy for showing alternatives side by side:
+
+
+
+::: callout-warning
+## Common mistake
+
+Describe an error students often hit and how to fix it.
+:::
+
+### Ecological niche model
+
+::: {.callout-tip icon="false"}
+## 🧩 Your turn
+
+1.  First task
+2.  Second task
+3.  **Stretch:** an extra challenge for students who finish early
+:::
+
+::: {.callout-caution collapse="true"}
+## Hint
+
+A nudge in the right direction, hidden until clicked.
+:::
+
+::: {.callout-caution collapse="true"}
+## Solution
+
+```{r}
+#| label: exercise-solution
+#| eval: false
+# Solution code here
+```
+:::
+
+## Summary
+
+::: {.callout-note appearance="simple"}
+## Key takeaways
+
+-   Combining multiple geolocation tools can give spatially constrained estimates of origin
+-   Each geolocation tool comes with additional assumptions and uncertainty
+:::
+
+**Next:** [Section 2 →](02-next-section.qmd)

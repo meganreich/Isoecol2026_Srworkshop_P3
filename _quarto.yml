@@ -1,0 +1,66 @@
+project:
+  type: website
+  output-dir: docs            # "docs" makes GitHub Pages publishing easy
+
+execute:
+  freeze: auto                # only re-run code in pages you've changed
+  echo: true
+  warning: false
+  message: false
+
+website:
+  title: "Strontium isotope geolocation for terrestrial ecology: Part 3"
+  description: "A hands-on workshop on isotope-based geographic assignment"
+  site-url: https://your-username.github.io/your-repo   # update when you publish
+  page-navigation: true       # previous / next buttons at the bottom of each page
+  back-to-top-navigation: true
+  reader-mode: true           # lets students hide the sidebars to focus
+  search:
+    location: sidebar
+
+  navbar:
+    background: primary
+    left:
+      - href: index.qmd
+        text: Home
+    right:
+      - icon: github
+        href: https://github.com/your-username/your-repo
+        aria-label: GitHub
+
+  sidebar:
+    style: docked
+    collapse-level: 1
+    contents:
+      - href: index.qmd
+        text: Welcome
+      - section: "Workshop"
+        contents:
+          - 01-section-template.qmd
+          - 02-section-priors.qmd
+          # - 03-visualisation.qmd
+          # - 04-modelling.qmd
+
+  page-footer:
+    left: "© 2026 Your Name · CC BY 4.0"
+    right: "Built with [Quarto](https://quarto.org)"
+
+format:
+  html:
+    theme: [litera, styles.scss]
+    toc: true
+    toc-depth: 3
+    toc-location: right
+    toc-title: "On this page"
+    number-sections: false
+    smooth-scroll: true
+    code-copy: true           # copy button on every code block
+    code-overflow: wrap
+    code-block-border-left: true
+    code-block-bg: true
+    code-link: true           # function names link to their documentation
+    callout-appearance: default
+    df-print: paged           # data frames print as scrollable tables
+    fig-align: center
+    fig-width: 8
+    fig-height: 5

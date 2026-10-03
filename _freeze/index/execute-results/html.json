@@ -1,0 +1,19 @@
+{
+  "hash": "5a73d60bb282d41ac7da16c796f4a6f6",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"IsoEcol 2026: Sr workshop\"\nsubtitle: \"Part 3: isotope-based geographic assignment\"\nauthor: \"Megan Reich\"\ndate: \"2026-10-03\"\ntoc: true\n---\n\n## Welcome\n\nWelcome to Part 3 of our workshop, \"Strontium isotope geolocation for terrestrial ecology,\" held at The 14th International Conference on the Applications of Stable Isotope Techniques to Ecological Studies (ISOECOL 2026) in Hong Kong!\n\n::: {.callout-note appearance=\"simple\"}\n## How to use this site\n\nEach section of the workshop has its own page, listed in the sidebar on the left. We'll go through them together, but you're welcome to work at your own pace. If you get lost, use the sidebar or the search box to find the section we're on.\n:::\n\n## What you'll learn\n\nBy the end of this workshop you will be able to:\n\n-   Use the assignR package to estimate geographic origin\n-   Integrate information from multiple isotopes or other informative priors\n-   Summarize posterior probability surfaces\n\n## Schedule\n\n| Time          | Section                                    |\n|---------------|--------------------------------------------|\n| In advance    | [Getting started](01-section-template.qmd) |\n| 15:00 – 15:45 | Section 1: Geographic assignment           |\n| 15:45 – 16:15 | Section 2: Combining geolocation tools     |\n| 16:15 – 17:00 | Section 3: summarizing outputs             |\n\n## Before the workshop\n\n::: callout-important\n## Please set up before you arrive\n\n1.  Install a recent version of [R](https://cran.r-project.org/).\n2.  Install [RStudio Desktop](https://posit.co/download/rstudio-desktop/).\n3.  Run the code below in the RStudio console to install the packages we'll use.\n:::\n\n\n::: {.cell}\n\n```{.r .cell-code}\ninstall.packages(c(\"tidyverse\", \"assignR\",\"raster\"))\n```\n:::\n\n\n## Getting help\n\nDuring the workshop, put up your hand or ask Megan, Clement, or Chris for help. Afterwards, contact Megan Reich at [mreich\\@uow.edu.au](mailto:mreich@uow.edu.au).\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {
+      "include-in-header": [
+        "<link href=\"site_libs/pagedtable-1.1/css/pagedtable.css\" rel=\"stylesheet\" />\n<script src=\"site_libs/pagedtable-1.1/js/pagedtable.js\"></script>\n"
+      ]
+    },
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

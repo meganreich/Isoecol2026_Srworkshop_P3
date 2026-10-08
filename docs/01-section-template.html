@@ -99,8 +99,34 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script><style>html{ scroll-behavior: smooth; }</style>
+<script type="module" src="site_libs/quarto-ojs/quarto-ojs-runtime.js"></script><link href="site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
 <link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
-<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 </head>
 <body class="nav-sidebar docked nav-fixed quarto-light">
 
@@ -202,16 +228,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
 <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
   <li><a href="#setting-up" id="toc-setting-up" class="nav-link" data-scroll-target="#setting-up">Setting up</a></li>
+  <li><a href="#unknown-origin-data" id="toc-unknown-origin-data" class="nav-link" data-scroll-target="#unknown-origin-data">Unknown origin data</a></li>
+  <li><a href="#strontium-isoscape" id="toc-strontium-isoscape" class="nav-link" data-scroll-target="#strontium-isoscape">Strontium isoscape</a></li>
+  <li><a href="#map" id="toc-map" class="nav-link" data-scroll-target="#map">Map</a></li>
   <li>
-<a href="#unknown-origin-data" id="toc-unknown-origin-data" class="nav-link" data-scroll-target="#unknown-origin-data">Unknown origin data</a>
+<a href="#geographic-assignment-1" id="toc-geographic-assignment-1" class="nav-link" data-scroll-target="#geographic-assignment-1">Geographic assignment 1</a>
   <ul class="collapse">
-<li><a href="#a-sub-step" id="toc-a-sub-step" class="nav-link" data-scroll-target="#a-sub-step">A sub-step</a></li>
+<li>
+<a href="#how-the-pdraster-function-works" id="toc-how-the-pdraster-function-works" class="nav-link" data-scroll-target="#how-the-pdraster-function-works">How the pdRaster function works</a>
+  <ul class="collapse">
+<li><a href="#lets-explore-the-probability-density-function" id="toc-lets-explore-the-probability-density-function" class="nav-link" data-scroll-target="#lets-explore-the-probability-density-function">Let’s explore the probability density function!</a></li>
   </ul>
 </li>
-  <li><a href="#strontium-isoscape" id="toc-strontium-isoscape" class="nav-link" data-scroll-target="#strontium-isoscape">Strontium isoscape</a></li>
-  <li><a href="#isotope-based-geographic-assignment" id="toc-isotope-based-geographic-assignment" class="nav-link" data-scroll-target="#isotope-based-geographic-assignment">Isotope-based geographic assignment</a></li>
-  <li><a href="#exercise" id="toc-exercise" class="nav-link" data-scroll-target="#exercise">Exercise</a></li>
-  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul>
+</li>
   </ul></nav>
     </div>
 <!-- main -->
@@ -234,7 +264,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">October 3, 2026</p>
+      <p class="date-modified">October 8, 2026</p>
     </div>
   </div>
     
@@ -263,74 +293,119 @@ In this section
 </div>
 </div>
 <section id="overview" class="level2"><h2 class="anchored" data-anchor-id="overview">Overview</h2>
-<p>A short introduction to the topic: why it matters and what we’re going to do.</p>
+<p>We will explore how to use the assignR package for isotope-based geographic assignment!</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+More resources
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Ma, C., Vander Zanden, H. B., Wunder, M. B., &amp; Bowen, G. J. (2020). assignR : An R package for isotope‐based geographic assignment. <em>Methods in Ecology and Evolution</em>, (00), 1–6. <a href="https://doi.org/10.1111/2041-210x.13426" class="uri">https://doi.org/10.1111/2041-210x.13426</a>
+</li>
+<li><a href="https://github.com/SPATIAL-Lab/assignR" class="uri">https://github.com/SPATIAL-Lab/assignR</a></li>
+<li><a href="https://spatial-lab.github.io/assignR/" class="uri">https://spatial-lab.github.io/assignR/</a></li>
+</ul>
+</div>
+</div>
 </section><section id="setting-up" class="level2"><h2 class="anchored" data-anchor-id="setting-up">Setting up</h2>
 <div class="cell">
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">assignR</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster">raster</a></span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/">terra</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://docs.ropensci.org/rnaturalearth/">rnaturalearth</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dieghernan.github.io/tidyterra/">tidyterra</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/">viridis</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://jrnold.github.io/ggthemes/">ggthemes</a></span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section><section id="unknown-origin-data" class="level2"><h2 class="anchored" data-anchor-id="unknown-origin-data">Unknown origin data</h2>
-<p>Explain the idea in a sentence or two, then show the code.</p>
+<p>Today we will be working with painted lady butterflies collected from various locations in South Africa</p>
 <div class="cell">
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">mtcars</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>mean_mpg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">mpg</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">unknown</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"Module3_assignment/unknown.csv"</span><span class="op">)</span></span>
+<span><span class="va">unknown</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div data-pagedtable="false">
   <script data-pagedtable-source="" type="application/json">
-{"columns":[{"label":["cyl"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["mean_mpg"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"4","2":"26.66364"},{"1":"6","2":"19.74286"},{"1":"8","2":"15.10000"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["Sample_ID"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Genus"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Species"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Lat"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Lon"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["Day"],"name":[6],"type":["int"],"align":["right"]},{"label":["Month"],"name":[7],"type":["int"],"align":["right"]},{"label":["Year"],"name":[8],"type":["int"],"align":["right"]},{"label":["d2H"],"name":[9],"type":["int"],"align":["right"]},{"label":["d2H_sd"],"name":[10],"type":["int"],"align":["right"]},{"label":["Sr8786"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["Sr8786_sd"],"name":[12],"type":["dbl"],"align":["right"]}],"data":[{"1":"RVcoll07F538","2":"Vanessa","3":"cardui","4":"-30.2000","5":"17.9330","6":"14","7":"10","8":"2007","9":"-36","10":"2","11":"0.72384","12":"0.00014"},{"1":"RVcoll07F540","2":"Vanessa","3":"cardui","4":"-33.4982","5":"21.2673","6":"28","7":"10","8":"2007","9":"-31","10":"2","11":"0.71247","12":"0.00011"},{"1":"RVcoll07F541","2":"Vanessa","3":"cardui","4":"-33.4982","5":"21.2673","6":"28","7":"10","8":"2007","9":"-50","10":"2","11":"0.71355","12":"0.00005"},{"1":"RVcoll07F542","2":"Vanessa","3":"cardui","4":"-33.4982","5":"21.2673","6":"28","7":"10","8":"2007","9":"-32","10":"2","11":"0.71165","12":"0.00007"},{"1":"RVcoll07F553","2":"Vanessa","3":"cardui","4":"-30.4000","5":"17.4320","6":"31","7":"8","8":"2007","9":"-68","10":"2","11":"0.71197","12":"0.00016"},{"1":"RVcoll07F554","2":"Vanessa","3":"cardui","4":"-32.1170","5":"18.9170","6":"2","7":"9","8":"2007","9":"-54","10":"2","11":"0.71341","12":"0.00013"},{"1":"RVcoll07F555","2":"Vanessa","3":"cardui","4":"-32.4045","5":"20.6598","6":"30","7":"9","8":"2007","9":"-56","10":"2","11":"0.71524","12":"0.00004"},{"1":"RVcoll14B025","2":"Vanessa","3":"cardui","4":"-31.3728","5":"19.1037","6":"23","7":"9","8":"2013","9":"-61","10":"2","11":"0.71034","12":"0.00004"},{"1":"RVcoll14B026","2":"Vanessa","3":"cardui","4":"-32.1842","5":"18.8935","6":"22","7":"9","8":"2013","9":"-9","10":"2","11":"0.71660","12":"0.00009"},{"1":"RVcoll14B028","2":"Vanessa","3":"cardui","4":"-31.4725","5":"19.7691","6":"1","7":"10","8":"2012","9":"-25","10":"2","11":"0.71612","12":"0.00011"},{"1":"RVcoll14B029","2":"Vanessa","3":"cardui","4":"-34.3582","5":"18.8780","6":"15","7":"9","8":"2013","9":"-65","10":"2","11":"0.71313","12":"0.00002"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
 </div>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Tip
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>A helpful shortcut or good-practice note.</p>
-</div>
-</div>
-<section id="a-sub-step" class="level3"><h3 class="anchored" data-anchor-id="a-sub-step">A sub-step</h3>
-<p>Use <code>###</code> headings for smaller steps. They appear nested in the table of contents.</p>
-</section></section><section id="strontium-isoscape" class="level2"><h2 class="anchored" data-anchor-id="strontium-isoscape">Strontium isoscape</h2>
-<p>Tabsets are handy for showing alternatives side by side:</p>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">tidyverse</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">base R</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+</section><section id="strontium-isoscape" class="level2"><h2 class="anchored" data-anchor-id="strontium-isoscape">Strontium isoscape</h2>
+<p>We will load the strontium ioscape we developed in Module 2</p>
 <div class="cell">
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">mtcars</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">&gt;</span> <span class="fl">25</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">Sr_iso_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html">rast</a></span><span class="op">(</span><span class="st">"Module3_assignment/rf_all_pred.tif"</span><span class="op">)</span></span>
+<span><span class="va">Sr_iso_sd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html">rast</a></span><span class="op">(</span><span class="st">"Module3_assignment/rf_all_sd.tif"</span><span class="op">)</span></span>
+<span><span class="va">Sr_iso</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">Sr_iso_mean</span>, <span class="va">Sr_iso_sd</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">Sr_iso</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div data-pagedtable="false">
-  <script data-pagedtable-source="" type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["mpg"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["cyl"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["disp"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["hp"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["drat"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["wt"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["qsec"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["vs"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["am"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["gear"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["carb"],"name":[11],"type":["dbl"],"align":["right"]}],"data":[{"1":"32.4","2":"4","3":"78.7","4":"66","5":"4.08","6":"2.200","7":"19.47","8":"1","9":"1","10":"4","11":"1","_rn_":"Fiat 128"},{"1":"30.4","2":"4","3":"75.7","4":"52","5":"4.93","6":"1.615","7":"18.52","8":"1","9":"1","10":"4","11":"2","_rn_":"Honda Civic"},{"1":"33.9","2":"4","3":"71.1","4":"65","5":"4.22","6":"1.835","7":"19.90","8":"1","9":"1","10":"4","11":"1","_rn_":"Toyota Corolla"},{"1":"27.3","2":"4","3":"79.0","4":"66","5":"4.08","6":"1.935","7":"18.90","8":"1","9":"1","10":"4","11":"1","_rn_":"Fiat X1-9"},{"1":"26.0","2":"4","3":"120.3","4":"91","5":"4.43","6":"2.140","7":"16.70","8":"0","9":"1","10":"5","11":"2","_rn_":"Porsche 914-2"},{"1":"30.4","2":"4","3":"95.1","4":"113","5":"3.77","6":"1.513","7":"16.90","8":"1","9":"1","10":"5","11":"2","_rn_":"Lotus Europa"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
+<div>
+<figure class="figure"><p><img src="01-section-template_files/figure-html/Sr isoscape from Module 2-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
 </div>
 </div>
 </div>
-</div>
-<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+</section><section id="map" class="level2"><h2 class="anchored" data-anchor-id="map">Map</h2>
+<p>Let’s take a look at a map!</p>
 <div class="cell">
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">mtcars</span><span class="op">[</span><span class="va">mtcars</span><span class="op">$</span><span class="va">mpg</span> <span class="op">&gt;</span> <span class="fl">25</span>, <span class="op">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">eck</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/crs.html">crs</a></span><span class="op">(</span><span class="va">Sr_iso_mean</span><span class="op">)</span></span>
+<span><span class="va">WGS84</span> <span class="op">&lt;-</span> <span class="st">'+init=EPSG:4326'</span></span>
+<span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/ext.html">ext</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">16.5</span>, <span class="fl">35</span>, <span class="op">-</span><span class="fl">36</span>, <span class="op">-</span><span class="fl">22</span><span class="op">)</span><span class="op">)</span> <span class="co">#(xmin, xmax, ymin, ymax</span></span>
+<span><span class="va">SA_outline</span> <span class="op">&lt;-</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/rnaturalearth/reference/ne_countries.html">ne_countries</a></span><span class="op">(</span></span>
+<span>  country <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"South Africa"</span>, <span class="st">"Lesotho"</span>, <span class="st">"Eswatini"</span><span class="op">)</span>,returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span><span class="va">.</span>, crs<span class="op">=</span><span class="va">WGS84</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crop.html">st_crop</a></span><span class="op">(</span><span class="va">sa</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span>crs<span class="op">=</span><span class="va">eck</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="va">unknownxy</span><span class="op">&lt;-</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span><span class="va">unknown</span>, coords<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Lon"</span>,<span class="st">"Lat"</span><span class="op">)</span>, crs<span class="op">=</span><span class="va">WGS84</span><span class="op">)</span><span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>         <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span>crs<span class="op">=</span><span class="va">eck</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://dieghernan.github.io/tidyterra/reference/geom_spatraster.html">geom_spatraster</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">Sr_iso_mean</span><span class="op">)</span><span class="op">+</span> <span class="co"># isoscape - mean prediction</span></span>
+<span>  <span class="fu"><a href="https://dieghernan.github.io/tidyterra/reference/ggspatvector.html">geom_spatvector</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">SA_outline</span>,fill<span class="op">=</span><span class="cn">NA</span>,colour<span class="op">=</span><span class="st">"black"</span><span class="op">)</span><span class="op">+</span> <span class="co"># country outline</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">unknownxy</span>,pch<span class="op">=</span><span class="fl">1</span>, col<span class="op">=</span><span class="st">"red3"</span>,cex<span class="op">=</span><span class="fl">2</span><span class="op">)</span><span class="op">+</span>  <span class="co"># butterfly collection sites</span></span>
+<span>  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html">scale_fill_viridis</a></span><span class="op">(</span>option<span class="op">=</span><span class="st">"turbo"</span>, na.value <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span><span class="op">+</span> <span class="co">#pretty colors</span></span>
+<span>  <span class="fu"><a href="https://jrnold.github.io/ggthemes/reference/theme_map.html">theme_map</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span> <span class="co"># cute map theme</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position<span class="op">=</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.key.width<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html">unit</a></span><span class="op">(</span><span class="fl">2</span>, <span class="st">"cm"</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_colourbar.html">guide_colourbar</a></span><span class="op">(</span>direction <span class="op">=</span> <span class="st">'horizontal'</span>, <span class="co">##transform legend</span></span>
+<span>                                title<span class="op">=</span><span class="st">"87Sr/86Sr"</span>,  <span class="co">##rename default legend</span></span>
+<span>                                title.position<span class="op">=</span><span class="st">'top'</span>,</span>
+<span>                                title.hjust<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span>                                ticks.colour<span class="op">=</span><span class="st">'#f5f5f2'</span>,</span>
+<span>                                ticks.linewidth<span class="op">=</span><span class="fl">2</span>,</span>
+<span>                                barwidth <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>                                barheight <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span><span class="op">)</span>  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div data-pagedtable="false">
-  <script data-pagedtable-source="" type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["mpg"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["cyl"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["disp"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["hp"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["drat"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["wt"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["qsec"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["vs"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["am"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["gear"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["carb"],"name":[11],"type":["dbl"],"align":["right"]}],"data":[{"1":"32.4","2":"4","3":"78.7","4":"66","5":"4.08","6":"2.200","7":"19.47","8":"1","9":"1","10":"4","11":"1","_rn_":"Fiat 128"},{"1":"30.4","2":"4","3":"75.7","4":"52","5":"4.93","6":"1.615","7":"18.52","8":"1","9":"1","10":"4","11":"2","_rn_":"Honda Civic"},{"1":"33.9","2":"4","3":"71.1","4":"65","5":"4.22","6":"1.835","7":"19.90","8":"1","9":"1","10":"4","11":"1","_rn_":"Toyota Corolla"},{"1":"27.3","2":"4","3":"79.0","4":"66","5":"4.08","6":"1.935","7":"18.90","8":"1","9":"1","10":"4","11":"1","_rn_":"Fiat X1-9"},{"1":"26.0","2":"4","3":"120.3","4":"91","5":"4.43","6":"2.140","7":"16.70","8":"0","9":"1","10":"5","11":"2","_rn_":"Porsche 914-2"},{"1":"30.4","2":"4","3":"95.1","4":"113","5":"3.77","6":"1.513","7":"16.90","8":"1","9":"1","10":"5","11":"2","_rn_":"Lotus Europa"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
+<div>
+<figure class="figure"><p><img src="01-section-template_files/figure-html/outline of South Africa-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
 </div>
 </div>
 </div>
+</section><section id="geographic-assignment-1" class="level1"><h1>Geographic assignment 1</h1>
+<p>Let’s do our first isotope-based geographic assignment, then we will explore how it works!</p>
+<div class="cell">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># prepare unknown for pdRaster</span></span>
+<span><span class="va">unknown_Sr</span> <span class="op">&lt;-</span> <span class="va">unknown</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">Sample_ID</span>, <span class="va">Sr8786</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># geographic assignment with assignR</span></span>
+<span><span class="va">Sr_probsurfaces</span> <span class="op">&lt;-</span> <span class="fu">assignR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/assignR/man/pdRaster.html">pdRaster</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">Sr_iso</span>, unknown <span class="op">=</span> <span class="va">unknown_Sr</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="01-section-template_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
 </div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>NULL</code></pre>
 </div>
 </div>
 <div class="callout callout-style-default callout-warning callout-titled">
@@ -339,31 +414,238 @@ Tip
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Common mistake
+Going Bayesian
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Describe an error students often hit and how to fix it.</p>
+<p>The output maps of isotope-based geographic assignment are called “posterior probability surfaces”</p>
 </div>
 </div>
-</section><section id="isotope-based-geographic-assignment" class="level2"><h2 class="anchored" data-anchor-id="isotope-based-geographic-assignment">Isotope-based geographic assignment</h2>
-<p>Tabsets are handy for showing alternatives side by side:</p>
-</section><section id="exercise" class="level2"><h2 class="anchored" data-anchor-id="exercise">Exercise</h2>
+<section id="how-the-pdraster-function-works" class="level2"><h2 class="anchored" data-anchor-id="how-the-pdraster-function-works">How the pdRaster function works</h2>
+<p>For each cell, <strong>j</strong>, the liklihood that the butterfly originated from that location is calculated from a probability density function given:</p>
+<table class="caption-top table">
+<thead><tr class="header">
+<th>Symbol</th>
+<th>Meaning</th>
+<th>Argument in our function</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\delta_s\)</span></td>
+<td>⁸⁷Sr/⁸⁶Sr of the butterfly</td>
+<td><code>sr_sample</code></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\delta_t(j)\)</span></td>
+<td>isoscape prediction (mean) at cell <span class="math inline">\(j\)</span>
+</td>
+<td><code>sr_mean</code></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\sigma_t(j)\)</span></td>
+<td>prediction uncertainty (SD) at cell <span class="math inline">\(j\)</span>
+</td>
+<td><code>sr_sd</code></td>
+</tr>
+</tbody>
+</table>
+<p><img src="images/clipboard-1101354603.png" class="img-fluid"></p>
+<p>:::</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Code version
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">sr_likelihood</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">sr_sample</span>, <span class="va">sr_mean</span>, <span class="va">sr_sd</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/any.html">any</a></span><span class="op">(</span><span class="va">sr_sd</span> <span class="op">&lt;=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/stop.html">stop</a></span><span class="op">(</span><span class="st">"sr_sd (the uncertainty) must be greater than 0."</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="va">scaling</span>  <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fl">2</span> <span class="op">*</span> <span class="va">pi</span> <span class="op">*</span> <span class="va">sr_sd</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>               <span class="co"># the fraction: height of the curve</span></span>
+<span>  <span class="va">distance</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">sr_sample</span> <span class="op">-</span> <span class="va">sr_mean</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span> <span class="op">/</span> <span class="op">(</span><span class="fl">2</span> <span class="op">*</span> <span class="va">sr_sd</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>  <span class="co"># squared distance, scaled by uncertainty</span></span>
+<span>  <span class="va">scaling</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="op">-</span><span class="va">distance</span><span class="op">)</span>                             <span class="co"># the full equation</span></span>
+<span><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">sr_likelihood</span><span class="op">(</span>sr_sample <span class="op">=</span> <span class="fl">0.71313</span>, sr_mean <span class="op">=</span> <span class="fl">0.71313</span>, sr_sd <span class="op">=</span> <span class="fl">0.0010</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 398.9423</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<section id="lets-explore-the-probability-density-function" class="level3"><h3 class="anchored">Let’s explore the probability density function!</h3>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-🧩 Your turn
+🧩 changing parameters
 </div>
 </div>
 <div class="callout-body-container callout-body">
+<div class="cell">
+<details class="code-fold"><summary>Show the plotting function</summary><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">plot_sr_likelihood</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">sr_sample</span>, <span class="va">sr_mean</span>, <span class="va">sr_sd</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># x-axis: 4 SDs either side of the mean, widened to include the sample</span></span>
+<span>  <span class="va">x_min</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">sr_mean</span> <span class="op">-</span> <span class="fl">4</span> <span class="op">*</span> <span class="va">sr_sd</span>, <span class="va">sr_sample</span> <span class="op">-</span> <span class="va">sr_sd</span><span class="op">)</span></span>
+<span>  <span class="va">x_max</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">sr_mean</span> <span class="op">+</span> <span class="fl">4</span> <span class="op">*</span> <span class="va">sr_sd</span>, <span class="va">sr_sample</span> <span class="op">+</span> <span class="va">sr_sd</span><span class="op">)</span></span>
+<span>  <span class="va">curve</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>sr <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="va">x_min</span>, <span class="va">x_max</span>, length.out <span class="op">=</span> <span class="fl">500</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">curve</span><span class="op">$</span><span class="va">likelihood</span> <span class="op">&lt;-</span> <span class="fu">sr_likelihood</span><span class="op">(</span><span class="va">curve</span><span class="op">$</span><span class="va">sr</span>, <span class="va">sr_mean</span>, <span class="va">sr_sd</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="va">value</span> <span class="op">&lt;-</span> <span class="fu">sr_likelihood</span><span class="op">(</span><span class="va">sr_sample</span>, <span class="va">sr_mean</span>, <span class="va">sr_sd</span><span class="op">)</span></span>
+<span>  <span class="va">z</span>     <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">sr_sample</span> <span class="op">-</span> <span class="va">sr_mean</span><span class="op">)</span> <span class="op">/</span> <span class="va">sr_sd</span>   <span class="co"># distance from the mean, in SDs</span></span>
+<span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">curve</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">sr</span>, <span class="va">likelihood</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html">geom_area</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"#1f4e6b"</span>, alpha <span class="op">=</span> <span class="fl">0.12</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"#1f4e6b"</span>, linewidth <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">sr_mean</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, colour <span class="op">=</span> <span class="st">"grey50"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/annotate.html">annotate</a></span><span class="op">(</span><span class="st">"segment"</span>, x <span class="op">=</span> <span class="va">sr_sample</span>, xend <span class="op">=</span> <span class="va">sr_sample</span>, y <span class="op">=</span> <span class="fl">0</span>, yend <span class="op">=</span> <span class="va">value</span>,</span>
+<span>             colour <span class="op">=</span> <span class="st">"#8a3b12"</span>, linewidth <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/annotate.html">annotate</a></span><span class="op">(</span><span class="st">"point"</span>, x <span class="op">=</span> <span class="va">sr_sample</span>, y <span class="op">=</span> <span class="va">value</span>, colour <span class="op">=</span> <span class="st">"#8a3b12"</span>, size <span class="op">=</span> <span class="fl">3.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span></span>
+<span>      x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="op">{</span><span class="op">}</span><span class="op">^</span><span class="fl">87</span> <span class="op">*</span> <span class="va">Sr</span> <span class="op">/</span> <span class="op">{</span><span class="op">}</span><span class="op">^</span><span class="fl">86</span> <span class="op">*</span> <span class="va">Sr</span><span class="op">)</span>,</span>
+<span>      y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="fu">P</span><span class="op">(</span><span class="va">delta</span><span class="op">[</span><span class="va">s</span><span class="op">]</span> <span class="op">~</span> <span class="st">"|"</span> <span class="op">~</span> <span class="va">j</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>      title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Likelihood ="</span>, <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html">signif</a></span><span class="op">(</span><span class="va">value</span>, <span class="fl">4</span><span class="op">)</span>, big.mark <span class="op">=</span> <span class="st">","</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>      subtitle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"Butterfly %.4f | cell mean %.4f | SD %.4f | %.1f SDs from the mean"</span>,</span>
+<span>                         <span class="va">sr_sample</span>, <span class="va">sr_mean</span>, <span class="va">sr_sd</span>, <span class="va">z</span><span class="op">)</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">13</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">plot_sr_likelihood</span><span class="op">(</span>sr_sample <span class="op">=</span> <span class="fl">0.71313</span>, sr_mean <span class="op">=</span> <span class="fl">0.71333</span>, sr_sd <span class="op">=</span> <span class="fl">0.0010</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="01-section-template_files/figure-html/first-plot-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
 <ol type="1">
-<li><p>First task</p></li>
-<li><p>Second task</p></li>
-<li><p><strong>Stretch:</strong> an extra challenge for students who finish early</p></li>
+<li><p>Holding <strong>sr_sd</strong> constant, how does the likelihood change if the difference between <strong>sr_mean</strong> and <strong>sr_sample</strong> is small?</p></li>
+<li><p>Holding <strong>sr_sd</strong> constant, how does the likelihood change if the difference between <strong>sr_mean</strong> and <strong>sr_sample</strong> is large?</p></li>
+<li><p>Holding <strong>sr_mean</strong> and <strong>sr_sample</strong> constant, how does modifying <strong>sr_sd</strong> change the likelihood? How does the probability density curve change?</p></li>
+<li><p>Which is better: small difference between <strong>sr_mean</strong> and <strong>sr_sample</strong> and large <strong>sr_sd</strong> OR a larger difference between <strong>sr_mean</strong> and <strong>sr_sample</strong> and small <strong>sr_sd</strong></p></li>
 </ol>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>The sliders only work on this website. If you’re running this page in RStudio, skip the two <code>{ojs}</code> chunks below and use <code>plot_sr_likelihood()</code> instead.</p>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code hidden" id="cb12" data-startfrom="213" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 212;"><span id="cb12-213"><a href="#cb12-213" aria-hidden="true" tabindex="-1"></a>viewof sr_sample <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="fl">0.7000</span><span class="op">,</span> <span class="fl">0.7250</span>]<span class="op">,</span> {</span>
+<span id="cb12-214"><a href="#cb12-214" aria-hidden="true" tabindex="-1"></a>  <span class="dt">value</span><span class="op">:</span> <span class="fl">0.7105</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.0001</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"δs: butterfly"</span><span class="op">,</span> <span class="dt">format</span><span class="op">:</span> x <span class="kw">=&gt;</span> x<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">4</span>)</span>
+<span id="cb12-215"><a href="#cb12-215" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb12-216"><a href="#cb12-216" aria-hidden="true" tabindex="-1"></a>viewof sr_mean <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="fl">0.7000</span><span class="op">,</span> <span class="fl">0.7250</span>]<span class="op">,</span> {</span>
+<span id="cb12-217"><a href="#cb12-217" aria-hidden="true" tabindex="-1"></a>  <span class="dt">value</span><span class="op">:</span> <span class="fl">0.7100</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.0001</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"δt(j): cell prediction"</span><span class="op">,</span> <span class="dt">format</span><span class="op">:</span> x <span class="kw">=&gt;</span> x<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">4</span>)</span>
+<span id="cb12-218"><a href="#cb12-218" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb12-219"><a href="#cb12-219" aria-hidden="true" tabindex="-1"></a>viewof sr_sd <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="fl">0.0001</span><span class="op">,</span> <span class="fl">0.0050</span>]<span class="op">,</span> {</span>
+<span id="cb12-220"><a href="#cb12-220" aria-hidden="true" tabindex="-1"></a>  <span class="dt">value</span><span class="op">:</span> <span class="fl">0.0010</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.0001</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"σt(j): uncertainty"</span><span class="op">,</span> <span class="dt">format</span><span class="op">:</span> x <span class="kw">=&gt;</span> x<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">4</span>)</span>
+<span id="cb12-221"><a href="#cb12-221" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-1-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-1-2" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-1-3" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code hidden" id="cb13" data-startfrom="226" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 225;"><span id="cb13-226"><a href="#cb13-226" aria-hidden="true" tabindex="-1"></a>likelihood <span class="op">=</span> (x<span class="op">,</span> m<span class="op">,</span> s) <span class="kw">=&gt;</span></span>
+<span id="cb13-227"><a href="#cb13-227" aria-hidden="true" tabindex="-1"></a>  <span class="bu">Math</span><span class="op">.</span><span class="fu">exp</span>(<span class="op">-</span>((x <span class="op">-</span> m) <span class="op">**</span> <span class="dv">2</span>) <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> s <span class="op">**</span> <span class="dv">2</span>)) <span class="op">/</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sqrt</span>(<span class="dv">2</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span> <span class="op">*</span> s <span class="op">**</span> <span class="dv">2</span>)</span>
+<span id="cb13-228"><a href="#cb13-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-229"><a href="#cb13-229" aria-hidden="true" tabindex="-1"></a>value <span class="op">=</span> <span class="fu">likelihood</span>(sr_sample<span class="op">,</span> sr_mean<span class="op">,</span> sr_sd)</span>
+<span id="cb13-230"><a href="#cb13-230" aria-hidden="true" tabindex="-1"></a>n_sd  <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">abs</span>(sr_sample <span class="op">-</span> sr_mean) <span class="op">/</span> sr_sd</span>
+<span id="cb13-231"><a href="#cb13-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-232"><a href="#cb13-232" aria-hidden="true" tabindex="-1"></a>curve <span class="op">=</span> d3<span class="op">.</span><span class="fu">range</span>(<span class="fl">0.7000</span><span class="op">,</span> <span class="fl">0.7250</span><span class="op">,</span> <span class="fl">0.00002</span>)</span>
+<span id="cb13-233"><a href="#cb13-233" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">map</span>(x <span class="kw">=&gt;</span> ({x<span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="fu">likelihood</span>(x<span class="op">,</span> sr_mean<span class="op">,</span> sr_sd)}))</span>
+<span id="cb13-234"><a href="#cb13-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-235"><a href="#cb13-235" aria-hidden="true" tabindex="-1"></a><span class="fu">md</span><span class="vs">`**Likelihood = </span><span class="sc">${</span>value<span class="op">.</span><span class="fu">toLocaleString</span>(<span class="kw">undefined</span><span class="op">,</span> {<span class="dt">maximumSignificantDigits</span><span class="op">:</span> <span class="dv">4</span>})<span class="sc">}</span><span class="vs">**</span></span>
+<span id="cb13-236"><a href="#cb13-236" aria-hidden="true" tabindex="-1"></a><span class="vs">· the butterfly is </span><span class="sc">${</span>n_sd<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">1</span>)<span class="sc">}</span><span class="vs"> SDs from the prediction</span></span>
+<span id="cb13-237"><a href="#cb13-237" aria-hidden="true" tabindex="-1"></a><span class="vs">· the curve's peak is </span><span class="sc">${</span><span class="fu">likelihood</span>(sr_mean<span class="op">,</span> sr_mean<span class="op">,</span> sr_sd)<span class="op">.</span><span class="fu">toLocaleString</span>(<span class="kw">undefined</span><span class="op">,</span> {<span class="dt">maximumFractionDigits</span><span class="op">:</span> <span class="dv">0</span>})<span class="sc">}</span><span class="vs">`</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-2" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-3" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-4" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-5" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<div class="sourceCode cell-code hidden" id="cb14" data-startfrom="239" data-source-offset="-558"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 238;"><span id="cb14-239"><a href="#cb14-239" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<span id="cb14-240"><a href="#cb14-240" aria-hidden="true" tabindex="-1"></a>  <span class="dt">height</span><span class="op">:</span> <span class="dv">320</span><span class="op">,</span></span>
+<span id="cb14-241"><a href="#cb14-241" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marginLeft</span><span class="op">:</span> <span class="dv">60</span><span class="op">,</span></span>
+<span id="cb14-242"><a href="#cb14-242" aria-hidden="true" tabindex="-1"></a>  <span class="dt">x</span><span class="op">:</span> {<span class="dt">domain</span><span class="op">:</span> [<span class="fl">0.7000</span><span class="op">,</span> <span class="fl">0.7250</span>]<span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"⁸⁷Sr/⁸⁶Sr"</span><span class="op">,</span> <span class="dt">tickFormat</span><span class="op">:</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">3</span>)}<span class="op">,</span></span>
+<span id="cb14-243"><a href="#cb14-243" aria-hidden="true" tabindex="-1"></a>  <span class="dt">y</span><span class="op">:</span> {<span class="dt">label</span><span class="op">:</span> <span class="st">"P(δs | j)"</span><span class="op">,</span> <span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
+<span id="cb14-244"><a href="#cb14-244" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb14-245"><a href="#cb14-245" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">areaY</span>(curve<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"x"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"y"</span><span class="op">,</span> <span class="dt">fill</span><span class="op">:</span> <span class="st">"#1f4e6b"</span><span class="op">,</span> <span class="dt">fillOpacity</span><span class="op">:</span> <span class="fl">0.12</span>})<span class="op">,</span></span>
+<span id="cb14-246"><a href="#cb14-246" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">line</span>(curve<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"x"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"y"</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"#1f4e6b"</span><span class="op">,</span> <span class="dt">strokeWidth</span><span class="op">:</span> <span class="dv">2</span>})<span class="op">,</span></span>
+<span id="cb14-247"><a href="#cb14-247" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleX</span>([sr_mean]<span class="op">,</span> {<span class="dt">stroke</span><span class="op">:</span> <span class="st">"grey"</span><span class="op">,</span> <span class="dt">strokeDasharray</span><span class="op">:</span> <span class="st">"4,4"</span>})<span class="op">,</span></span>
+<span id="cb14-248"><a href="#cb14-248" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleX</span>([sr_sample]<span class="op">,</span> {<span class="dt">y1</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">y2</span><span class="op">:</span> value<span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"#8a3b12"</span><span class="op">,</span> <span class="dt">strokeWidth</span><span class="op">:</span> <span class="dv">2</span>})<span class="op">,</span></span>
+<span id="cb14-249"><a href="#cb14-249" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">dot</span>([{<span class="dt">x</span><span class="op">:</span> sr_sample<span class="op">,</span> <span class="dt">y</span><span class="op">:</span> value}]<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"x"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"y"</span><span class="op">,</span> <span class="dt">fill</span><span class="op">:</span> <span class="st">"#8a3b12"</span><span class="op">,</span> <span class="dt">r</span><span class="op">:</span> <span class="dv">6</span>})<span class="op">,</span></span>
+<span id="cb14-250"><a href="#cb14-250" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])</span>
+<span id="cb14-251"><a href="#cb14-251" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb14-252"><a href="#cb14-252" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-6" data-nodetype="expression">
+
+</div>
+</div>
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled">
@@ -372,35 +654,19 @@ Common mistake
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Hint
+Solution
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>A nudge in the right direction, hidden until clicked.</p>
-</div>
-</div>
-</div>
-<div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Solution
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
 <div class="cell">
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Solution code here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Solution code here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
 </div>
-</section><section id="summary" class="level2"><h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<section id="summary" class="level2"><h2 class="anchored" data-anchor-id="summary">Summary</h2>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -420,7 +686,19 @@ Key takeaways
 <p><strong>Next:</strong> <a href="./02-section-priors.html">Section 2 →</a></p>
 
 
-</section><a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+</section>
+</div>
+</div>
+</section></section></section><a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main><!-- /main --><script type="ojs-module-contents">
+eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6InZpZXdvZiBzcl9zYW1wbGUgPSBJbnB1dHMucmFuZ2UoWzAuNzAwMCwgMC43MjUwXSwge1xuICB2YWx1ZTogMC43MTA1LCBzdGVwOiAwLjAwMDEsIGxhYmVsOiBcIs60czogYnV0dGVyZmx5XCIsIGZvcm1hdDogeCA9PiB4LnRvRml4ZWQoNClcbn0pXG52aWV3b2Ygc3JfbWVhbiA9IElucHV0cy5yYW5nZShbMC43MDAwLCAwLjcyNTBdLCB7XG4gIHZhbHVlOiAwLjcxMDAsIHN0ZXA6IDAuMDAwMSwgbGFiZWw6IFwizrR0KGopOiBjZWxsIHByZWRpY3Rpb25cIiwgZm9ybWF0OiB4ID0+IHgudG9GaXhlZCg0KVxufSlcbnZpZXdvZiBzcl9zZCA9IElucHV0cy5yYW5nZShbMC4wMDAxLCAwLjAwNTBdLCB7XG4gIHZhbHVlOiAwLjAwMTAsIHN0ZXA6IDAuMDAwMSwgbGFiZWw6IFwiz4N0KGopOiB1bmNlcnRhaW50eVwiLCBmb3JtYXQ6IHggPT4geC50b0ZpeGVkKDQpXG59KVxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0IiwiY2VsbE5hbWUiOiJvanMtY2VsbC0yIiwiaW5saW5lIjpmYWxzZSwic291cmNlIjoibGlrZWxpaG9vZCA9ICh4LCBtLCBzKSA9PlxuICBNYXRoLmV4cCgtKCh4IC0gbSkgKiogMikgLyAoMiAqIHMgKiogMikpIC8gTWF0aC5zcXJ0KDIgKiBNYXRoLlBJICogcyAqKiAyKVxuXG52YWx1ZSA9IGxpa2VsaWhvb2Qoc3Jfc2FtcGxlLCBzcl9tZWFuLCBzcl9zZClcbm5fc2QgID0gTWF0aC5hYnMoc3Jfc2FtcGxlIC0gc3JfbWVhbikgLyBzcl9zZFxuXG5jdXJ2ZSA9IGQzLnJhbmdlKDAuNzAwMCwgMC43MjUwLCAwLjAwMDAyKVxuICAubWFwKHggPT4gKHt4LCB5OiBsaWtlbGlob29kKHgsIHNyX21lYW4sIHNyX3NkKX0pKVxuXG5tZGAqKkxpa2VsaWhvb2QgPSAke3ZhbHVlLnRvTG9jYWxlU3RyaW5nKHVuZGVmaW5lZCwge21heGltdW1TaWduaWZpY2FudERpZ2l0czogNH0pfSoqXG7CtyB0aGUgYnV0dGVyZmx5IGlzICR7bl9zZC50b0ZpeGVkKDEpfSBTRHMgZnJvbSB0aGUgcHJlZGljdGlvblxuwrcgdGhlIGN1cnZlJ3MgcGVhayBpcyAke2xpa2VsaWhvb2Qoc3JfbWVhbiwgc3JfbWVhbiwgc3Jfc2QpLnRvTG9jYWxlU3RyaW5nKHVuZGVmaW5lZCwge21heGltdW1GcmFjdGlvbkRpZ2l0czogMH0pfWBcblxuUGxvdC5wbG90KHtcbiAgaGVpZ2h0OiAzMjAsXG4gIG1hcmdpbkxlZnQ6IDYwLFxuICB4OiB7ZG9tYWluOiBbMC43MDAwLCAwLjcyNTBdLCBsYWJlbDogXCLigbjigbdTci/igbjigbZTclwiLCB0aWNrRm9ybWF0OiBkID0+IGQudG9GaXhlZCgzKX0sXG4gIHk6IHtsYWJlbDogXCJQKM60cyB8IGopXCIsIGdyaWQ6IHRydWV9LFxuICBtYXJrczogW1xuICAgIFBsb3QuYXJlYVkoY3VydmUsIHt4OiBcInhcIiwgeTogXCJ5XCIsIGZpbGw6IFwiIzFmNGU2YlwiLCBmaWxsT3BhY2l0eTogMC4xMn0pLFxuICAgIFBsb3QubGluZShjdXJ2ZSwge3g6IFwieFwiLCB5OiBcInlcIiwgc3Ryb2tlOiBcIiMxZjRlNmJcIiwgc3Ryb2tlV2lkdGg6IDJ9KSxcbiAgICBQbG90LnJ1bGVYKFtzcl9tZWFuXSwge3N0cm9rZTogXCJncmV5XCIsIHN0cm9rZURhc2hhcnJheTogXCI0LDRcIn0pLFxuICAgIFBsb3QucnVsZVgoW3NyX3NhbXBsZV0sIHt5MTogMCwgeTI6IHZhbHVlLCBzdHJva2U6IFwiIzhhM2IxMlwiLCBzdHJva2VXaWR0aDogMn0pLFxuICAgIFBsb3QuZG90KFt7eDogc3Jfc2FtcGxlLCB5OiB2YWx1ZX1dLCB7eDogXCJ4XCIsIHk6IFwieVwiLCBmaWxsOiBcIiM4YTNiMTJcIiwgcjogNn0pLFxuICAgIFBsb3QucnVsZVkoWzBdKVxuICBdXG59KVxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJzaGlueUlucHV0KCdzcl9zYW1wbGUnKSJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoic2hpbnlJbnB1dCgnc3JfbWVhbicpIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJzaGlueUlucHV0KCdzcl9zZCcpIn1dfQ==
+</script><script type="module">
+if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
+window._ojs.paths.runtimeToDoc = "../..";
+window._ojs.paths.runtimeToRoot = "../..";
+window._ojs.paths.docToRoot = "";
+window._ojs.selfContained = false;
+window._ojs.runtime.interpretFromScriptTags();
+</script><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
     const anchorJS = new window.AnchorJS();

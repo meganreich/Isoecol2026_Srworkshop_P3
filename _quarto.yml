@@ -9,7 +9,7 @@ execute:
   message: false
 
 website:
-  title: "Strontium isotope geolocation for terrestrial ecology: Part 3"
+  title: "Strontium isotope geolocation for terrestrial ecology: Module 3"
   description: "A hands-on workshop on isotope-based geographic assignment"
   site-url: https://meganreich.github.io/Isoecol2026_Srworkshop_P3
   page-navigation: true       # previous / next buttons at the bottom of each page

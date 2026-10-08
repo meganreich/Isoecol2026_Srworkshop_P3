@@ -1,6 +1,6 @@
 ---
 title: "IsoEcol 2026: Sr workshop"
-subtitle: "Part 3: isotope-based geographic assignment"
+subtitle: "Module 3: isotope-based geographic assignment"
 author: "Megan Reich"
 date: "2026-10-03"
 toc: true
@@ -8,7 +8,7 @@ toc: true
 
 ## Welcome
 
-Welcome to Part 3 of our workshop, "Strontium isotope geolocation for terrestrial ecology," held at The 14th International Conference on the Applications of Stable Isotope Techniques to Ecological Studies (ISOECOL 2026) in Hong Kong!
+Welcome to Module 3 of our workshop, "Strontium isotope geolocation for terrestrial ecology," held at The 14th International Conference on the Applications of Stable Isotope Techniques to Ecological Studies (ISOECOL 2026) in Hong Kong!
 
 ::: {.callout-note appearance="simple"}
 ## How to use this site

@@ -201,12 +201,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
 <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
-  <li><a href="#setting-up" id="toc-setting-up" class="nav-link" data-scroll-target="#setting-up">Setting up</a></li>
   <li>
-<a href="#dual-isotope-assignment" id="toc-dual-isotope-assignment" class="nav-link" data-scroll-target="#dual-isotope-assignment">Dual isotope assignment</a>
+<a href="#setting-up" id="toc-setting-up" class="nav-link" data-scroll-target="#setting-up">Setting up</a>
   <ul class="collapse">
 <li><a href="#hydrogen-isoscape" id="toc-hydrogen-isoscape" class="nav-link" data-scroll-target="#hydrogen-isoscape">Hydrogen isoscape</a></li>
-  <li><a href="#preparing-for-dual-assignment" id="toc-preparing-for-dual-assignment" class="nav-link" data-scroll-target="#preparing-for-dual-assignment">Preparing for dual assignment</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#hydrogen-isotope-based-geographic-assignment" id="toc-hydrogen-isotope-based-geographic-assignment" class="nav-link" data-scroll-target="#hydrogen-isotope-based-geographic-assignment">Hydrogen isotope-based geographic assignment</a>
+  <ul class="collapse">
+<li><a href="#preparing-for-dual-assignment" id="toc-preparing-for-dual-assignment" class="nav-link" data-scroll-target="#preparing-for-dual-assignment">Preparing for dual assignment</a></li>
   <li><a href="#dual-assignment" id="toc-dual-assignment" class="nav-link" data-scroll-target="#dual-assignment">dual assignment</a></li>
   </ul>
 </li>
@@ -214,7 +218,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li>
 <a href="#using-a-prior" id="toc-using-a-prior" class="nav-link" data-scroll-target="#using-a-prior">Using a prior</a>
   <ul class="collapse">
-<li><a href="#ecological-niche-model" id="toc-ecological-niche-model" class="nav-link" data-scroll-target="#ecological-niche-model">Ecological niche model</a></li>
+<li><a href="#think-pair-share" id="toc-think-pair-share" class="nav-link" data-scroll-target="#think-pair-share">🦋 Think · Pair · Share</a></li>
+  <li><a href="#ecological-niche-model" id="toc-ecological-niche-model" class="nav-link" data-scroll-target="#ecological-niche-model">Ecological niche model</a></li>
   </ul>
 </li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
@@ -240,7 +245,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">October 3, 2026</p>
+      <p class="date-modified">October 8, 2026</p>
     </div>
   </div>
     
@@ -269,107 +274,125 @@ In this section
 </div>
 </div>
 <section id="overview" class="level2"><h2 class="anchored" data-anchor-id="overview">Overview</h2>
-<p>A short introduction to the topic: why it matters and what we’re going to do.</p>
+<p>Two are better than one! Many studies have shown that multi-isotope assignment can result in better spatial precision than single-isotope assignment. Let’s try it!</p>
 </section><section id="setting-up" class="level2"><h2 class="anchored" data-anchor-id="setting-up">Setting up</h2>
 <div class="cell">
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">assignR</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster">raster</a></span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/">terra</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://docs.ropensci.org/rnaturalearth/">rnaturalearth</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dieghernan.github.io/tidyterra/">tidyterra</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/">viridis</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://jrnold.github.io/ggthemes/">ggthemes</a></span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section><section id="dual-isotope-assignment" class="level2"><h2 class="anchored" data-anchor-id="dual-isotope-assignment">Dual isotope assignment</h2>
-<p>Explain the idea in a sentence or two, then show the code.</p>
 <div class="cell">
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">mtcars</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>mean_mpg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">mpg</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div data-pagedtable="false">
-  <script data-pagedtable-source="" type="application/json">
-{"columns":[{"label":["cyl"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["mean_mpg"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"4","2":"26.66364"},{"1":"6","2":"19.74286"},{"1":"8","2":"15.10000"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
-</div>
-</div>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Tip
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>A helpful shortcut or good-practice note.</p>
-</div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">unknown</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"Module3_assignment/unknown.csv"</span><span class="op">)</span></span>
+<span><span class="va">Sr_iso_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html">rast</a></span><span class="op">(</span><span class="st">"Module3_assignment/rf_all_pred.tif"</span><span class="op">)</span></span>
+<span><span class="va">Sr_iso_sd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html">rast</a></span><span class="op">(</span><span class="st">"Module3_assignment/rf_all_sd.tif"</span><span class="op">)</span></span>
+<span><span class="va">Sr_iso</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">Sr_iso_mean</span>, <span class="va">Sr_iso_sd</span><span class="op">)</span></span>
+<span><span class="va">d2Hw_isoscape</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html">rast</a></span><span class="op">(</span><span class="st">"Module3_assignment/d2Hw_isoscape.tif"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="hydrogen-isoscape" class="level3"><h3 class="anchored" data-anchor-id="hydrogen-isoscape">Hydrogen isoscape</h3>
-<p>Hydrogen isotopes are commonly used for geographic assignment. Spatial variation in hydrogen isotopes is largely driven by patterns of precipitation. Since this pattern is independent of strontium isotopes, the two isotopes are great complementary geolocation tools.</p>
+<p>Hydrogen isotopes are commonly used for geographic assignment of butterflies. Spatial variation in hydrogen isotopes is largely driven by patterns of precipitation. Since this pattern is independent of strontium isotopes, the two isotopes are great complementary geolocation tools.</p>
 <p>How does the hydrogen isoscape compare to the strontium isoscape?</p>
 <div class="cell">
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#d2H_insect_isoscape &lt;- raster::rast("")</span></span>
-<span><span class="co"># how does the spatial pattern compare to strontium isotopes?</span></span>
-<span><span class="co">#plot(d2H_insect_isoscape)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># how does the spatial pattern compare to strontium isotopes?</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">d2Hw_isoscape</span><span class="op">)</span>; <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">Sr_iso</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="02-section-priors_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
 </div>
-<p>It is important to use a hydrogen isoscape that has been calibrated to the material of interest. Here, I am giving you a hydrogen isoscape that has already been calibrated to insect wings.</p>
-</section><section id="preparing-for-dual-assignment" class="level3"><h3 class="anchored" data-anchor-id="preparing-for-dual-assignment">Preparing for dual assignment</h3>
-<p>For simplicity, we will append d2H values for each butterfly and assume the measurement uncertainty is 2 permille.</p>
-<div class="cell">
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># append d2H values for each butterfly</span></span>
-<span><span class="co">#d2H &lt;- c( )</span></span>
-<span><span class="co">#d2H.sd &lt;- c()</span></span>
-<span></span>
-<span><span class="co"># arrange dataframe to assignR specifications</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section><section id="dual-assignment" class="level3"><h3 class="anchored" data-anchor-id="dual-assignment">dual assignment</h3>
-<div class="cell">
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#dual &lt;- pdraster()</span></span>
-<span><span class="co">#dual</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="02-section-priors_files/figure-html/unnamed-chunk-2-2.png" class="img-fluid figure-img" width="768"></p>
+</figure>
 </div>
-<p>How do these posterior probability surfaces compare to the ones generated with strontium isotopes alone? Is there a smaller area of high probability? ::: panel-tabset ## tidyverse</p>
-<div class="cell">
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#plot(dual)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section></section><section id="base-r" class="level2"><h2 class="anchored" data-anchor-id="base-r">base R</h2>
-<div class="cell">
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#plot(Sr_assign)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section><section id="using-a-prior" class="level2"><h2 class="anchored" data-anchor-id="using-a-prior">Using a prior</h2>
-<p>Tabsets are handy for showing alternatives side by side:</p>
+<p>What do you notice about the patterns in the mean and sd layers of the hydrogen isoscape? Where are the predicted d2H values high? why? where are they low? Is there a correlation between predicted d2H values and uncertainty? Where is uncertainty high? low?</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Common mistake
+Careful!
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Describe an error students often hit and how to fix it.</p>
+<p>It is important to use a hydrogen isoscape that has been calibrated to the material of interest. Here, I am giving you a hydrogen isoscape that has already been calibrated to insect wings. Calibrating a hydrogen isoscape involves (almost) as many decisions as developing a strontium isoscape.</p>
 </div>
 </div>
-<section id="ecological-niche-model" class="level3"><h3 class="anchored" data-anchor-id="ecological-niche-model">Ecological niche model</h3>
-<div class="callout callout-style-default callout-tip no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-🧩 Your turn
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<ol type="1">
-<li>First task</li>
-<li>Second task</li>
-<li>
-<strong>Stretch:</strong> an extra challenge for students who finish early</li>
-</ol>
+</section></section><section id="hydrogen-isotope-based-geographic-assignment" class="level2"><h2 class="anchored" data-anchor-id="hydrogen-isotope-based-geographic-assignment">Hydrogen isotope-based geographic assignment</h2>
+<p>What do the hydrogen-only probability surfaces look like?</p>
+<div class="cell">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">unknown_H</span> <span class="op">&lt;-</span> <span class="va">unknown</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">Sample_ID</span>, <span class="va">d2H</span>, <span class="va">d2H_sd</span><span class="op">)</span> <span class="co">#RVcoll07F553 is above range of South Africa isoscape</span></span>
+<span></span>
+<span><span class="va">H_probsurfaces</span> <span class="op">&lt;-</span> <span class="fu">assignR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/assignR/man/pdRaster.html">pdRaster</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">d2Hw_isoscape</span>, unknown <span class="op">=</span> <span class="va">unknown_H</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="02-section-priors_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
 </div>
 </div>
+<div class="cell-output cell-output-stdout">
+<pre><code>NULL</code></pre>
+</div>
+</div>
+<section id="preparing-for-dual-assignment" class="level3"><h3 class="anchored" data-anchor-id="preparing-for-dual-assignment">Preparing for dual assignment</h3>
+<p>For simplicity, we will append d2H values for each butterfly and assume the measurement uncertainty is 2 permille.</p>
+<div class="cell">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># arrange dataframe to assignR specifications</span></span>
+<span><span class="va">unknown_dual</span> <span class="op">&lt;-</span> <span class="va">unknown</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">Sample_ID</span>, <span class="va">Sr8786</span>, <span class="va">d2H</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">dual_isoscapes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/assignR/man/isoStack.html">isoStack</a></span><span class="op">(</span><span class="va">Sr_iso</span>, <span class="va">d2Hw_isoscape</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="dual-assignment" class="level3"><h3 class="anchored" data-anchor-id="dual-assignment">dual assignment</h3>
+<div class="cell">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># hydrogen and strontium isotope-based geographic assignment</span></span>
+<span><span class="va">dual_assign</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/assignR/man/pdRaster.html">pdRaster</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">dual_isoscapes</span>, unknown <span class="op">=</span> <span class="va">unknown_dual</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="02-section-priors_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>NULL</code></pre>
+</div>
+</div>
+<p>How do these posterior probability surfaces compare to the ones generated with strontium isotopes alone? Is there a smaller area of high probability? ::: panel-tabset ## tidyverse</p>
+<div class="cell">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#plot(dual)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section></section><section id="base-r" class="level2"><h2 class="anchored" data-anchor-id="base-r">base R</h2>
+<div class="cell">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#plot(Sr_assign)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="using-a-prior" class="level2"><h2 class="anchored" data-anchor-id="using-a-prior">Using a prior</h2>
+<section id="think-pair-share" class="level3 think-pair-share"><h3 class="anchored" data-anchor-id="think-pair-share">🦋 Think · Pair · Share</h3>
+<div class="tps-steps">
+<div class="tps-step">
+<p><strong>💭 Think</strong> <span class="tps-time">1 min</span></p>
+<p>On your own: what do you already know about where <em>your</em> study species could have come from, before measuring any strontium?</p>
+</div>
+<div class="tps-step">
+<p><strong>🤝 Pair</strong> <span class="tps-time">2 min</span></p>
+<p>Turn to your neighbour. How could you turn that knowledge into a prior map, P(j)? Which cells would get a prior of zero?</p>
+</div>
+<div class="tps-step">
+<p><strong>📣 Share</strong> <span class="tps-time">2 min</span></p>
+<p>Tell the room one idea for a prior, and one way it could go wrong.</p>
+</div>
+</div>
+</section><section id="ecological-niche-model" class="level3"><h3 class="anchored" data-anchor-id="ecological-niche-model">Ecological niche model</h3>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -378,14 +401,14 @@ Hint
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>A nudge in the right direction, hidden until clicked.</p>
 </div>
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -394,10 +417,10 @@ Solution
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Solution code here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Solution code here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>

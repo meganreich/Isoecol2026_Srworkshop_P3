@@ -70,7 +70,7 @@
     "href": "01-section-template.html",
     "title": "1. Geographic assignment",
     "section": "",
-    "text": "In this section\n\n\n\n\n\nYou’ll learn: how the pdRaster function works\n\nYou’ll need: the strontium isoscape from Module 2\n\nTime: about 40 minutes",
+    "text": "In this section\n\n\n\n\n\nYou’ll learn: how the pdRaster function works\n\nYou’ll need: the strontium isoscape from Module 2\n\nTime: about 45 minutes",
     "crumbs": [
       "Home",
       "Workshop",
@@ -166,7 +166,7 @@
     "href": "02-section-priors.html#overview",
     "title": "2. Combining geolocation tools",
     "section": "Overview",
-    "text": "Overview\nA short introduction to the topic: why it matters and what we’re going to do.",
+    "text": "Overview\nTwo are better than one! Many studies have shown that multi-isotope assignment can result in better spatial precision than single-isotope assignment. Let’s try it!",
     "crumbs": [
       "Home",
       "Workshop",
@@ -178,7 +178,7 @@
     "href": "02-section-priors.html#setting-up",
     "title": "2. Combining geolocation tools",
     "section": "Setting up",
-    "text": "Setting up\n\nlibrary(tidyverse)\nlibrary(assignR)\nlibrary(raster)",
+    "text": "Setting up\n\nlibrary(tidyverse)\nlibrary(assignR)\nlibrary(terra)\nlibrary(rnaturalearth)\nlibrary(sf)\nlibrary(tidyterra)\nlibrary(viridis)\nlibrary(ggthemes)\n\n\nunknown &lt;- read.csv(\"Module3_assignment/unknown.csv\")\nSr_iso_mean &lt;- rast(\"Module3_assignment/rf_all_pred.tif\")\nSr_iso_sd &lt;- rast(\"Module3_assignment/rf_all_sd.tif\")\nSr_iso &lt;- c(Sr_iso_mean, Sr_iso_sd)\nd2Hw_isoscape &lt;- terra::rast(\"Module3_assignment/d2Hw_isoscape.tif\")\n\nHydrogen isoscape\nHydrogen isotopes are commonly used for geographic assignment of butterflies. Spatial variation in hydrogen isotopes is largely driven by patterns of precipitation. Since this pattern is independent of strontium isotopes, the two isotopes are great complementary geolocation tools.\nHow does the hydrogen isoscape compare to the strontium isoscape?\n\n# how does the spatial pattern compare to strontium isotopes?\nplot(d2Hw_isoscape); plot(Sr_iso)\n\n\n\n\n\n\n\n\n\n\n\n\n\nWhat do you notice about the patterns in the mean and sd layers of the hydrogen isoscape? Where are the predicted d2H values high? why? where are they low? Is there a correlation between predicted d2H values and uncertainty? Where is uncertainty high? low?\n\n\n\n\n\n\nCareful!\n\n\n\nIt is important to use a hydrogen isoscape that has been calibrated to the material of interest. Here, I am giving you a hydrogen isoscape that has already been calibrated to insect wings. Calibrating a hydrogen isoscape involves (almost) as many decisions as developing a strontium isoscape.",
     "crumbs": [
       "Home",
       "Workshop",
@@ -262,7 +262,7 @@
     "href": "02-section-priors.html#using-a-prior",
     "title": "2. Combining geolocation tools",
     "section": "Using a prior",
-    "text": "Using a prior\nTabsets are handy for showing alternatives side by side:\n\n\n\n\n\n\nCommon mistake\n\n\n\nDescribe an error students often hit and how to fix it.\n\n\nEcological niche model\n\n\n\n\n\n\n🧩 Your turn\n\n\n\n\nFirst task\nSecond task\n\nStretch: an extra challenge for students who finish early\n\n\n\n\n\n\n\n\n\nHint\n\n\n\n\n\nA nudge in the right direction, hidden until clicked.\n\n\n\n\n\n\n\n\n\nSolution\n\n\n\n\n\n\n# Solution code here",
+    "text": "Using a prior\n🦋 Think · Pair · Share\n\n\n💭 Think 1 min\nOn your own: what do you already know about where your study species could have come from, before measuring any strontium?\n\n\n🤝 Pair 2 min\nTurn to your neighbour. How could you turn that knowledge into a prior map, P(j)? Which cells would get a prior of zero?\n\n\n📣 Share 2 min\nTell the room one idea for a prior, and one way it could go wrong.\n\n\nEcological niche model\n\n\n\n\n\n\nHint\n\n\n\n\n\nA nudge in the right direction, hidden until clicked.\n\n\n\n\n\n\n\n\n\nSolution\n\n\n\n\n\n\n# Solution code here",
     "crumbs": [
       "Home",
       "Workshop",
@@ -447,6 +447,18 @@
       "Home",
       "Workshop",
       "1. Geographic assignment"
+    ]
+  },
+  {
+    "objectID": "02-section-priors.html#hydrogen-isotope-based-geographic-assignment",
+    "href": "02-section-priors.html#hydrogen-isotope-based-geographic-assignment",
+    "title": "2. Combining geolocation tools",
+    "section": "Hydrogen isotope-based geographic assignment",
+    "text": "Hydrogen isotope-based geographic assignment\nWhat do the hydrogen-only probability surfaces look like?\n\nunknown_H &lt;- unknown %&gt;%\n  dplyr::select(Sample_ID, d2H, d2H_sd) #RVcoll07F553 is above range of South Africa isoscape\n\nH_probsurfaces &lt;- assignR::pdRaster(r = d2Hw_isoscape, unknown = unknown_H)\n\n\n\n\n\n\n\nNULL\n\n\nPreparing for dual assignment\nFor simplicity, we will append d2H values for each butterfly and assume the measurement uncertainty is 2 permille.\n\n# arrange dataframe to assignR specifications\nunknown_dual &lt;- unknown %&gt;%\n  dplyr::select(Sample_ID, Sr8786, d2H)\n\ndual_isoscapes &lt;- isoStack(Sr_iso, d2Hw_isoscape)\n\ndual assignment\n\n# hydrogen and strontium isotope-based geographic assignment\ndual_assign &lt;- pdRaster(r = dual_isoscapes, unknown = unknown_dual)\n\n\n\n\n\n\n\nNULL\n\n\nHow do these posterior probability surfaces compare to the ones generated with strontium isotopes alone? Is there a smaller area of high probability? ::: panel-tabset ## tidyverse\n\n#plot(dual)",
+    "crumbs": [
+      "Home",
+      "Workshop",
+      "2. Combining geolocation tools"
     ]
   }
 ]

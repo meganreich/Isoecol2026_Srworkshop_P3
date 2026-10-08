@@ -23,9 +23,20 @@ Two are better than one! Many studies have shown that multi-isotope assignment c
 #| label: setup
 library(tidyverse)
 library(assignR)
-library(raster)
+library(terra)
+library(rnaturalearth)
+library(sf)
+library(tidyterra)
+library(viridis)
+library(ggthemes)
 ```
-
+```{r}
+unknown <- read.csv("Module3_assignment/unknown.csv")
+Sr_iso_mean <- rast("Module3_assignment/rf_all_pred.tif")
+Sr_iso_sd <- rast("Module3_assignment/rf_all_sd.tif")
+Sr_iso <- c(Sr_iso_mean, Sr_iso_sd)
+d2Hw_isoscape <- terra::rast("Module3_assignment/d2Hw_isoscape.tif")
+```
 ### Hydrogen isoscape
 
 Hydrogen isotopes are commonly used for geographic assignment of butterflies. Spatial variation in hydrogen isotopes is largely driven by patterns of precipitation. Since this pattern is independent of strontium isotopes, the two isotopes are great complementary geolocation tools.
@@ -33,8 +44,6 @@ Hydrogen isotopes are commonly used for geographic assignment of butterflies. Sp
 How does the hydrogen isoscape compare to the strontium isoscape?
 
 ```{r}
-d2Hw_isoscape <- terra::rast("Module3_assignment/d2Hw_isoscape.tif")
-
 # how does the spatial pattern compare to strontium isotopes?
 plot(d2Hw_isoscape); plot(Sr_iso)
 ```
@@ -65,7 +74,7 @@ For simplicity, we will append d2H values for each butterfly and assume the meas
 unknown_dual <- unknown %>%
   dplyr::select(Sample_ID, Sr8786, d2H)
 
-dual_isoscapes <- isoStack(Sr_iso_crop, d2Hw_isoscape)
+dual_isoscapes <- isoStack(Sr_iso, d2Hw_isoscape)
 
 ```
 

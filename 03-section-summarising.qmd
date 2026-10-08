@@ -72,21 +72,10 @@ For simplicity, we will append d2H values for each butterfly and assume the meas
 
 ```
 
-## Odds ratio
-
-```{r}
-#dual <- pdraster()
-#dual
-```
-
-How do these posterior probability surfaces compare to the ones generated with strontium isotopes alone? Is there a smaller area of high probability? ::: panel-tabset \## tidyverse
-
 ```{r}
 #| label: tidy-version
 #plot(dual)
 ```
-
-
 
 ::: {.callout-tip icon="false"}
 ## 🧩 Your turn

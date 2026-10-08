@@ -46,7 +46,7 @@ By the end of this workshop you will be able to:
 ```{r}
 #| label: install-packages
 #| eval: false
-install.packages(c("tidyverse", "assignR","raster","isocat"))
+install.packages(c("tidyverse", "assignR","terra","isocat","rnaturalearth", "sf", "tidyterra"))
 ```
 
 ## Getting help

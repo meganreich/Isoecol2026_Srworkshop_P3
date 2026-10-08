@@ -15,90 +15,243 @@ date-modified: last-modified
 
 ## Overview
 
-A short introduction to the topic: why it matters and what we're going to do.
+We will explore how to use the assignR package for isotope-based geographic assignment!
+
+::: {.callout-tip icon="false"}
+## More resources
+
+-   Ma, C., Vander Zanden, H. B., Wunder, M. B., & Bowen, G. J. (2020). assignR : An R package for isotope‐based geographic assignment. *Methods in Ecology and Evolution*, (00), 1–6. <https://doi.org/10.1111/2041-210x.13426>
+-   <https://github.com/SPATIAL-Lab/assignR>
+-   <https://spatial-lab.github.io/assignR/>
+:::
 
 ## Setting up
 
 ```{r}
 #| label: setup
+#| message: false
+#| warning: false
 library(tidyverse)
 library(assignR)
-library(raster)
+library(terra)
+library(rnaturalearth)
+library(sf)
+library(tidyterra)
+library(viridis)
+library(ggthemes)
 ```
 
 ## Unknown origin data
 
-Explain the idea in a sentence or two, then show the code.
+Today we will be working with painted lady butterflies collected from various locations in South Africa
 
 ```{r}
-#| label: first-example
-mtcars |>
-  group_by(cyl) |>
-  summarise(mean_mpg = mean(mpg))
+#| label: bring in unknown data
+unknown <- read.csv("Module3_assignment/unknown.csv")
+unknown
 ```
-
-::: callout-tip
-## Tip
-
-A helpful shortcut or good-practice note.
-:::
-
-### A sub-step
-
-Use `###` headings for smaller steps. They appear nested in the table of contents.
 
 ## Strontium isoscape
 
-Tabsets are handy for showing alternatives side by side:
-
-::: panel-tabset
-## tidyverse
+We will load the strontium ioscape we developed in Module 2
 
 ```{r}
-#| label: tidy-version
-mtcars |> filter(mpg > 25)
+#| label: Sr isoscape from Module 2
+Sr_iso_mean <- rast("Module3_assignment/rf_all_pred.tif")
+Sr_iso_sd <- rast("Module3_assignment/rf_all_sd.tif")
+Sr_iso <- c(Sr_iso_mean, Sr_iso_sd)
+plot(Sr_iso)
 ```
 
-## base R
+## Map
+
+Let's take a look at a map!
 
 ```{r}
-#| label: base-version
-mtcars[mtcars$mpg > 25, ]
+#| label: outline of South Africa
+#| message: false
+#| warning: false
+eck <- crs(Sr_iso_mean)
+WGS84 <- '+init=EPSG:4326'
+sa <- ext(c(16.5, 35, -36, -22)) #(xmin, xmax, ymin, ymax
+SA_outline <- rnaturalearth::ne_countries(
+  country = c("South Africa", "Lesotho", "Eswatini"),returnclass = "sf") %>%
+  sf::st_as_sf(., crs=WGS84) %>%
+  st_crop(sa) %>% 
+  sf::st_transform(crs=eck) 
+
+unknownxy<-st_as_sf(unknown, coords=c("Lon","Lat"), crs=WGS84)%>% 
+         st_transform(crs=eck)
+
+ggplot()+
+  geom_spatraster(data=Sr_iso_mean)+ # isoscape - mean prediction
+  geom_spatvector(data=SA_outline,fill=NA,colour="black")+ # country outline
+  geom_sf(data=unknownxy,pch=1, col="red3",cex=2)+  # butterfly collection sites
+  scale_fill_viridis(option="turbo", na.value = NA)+ #pretty colors
+  theme_map()+ # cute map theme
+  theme_minimal()+
+  theme(legend.position="bottom")+
+  theme(legend.key.width=unit(2, "cm"))+
+  guides(fill = guide_colourbar(direction = 'horizontal', ##transform legend
+                                title="87Sr/86Sr",  ##rename default legend
+                                title.position='top',
+                                title.hjust=0.5,
+                                ticks.colour='#f5f5f2',
+                                ticks.linewidth=2,
+                                barwidth = 15,
+                                barheight = 0.75))  
 ```
-:::
+
+# Geographic assignment 1
+
+Let's do our first isotope-based geographic assignment, then we will explore how it works!
+
+```{r}
+# prepare unknown for pdRaster
+unknown_Sr <- unknown %>%
+  dplyr::select(Sample_ID, Sr8786)
+
+# geographic assignment with assignR
+Sr_probsurfaces <- assignR::pdRaster(r = Sr_iso, unknown = unknown_Sr)
+```
 
 ::: callout-warning
-## Common mistake
+## Going Bayesian
 
-Describe an error students often hit and how to fix it.
+The output maps of isotope-based geographic assignment are called "posterior probability surfaces"
 :::
 
-## Isotope-based geographic assignment
+## How the pdRaster function works
 
-Tabsets are handy for showing alternatives side by side:
+For each cell, **j**, the liklihood that the butterfly originated from that location is calculated from a probability density function given:
 
-## Exercise
+| Symbol | Meaning | Argument in our function |
+|----|----|----|
+| $\delta_s$ | ⁸⁷Sr/⁸⁶Sr of the butterfly | `sr_sample` |
+| $\delta_t(j)$ | isoscape prediction (mean) at cell $j$ | `sr_mean` |
+| $\sigma_t(j)$ | prediction uncertainty (SD) at cell $j$ | `sr_sd` |
 
-::: {.callout-tip icon="false"}
-## 🧩 Your turn
+![](images/clipboard-1101354603.png)
 
-1.  First task
-
-2.  Second task
-
-3.  **Stretch:** an extra challenge for students who finish early
-
-    ```{r}
-
-
-    ```
 :::
 
 ::: {.callout-caution collapse="true"}
-## Hint
+## Code version
 
-A nudge in the right direction, hidden until clicked.
+```{r}
+#| label: sr-likelihood
+sr_likelihood <- function(sr_sample, sr_mean, sr_sd) {
+  if (any(sr_sd <= 0)) stop("sr_sd (the uncertainty) must be greater than 0.")
+
+  scaling  <- 1 / sqrt(2 * pi * sr_sd^2)               # the fraction: height of the curve
+  distance <- (sr_sample - sr_mean)^2 / (2 * sr_sd^2)  # squared distance, scaled by uncertainty
+  scaling * exp(-distance)                             # the full equation
+}
+```
+
+```{r}
+#| label: first-try
+sr_likelihood(sr_sample = 0.71313, sr_mean = 0.71313, sr_sd = 0.0010)
+```
 :::
+### Let's explore the probability density function!
+
+::: {.callout-tip icon="false"}
+## 🧩 changing parameters
+
+```{r}
+#| label: plot-helper
+#| code-fold: true
+#| code-summary: "Show the plotting function"
+plot_sr_likelihood <- function(sr_sample, sr_mean, sr_sd) {
+  # x-axis: 4 SDs either side of the mean, widened to include the sample
+  x_min <- min(sr_mean - 4 * sr_sd, sr_sample - sr_sd)
+  x_max <- max(sr_mean + 4 * sr_sd, sr_sample + sr_sd)
+  curve <- data.frame(sr = seq(x_min, x_max, length.out = 500))
+  curve$likelihood <- sr_likelihood(curve$sr, sr_mean, sr_sd)
+
+  value <- sr_likelihood(sr_sample, sr_mean, sr_sd)
+  z     <- abs(sr_sample - sr_mean) / sr_sd   # distance from the mean, in SDs
+
+  ggplot(curve, aes(sr, likelihood)) +
+    geom_area(fill = "#1f4e6b", alpha = 0.12) +
+    geom_line(colour = "#1f4e6b", linewidth = 0.9) +
+    geom_vline(xintercept = sr_mean, linetype = "dashed", colour = "grey50") +
+    annotate("segment", x = sr_sample, xend = sr_sample, y = 0, yend = value,
+             colour = "#8a3b12", linewidth = 0.8) +
+    annotate("point", x = sr_sample, y = value, colour = "#8a3b12", size = 3.5) +
+    labs(
+      x = expression({}^87 * Sr / {}^86 * Sr),
+      y = expression(P(delta[s] ~ "|" ~ j)),
+      title = paste("Likelihood =", format(signif(value, 4), big.mark = ",")),
+      subtitle = sprintf("Butterfly %.4f | cell mean %.4f | SD %.4f | %.1f SDs from the mean",
+                         sr_sample, sr_mean, sr_sd, z)
+    ) +
+    theme_minimal(base_size = 13)
+}
+```
+
+```{r}
+#| label: first-plot
+plot_sr_likelihood(sr_sample = 0.71313, sr_mean = 0.71333, sr_sd = 0.0010)
+```
+
+1.  Holding **sr_sd** constant, how does the likelihood change if the difference between **sr_mean** and **sr_sample** is small?
+
+2.  Holding **sr_sd** constant, how does the likelihood change if the difference between **sr_mean** and **sr_sample** is large?
+
+3.  Holding **sr_mean** and **sr_sample** constant, how does modifying **sr_sd** change the likelihood? How does the probability density curve change?
+
+4.  Which is better: small difference between **sr_mean** and **sr_sample** and large **sr_sd** OR a larger difference between **sr_mean** and **sr_sample** and small **sr_sd**
+
+::: {.callout-note appearance="simple"}
+The sliders only work on this website. If you're running this page in RStudio,
+skip the two `{ojs}` chunks below and use `plot_sr_likelihood()` instead.
+:::
+```{ojs}
+//| echo: false
+viewof sr_sample = Inputs.range([0.7000, 0.7250], {
+  value: 0.7105, step: 0.0001, label: "δs: butterfly", format: x => x.toFixed(4)
+})
+viewof sr_mean = Inputs.range([0.7000, 0.7250], {
+  value: 0.7100, step: 0.0001, label: "δt(j): cell prediction", format: x => x.toFixed(4)
+})
+viewof sr_sd = Inputs.range([0.0001, 0.0050], {
+  value: 0.0010, step: 0.0001, label: "σt(j): uncertainty", format: x => x.toFixed(4)
+})
+```
+```{ojs}
+//| echo: false
+likelihood = (x, m, s) =>
+  Math.exp(-((x - m) ** 2) / (2 * s ** 2)) / Math.sqrt(2 * Math.PI * s ** 2)
+
+value = likelihood(sr_sample, sr_mean, sr_sd)
+n_sd  = Math.abs(sr_sample - sr_mean) / sr_sd
+
+curve = d3.range(0.7000, 0.7250, 0.00002)
+  .map(x => ({x, y: likelihood(x, sr_mean, sr_sd)}))
+
+md`**Likelihood = ${value.toLocaleString(undefined, {maximumSignificantDigits: 4})}**
+· the butterfly is ${n_sd.toFixed(1)} SDs from the prediction
+· the curve's peak is ${likelihood(sr_mean, sr_mean, sr_sd).toLocaleString(undefined, {maximumFractionDigits: 0})}`
+
+Plot.plot({
+  height: 320,
+  marginLeft: 60,
+  x: {domain: [0.7000, 0.7250], label: "⁸⁷Sr/⁸⁶Sr", tickFormat: d => d.toFixed(3)},
+  y: {label: "P(δs | j)", grid: true},
+  marks: [
+    Plot.areaY(curve, {x: "x", y: "y", fill: "#1f4e6b", fillOpacity: 0.12}),
+    Plot.line(curve, {x: "x", y: "y", stroke: "#1f4e6b", strokeWidth: 2}),
+    Plot.ruleX([sr_mean], {stroke: "grey", strokeDasharray: "4,4"}),
+    Plot.ruleX([sr_sample], {y1: 0, y2: value, stroke: "#8a3b12", strokeWidth: 2}),
+    Plot.dot([{x: sr_sample, y: value}], {x: "x", y: "y", fill: "#8a3b12", r: 6}),
+    Plot.ruleY([0])
+  ]
+})
+```
+
+
 
 ::: {.callout-caution collapse="true"}
 ## Solution
@@ -119,4 +272,4 @@ A nudge in the right direction, hidden until clicked.
 -   Second key point
 :::
 
-**Next:** [Section 2 →](02-section-priors.qmd)
+# **Next:** [Section 2 →](02-section-priors.qmd)

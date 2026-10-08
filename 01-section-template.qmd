@@ -10,7 +10,7 @@ date-modified: last-modified
 
 -   **You'll learn:** how the pdRaster function works
 -   **You'll need:** the strontium isoscape from Module 2
--   **Time:** about 40 minutes
+-   **Time:** about 45 minutes
 :::
 
 ## Overview
@@ -453,7 +453,8 @@ Tell the room about one region, which box it's in, and what a probability map wo
 
 
 
-low uncertainty may be due to sampling biases (areas with more samples have lower uncertainty) or bedrock type (carbonate areas have lower uncertainty) \## Summary
+low uncertainty may be due to sampling biases (areas with more samples have lower uncertainty) or bedrock type (carbonate areas have lower uncertainty)
+## Summary
 
 ::: {.callout-note appearance="simple"}
 ## Key takeaways
@@ -462,6 +463,6 @@ low uncertainty may be due to sampling biases (areas with more samples have lowe
 -   Smaller uncertainty makes a taller, narrower curve. A precise cell can be the best match, or rule itself out.
 :::
 
+
 # **Next:** [Section 2 →](02-section-priors.qmd)
 
-:::::

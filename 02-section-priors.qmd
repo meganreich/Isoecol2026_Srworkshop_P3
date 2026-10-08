@@ -92,23 +92,35 @@ How do these posterior probability surfaces compare to the ones generated with s
 
 ## Using a prior
 
-Tabsets are handy for showing alternatives side by side:
+::: {.think-pair-share}
+### 🦋 Think · Pair · Share
 
-::: callout-warning
-## Common mistake
+::: {.tps-steps}
+::: {.tps-step}
+**💭 Think** <span class="tps-time">1 min</span>
 
-Describe an error students often hit and how to fix it.
+On your own: what do you already know about where *your* study species could
+have come from, before measuring any strontium?
+:::
+
+::: {.tps-step}
+**🤝 Pair** <span class="tps-time">2 min</span>
+
+Turn to your neighbour. How could you turn that knowledge into a prior map,
+P(j)? Which cells would get a prior of zero?
+:::
+
+::: {.tps-step}
+**📣 Share** <span class="tps-time">2 min</span>
+
+Tell the room one idea for a prior, and one way it could go wrong.
+:::
+:::
 :::
 
 ### Ecological niche model
 
-::: {.callout-tip icon="false"}
-## 🧩 Your turn
 
-1.  First task
-2.  Second task
-3.  **Stretch:** an extra challenge for students who finish early
-:::
 
 ::: {.callout-caution collapse="true"}
 ## Hint

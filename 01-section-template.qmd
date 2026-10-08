@@ -451,9 +451,8 @@ Tell the room about one region, which box it's in, and what a probability map wo
 | high SD | 🤔 ? | 🙈 ? |
 :::::::
 
-
-
 low uncertainty may be due to sampling biases (areas with more samples have lower uncertainty) or bedrock type (carbonate areas have lower uncertainty)
+
 ## Summary
 
 ::: {.callout-note appearance="simple"}

@@ -37,6 +37,8 @@ Sr_iso_sd <- rast("Module3_assignment/rf_all_sd.tif")
 Sr_iso <- c(Sr_iso_mean, Sr_iso_sd)
 d2Hw_isoscape <- terra::rast("Module3_assignment/d2Hw_isoscape.tif")
 ```
+
+
 ### Hydrogen isoscape
 
 Hydrogen isotopes are commonly used for geographic assignment of butterflies. Spatial variation in hydrogen isotopes is largely driven by patterns of precipitation. Since this pattern is independent of strontium isotopes, the two isotopes are great complementary geolocation tools.
@@ -129,6 +131,10 @@ Tell the room one idea for a prior, and one way it could go wrong.
 
 ### Ecological niche model
 
+```{r}
+ENM_Sept <- terra::rast("Module3_assignment/ENM_Sept.tif")
+plot(ENM_Sept)
+```
 
 
 ::: {.callout-caution collapse="true"}

@@ -8,8 +8,8 @@ date-modified: last-modified
 ::: {.callout-note appearance="simple" icon="false"}
 ## In this section
 
--   **You'll learn:** the key idea or skill
--   **You'll need:** packages or data from earlier sections
+-   **You'll learn:** how to combine multiple isotopes and add priors
+-   **You'll need:** everything from earlier today
 -   **Time:** about 30 minutes
 :::
 
@@ -36,20 +36,14 @@ Sr_iso_mean <- rast("Module3_assignment/rf_all_pred.tif")
 Sr_iso_sd <- rast("Module3_assignment/rf_all_sd.tif")
 Sr_iso <- c(Sr_iso_mean, Sr_iso_sd)
 d2Hw_isoscape <- terra::rast("Module3_assignment/d2Hw_isoscape.tif")
+unknown_Sr <- unknown %>%
+  dplyr::select(Sample_ID, Sr8786)
+Sr_probsurfaces <- assignR::pdRaster(r = Sr_iso, unknown = unknown_Sr)
 ```
-
 
 ### Hydrogen isoscape
 
 Hydrogen isotopes are commonly used for geographic assignment of butterflies. Spatial variation in hydrogen isotopes is largely driven by patterns of precipitation. Since this pattern is independent of strontium isotopes, the two isotopes are great complementary geolocation tools.
-
-How does the hydrogen isoscape compare to the strontium isoscape?
-
-```{r}
-# how does the spatial pattern compare to strontium isotopes?
-plot(d2Hw_isoscape); plot(Sr_iso)
-```
-What do you notice about the patterns in the mean and sd layers of the hydrogen isoscape? Where are the predicted d2H values high? why? where are they low? Is there a correlation between predicted d2H values and uncertainty? Where is uncertainty high? low?
 
 ::: callout-warning
 ## Careful!
@@ -57,51 +51,201 @@ What do you notice about the patterns in the mean and sd layers of the hydrogen 
 It is important to use a hydrogen isoscape that has been calibrated to the material of interest. Here, I am giving you a hydrogen isoscape that has already been calibrated to insect wings. Calibrating a hydrogen isoscape involves (almost) as many decisions as developing a strontium isoscape.
 :::
 
+::: {.think-pair-share}
+### 💧 Think · Pair · Share: hydrogen vs strontium
+
+::: {.tps-steps}
+::: {.tps-step}
+**💭 Think** <span class="tps-time">2 min</span>
+```{r}
+# how does the spatial pattern compare to strontium isotopes?
+plot(d2Hw_isoscape); plot(Sr_iso)
+```
+Look at the δ²H maps on your own.
+
+- Where are predicted δ²H values **high**? Where are they **low**?
+- Where is the uncertainty (SD) **high**? Where is it **low**?
+:::
+
+::: {.tps-step}
+**🤝 Pair** <span class="tps-time">3 min</span>
+
+With your neighbour, try to explain what you saw.
+
+- *Why* is δ²H high or low in those places? Think about latitude, altitude, and distance from the coast.
+- Do areas with extreme δ²H values also have high uncertainty?
+:::
+
+::: {.tps-step}
+**📣 Share** <span class="tps-time">3 min</span>
+
+Now compare with the strontium maps.
+
+- How do the spatial patterns differ?
+- If you had only one isotope, which parts of the map could you tell apart? What about with both?
+:::
+:::
+:::
+::: {.callout-caution collapse="true"}
+## Things you might have noticed
+
+**Compared with strontium:**
+
+| | δ²H | ⁸⁷Sr/⁸⁶Sr |
+|---|---|---|
+| **Controlled by** | Climate: temperature, rainfall, distance from the sea | Geology: rock type and age |
+| **Spatial pattern** | Smooth, broad gradients, mostly north–south | Patchy, can change sharply over short distances |
+| **Best at** | Narrowing down latitude | Telling apart neighbouring areas on different geologies |
+
+Because the two isotopes vary for different reasons, they complement each
+other. δ²H puts a butterfly in a band of latitude, and Sr picks out which
+patches within that band match.
+:::
+
 ## Hydrogen isotope-based geographic assignment
 What do the hydrogen-only probability surfaces look like?
 ```{r}
+#| message: false
+#| warning: false
 unknown_H <- unknown %>%
-  dplyr::select(Sample_ID, d2H, d2H_sd) #RVcoll07F553 is above range of South Africa isoscape
+  dplyr::select(Sample_ID, d2H) #RVcoll07F553 is above range of South Africa isoscape
 
 H_probsurfaces <- assignR::pdRaster(r = d2Hw_isoscape, unknown = unknown_H)
 ```
+::: {.callout-warning icon="false"}
+## 🔍 Something's not right
 
+`pdRaster()` ran without any errors, and every butterfly has a probability map.
+But some of these maps should not be trusted. Can you work out which ones, and why?
 
-### Preparing for dual assignment
+**Hint:** an assignment assumes every butterfly's value could have come from
+somewhere on the isoscape.
+:::
+::: {.callout-caution collapse="true"}
+## How to spot it
 
-For simplicity, we will append d2H values for each butterfly and assume the measurement uncertainty is 2 permille.
+Compare each butterfly's δ²H with the range of values the isoscape predicts:
+
+```{r}
+#| label: check-range
+iso_vals  <- values(d2Hw_isoscape[[1]], na.rm = TRUE)
+iso_range <- range(iso_vals)
+iso_range
+
+unknown_H %>%
+  mutate(in_range = d2H >= iso_range[1] & d2H <= iso_range[2])
+```
+
+A plot makes it even clearer. The grey bars show every value on the isoscape,
+and each red line is a butterfly:
+
+```{r}
+#| label: plot-range
+hist(iso_vals, breaks = 50, col = "grey85", border = NA,
+     xlim = range(c(iso_vals, unknown_H$d2H)),
+     main = "Isoscape values vs butterflies", xlab = "δ²H (‰)")
+abline(v = unknown_H$d2H, col = "#8a3b12", lwd = 2)
+```
+
+**RVcoll07F553** lies below every value on the isoscape. No cell matches it,
+so `pdRaster()` just puts most of the probability on the cells with the lowest
+δ²H, which are the "least bad" match. The probability surfaces look confident, but they're wrong.
+:::
+
+::: {.think-pair-share}
+### 🦋 Think · Pair · Share: the butterfly that doesn't fit
+
+::: {.tps-steps}
+::: {.tps-step}
+**💭 Think** <span class="tps-time">2 min</span>
+
+RVcoll14B026's δ²H is higher than anywhere on the isoscape. On your own, list
+as many reasons as you can for why this could happen.
+:::
+
+::: {.tps-step}
+**🤝 Pair** <span class="tps-time">3 min</span>
+
+Compare your lists. Sort each idea into one of these groups:
+
+- 🌍 It's about where the butterfly came from
+- 🌿 It's about the biology or environment
+- 🧪 It's about the measurement or the model
+
+Which idea do you think is most likely?
+:::
+
+::: {.tps-step}
+**📣 Share** <span class="tps-time">3 min</span>
+
+Tell the room your most likely explanation, and what you'd do with this
+butterfly: drop it, keep it, or something else?
+:::
+:::
+:::
+
+::: {.callout-caution collapse="true"}
+## Possible explanations
+
+**🌍 Where it came from**
+
+- **It developed outside the isoscape area.** Hot, dry regions have higher δ²H than anywhere in
+  southern Africa. A long-distance migrant could have come from there.
+
+**🌿 Biology and environment**
+
+- **Evaporation in the host plant.** In hot, dry conditions, leaf water loses
+  light hydrogen through transpiration and becomes enriched. A caterpillar
+  feeding on drought-stressed plants inherits that enrichment.
+- **An unusual season or year.** The isoscape is a long-term average. A
+  butterfly that developed during an exceptionally hot, dry spell can fall
+  outside it.
+- **Irrigated host plants.** Water from reservoirs or dams evaporates before
+  it's used, so it can be more enriched than local rain.
+
+**🧪 Measurement or model**
+
+- **A data error**, such as a typo, a sign error, or a sample mix-up.
+- **Lab issues**, such as contamination, or exchangeable hydrogen not being
+  properly accounted for.
+- **Calibration**, if the relationship between rainfall and wing δ²H doesn't
+  hold for this individual or region.
+- **The isoscape is wrong there.** Predictions in data-poor areas may simply
+  be too low.
+
+**What to do with it?**
+
+Don't trust its probability map, but don't quietly delete it either. Report it
+as unassigned, and say why. Check the raw data and lab records first. If the
+values hold up, this butterfly may be the most interesting one in the dataset:
+it could be evidence of a long-distance migrant.
+:::
+
+### Dual-isotope geographic assignment
+
+Dual assignment essentially multiples the two single assignment posterior probability surfaces.
 
 ```{r}
 # arrange dataframe to assignR specifications
 unknown_dual <- unknown %>%
+  mutate(in_range = d2H >= iso_range[1] & d2H <= iso_range[2]) %>%
+  filter(in_range == T) %>%
+  filter(Sample_ID != "RVcoll14B025") %>% # removing samples that have d2H values outside the isoscape range
   dplyr::select(Sample_ID, Sr8786, d2H)
 
+#arrange isoscapes with assignR function
 dual_isoscapes <- isoStack(Sr_iso, d2Hw_isoscape)
 
-```
-
-### dual assignment
-
-```{r}
 # hydrogen and strontium isotope-based geographic assignment
-dual_assign <- pdRaster(r = dual_isoscapes, unknown = unknown_dual)
+dual_probsurfaces <- pdRaster(r = dual_isoscapes, unknown = unknown_dual)
 ```
 
-How do these posterior probability surfaces compare to the ones generated with strontium isotopes alone? Is there a smaller area of high probability? ::: panel-tabset \## tidyverse
-
-```{r}
-#| label: tidy-version
-#plot(dual)
-```
-
-## base R
-
-```{r}
-#| label: base-version
-#plot(Sr_assign)
-```
+How do these posterior probability surfaces compare to the ones generated with strontium isotopes alone? Is there a smaller area of high probability? 
 
 ## Using a prior
+$$
+P(j \mid \delta_s) = \frac{P(j)\,P(\delta_s \mid j)}{\sum P(j)\,P(\delta_s \mid j)}
+$$
 
 ::: {.think-pair-share}
 ### 🦋 Think · Pair · Share
@@ -110,7 +254,7 @@ How do these posterior probability surfaces compare to the ones generated with s
 ::: {.tps-step}
 **💭 Think** <span class="tps-time">1 min</span>
 
-On your own: what do you already know about where *your* study species could
+On your own: what do you already know about where your study species/material could
 have come from, before measuring any strontium?
 :::
 
@@ -131,39 +275,87 @@ Tell the room one idea for a prior, and one way it could go wrong.
 
 ### Ecological niche model
 
+Today we will use a September ecological niche model for painted lady butterflies from Talavera et al (2023) as a prior. What does this assume? Is this prior a good choice? What might be a better choice?
+
+Talavera, G., García-Berro, A., Talla, V. N. K., Ng’iru, I., Bahleman, F., Kébé, K., Nzala, K. M., Plasencia, D., Marafi, M. A. J., Kassie, A., Goudégnon, E. O. A., Kiki, M., Benyamini, D., Reich, M. S., López-Mañas, R., Benetello, F., Collins, S. C., Bataille, C. P., Pierce, N. E., … Vila, R. (2023). The Afrotropical breeding grounds of the Palearctic-African migratory painted lady butterflies (Vanessa cardui). Proceedings of the National Academy of Sciences, 120(16), e2218280120. https://doi.org/10.1073/pnas.2218280120
+
+
 ```{r}
 ENM_Sept <- terra::rast("Module3_assignment/ENM_Sept.tif")
 plot(ENM_Sept)
 ```
-
-
-::: {.callout-caution collapse="true"}
-## Hint
-
-A nudge in the right direction, hidden until clicked.
-:::
-
-::: {.callout-caution collapse="true"}
-## Solution
-
 ```{r}
-#| label: exercise-solution
-#| eval: false
-# Solution code here
+# hydrogen and strontium isotope-based geographic assignment
+prior_probsurfaces <- pdRaster(r = dual_isoscapes, unknown = unknown_dual, prior = ENM_Sept)
 ```
-:::
+## Comparison
+```{r}
+#| label: compare-assignments
+#| fig-width: 9
+#| fig-height: 9
+library(terra)
+
+id <- "RVcoll07F542"
+
+# One map per method, with a label for each panel
+maps <- list(
+  "Strontium only"       = Sr_probsurfaces[[id]],
+  "Hydrogen only"        = H_probsurfaces[[id]],
+  "Sr + H combined"      = dual_probsurfaces[[id]],
+  "Sr + H + ENM prior"   = prior_probsurfaces[[id]]
+)
+
+op <- par(mfrow = c(2, 2),             # 1 row, 4 columns
+          oma = c(0, 0, 2.5, 0))       # space for an overall title
+for (label in names(maps)) {
+  plot(maps[[label]],
+       main = label,
+       col  = hcl.colors(100, "viridis"),
+       axes = FALSE)
+}
+mtext(paste("Probability of origin:", id), outer = TRUE, cex = 1.3, font = 2)
+par(op)                                # reset the layout
+```
+```{r}
+#| label: compare-assignments2
+#| fig-width: 9
+#| fig-height: 9
+library(terra)
+
+id <- "RVcoll07F555"
+
+# One map per method, with a label for each panel
+maps <- list(
+  "Strontium only"       = Sr_probsurfaces[[id]],
+  "Hydrogen only"        = H_probsurfaces[[id]],
+  "Sr + H combined"      = dual_probsurfaces[[id]],
+  "Sr + H + ENM prior"   = prior_probsurfaces[[id]]
+)
+
+op <- par(mfrow = c(2, 2),             # 1 row, 4 columns
+          oma = c(0, 0, 2.5, 0))       # space for an overall title
+for (label in names(maps)) {
+  plot(maps[[label]],
+       main = label,
+       col  = hcl.colors(100, "viridis"),
+       axes = FALSE)
+}
+mtext(paste("Probability of origin:", id), outer = TRUE, cex = 1.3, font = 2)
+par(op)                                # reset the layout
+```
 
 ## Summary
 
 ::: {.callout-note appearance="simple"}
 ## Key takeaways
 
--   Combining multiple geolocation tools can give spatially constrained estimates of origin
+-   Combining multiple geolocation tools and including priors can give spatially constrained estimates of origin
 -   Each geolocation tool comes with additional assumptions and uncertainty
 :::
 
 ```{r}
-
+sessionInfo()
 ```
+
 
 **Next:** [Section 3 →](03-section-summarising.qmd)

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.7.32">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="description" content="Using the assignR package to estimate geographic origin">
+<meta name="description" content="Let’s explore the pdRaster function">
 <title>1. Geographic assignment – Strontium isotope geolocation for terrestrial ecology: Part 3</title>
 <style>
 code{white-space: pre-wrap;}
@@ -240,8 +240,23 @@ window.Quarto = {
 <li><a href="#lets-explore-the-probability-density-function" id="toc-lets-explore-the-probability-density-function" class="nav-link" data-scroll-target="#lets-explore-the-probability-density-function">Let’s explore the probability density function!</a></li>
   </ul>
 </li>
+  <li>
+<a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises">Exercises</a>
+  <ul class="collapse">
+<li><a href="#exercise-1-move-the-butterfly-%CE%B4s" id="toc-exercise-1-move-the-butterfly-δs" class="nav-link" data-scroll-target="#exercise-1-move-the-butterfly-%CE%B4s">Exercise 1: move the butterfly (δs)</a></li>
+  <li><a href="#exercise-2-change-the-uncertainty-%CF%83t" id="toc-exercise-2-change-the-uncertainty-σt" class="nav-link" data-scroll-target="#exercise-2-change-the-uncertainty-%CF%83t">Exercise 2: change the uncertainty (σt)</a></li>
+  <li><a href="#exercise-3-a-precise-cell-vs-an-uncertain-cell" id="toc-exercise-3-a-precise-cell-vs-an-uncertain-cell" class="nav-link" data-scroll-target="#exercise-3-a-precise-cell-vs-an-uncertain-cell">Exercise 3: a precise cell vs an uncertain cell</a></li>
   </ul>
 </li>
+  <li>
+<a href="#from-likelihood-to-posterior-probability" id="toc-from-likelihood-to-posterior-probability" class="nav-link" data-scroll-target="#from-likelihood-to-posterior-probability">From likelihood to posterior probability</a>
+  <ul class="collapse">
+<li><a href="#think-pair-share" id="toc-think-pair-share" class="nav-link" data-scroll-target="#think-pair-share">🦋 Think · Pair · Share</a></li>
+  </ul>
+</li>
+  </ul>
+</li>
+  <li><a href="#next-section-2" id="toc-next-section-2" class="nav-link" data-scroll-target="#next-section-2"><strong>Next:</strong> Section 2 →</a></li>
   </ul></nav>
     </div>
 <!-- main -->
@@ -252,7 +267,7 @@ window.Quarto = {
 
 <div>
   <div class="description">
-    Using the assignR package to estimate geographic origin
+    Let’s explore the pdRaster function
   </div>
 </div>
 
@@ -284,11 +299,11 @@ In this section
 <div class="callout-body-container callout-body">
 <ul>
 <li>
-<strong>You’ll learn:</strong> the key idea or skill</li>
+<strong>You’ll learn:</strong> how the pdRaster function works</li>
 <li>
-<strong>You’ll need:</strong> packages or data from earlier sections</li>
+<strong>You’ll need:</strong> the strontium isoscape from Module 2</li>
 <li>
-<strong>Time:</strong> about 30 minutes</li>
+<strong>Time:</strong> about 40 minutes</li>
 </ul>
 </div>
 </div>
@@ -341,14 +356,7 @@ More resources
 <div class="cell">
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">Sr_iso_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html">rast</a></span><span class="op">(</span><span class="st">"Module3_assignment/rf_all_pred.tif"</span><span class="op">)</span></span>
 <span><span class="va">Sr_iso_sd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html">rast</a></span><span class="op">(</span><span class="st">"Module3_assignment/rf_all_sd.tif"</span><span class="op">)</span></span>
-<span><span class="va">Sr_iso</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">Sr_iso_mean</span>, <span class="va">Sr_iso_sd</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">Sr_iso</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure"><p><img src="01-section-template_files/figure-html/Sr isoscape from Module 2-1.png" class="img-fluid figure-img" width="768"></p>
-</figure>
-</div>
-</div>
+<span><span class="va">Sr_iso</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">Sr_iso_mean</span>, <span class="va">Sr_iso_sd</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section><section id="map" class="level2"><h2 class="anchored" data-anchor-id="map">Map</h2>
 <p>Let’s take a look at a map!</p>
@@ -389,6 +397,7 @@ More resources
 </div>
 </div>
 </div>
+<p>butterflies were collected from the locations marked with red circles.</p>
 </section><section id="geographic-assignment-1" class="level1"><h1>Geographic assignment 1</h1>
 <p>Let’s do our first isotope-based geographic assignment, then we will explore how it works!</p>
 <div class="cell">
@@ -481,14 +490,14 @@ Code version
 </div>
 </div>
 </div>
-<section id="lets-explore-the-probability-density-function" class="level3"><h3 class="anchored">Let’s explore the probability density function!</h3>
+<section id="lets-explore-the-probability-density-function" class="level3"><h3 class="anchored" data-anchor-id="lets-explore-the-probability-density-function">Let’s explore the probability density function!</h3>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-🧩 changing parameters
+run helper code
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -530,12 +539,8 @@ Code version
 </div>
 </div>
 </div>
-<ol type="1">
-<li><p>Holding <strong>sr_sd</strong> constant, how does the likelihood change if the difference between <strong>sr_mean</strong> and <strong>sr_sample</strong> is small?</p></li>
-<li><p>Holding <strong>sr_sd</strong> constant, how does the likelihood change if the difference between <strong>sr_mean</strong> and <strong>sr_sample</strong> is large?</p></li>
-<li><p>Holding <strong>sr_mean</strong> and <strong>sr_sample</strong> constant, how does modifying <strong>sr_sd</strong> change the likelihood? How does the probability density curve change?</p></li>
-<li><p>Which is better: small difference between <strong>sr_mean</strong> and <strong>sr_sample</strong> and large <strong>sr_sd</strong> OR a larger difference between <strong>sr_mean</strong> and <strong>sr_sample</strong> and small <strong>sr_sd</strong></p></li>
-</ol>
+</div>
+</div>
 <div class="callout callout-style-simple callout-note">
 <div class="callout-body d-flex">
 <div class="callout-icon-container">
@@ -547,15 +552,15 @@ Code version
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code hidden" id="cb12" data-startfrom="213" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 212;"><span id="cb12-213"><a href="#cb12-213" aria-hidden="true" tabindex="-1"></a>viewof sr_sample <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="fl">0.7000</span><span class="op">,</span> <span class="fl">0.7250</span>]<span class="op">,</span> {</span>
-<span id="cb12-214"><a href="#cb12-214" aria-hidden="true" tabindex="-1"></a>  <span class="dt">value</span><span class="op">:</span> <span class="fl">0.7105</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.0001</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"δs: butterfly"</span><span class="op">,</span> <span class="dt">format</span><span class="op">:</span> x <span class="kw">=&gt;</span> x<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">4</span>)</span>
+<div class="sourceCode cell-code hidden" id="cb12" data-startfrom="210" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 209;"><span id="cb12-210"><a href="#cb12-210" aria-hidden="true" tabindex="-1"></a>viewof sr_sample <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="fl">0.7000</span><span class="op">,</span> <span class="fl">0.7250</span>]<span class="op">,</span> {</span>
+<span id="cb12-211"><a href="#cb12-211" aria-hidden="true" tabindex="-1"></a>  <span class="dt">value</span><span class="op">:</span> <span class="fl">0.7105</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.0001</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"δs: butterfly"</span><span class="op">,</span> <span class="dt">format</span><span class="op">:</span> x <span class="kw">=&gt;</span> x<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">4</span>)</span>
+<span id="cb12-212"><a href="#cb12-212" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb12-213"><a href="#cb12-213" aria-hidden="true" tabindex="-1"></a>viewof sr_mean <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="fl">0.7000</span><span class="op">,</span> <span class="fl">0.7250</span>]<span class="op">,</span> {</span>
+<span id="cb12-214"><a href="#cb12-214" aria-hidden="true" tabindex="-1"></a>  <span class="dt">value</span><span class="op">:</span> <span class="fl">0.7100</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.0001</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"δt(j): cell prediction"</span><span class="op">,</span> <span class="dt">format</span><span class="op">:</span> x <span class="kw">=&gt;</span> x<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">4</span>)</span>
 <span id="cb12-215"><a href="#cb12-215" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb12-216"><a href="#cb12-216" aria-hidden="true" tabindex="-1"></a>viewof sr_mean <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="fl">0.7000</span><span class="op">,</span> <span class="fl">0.7250</span>]<span class="op">,</span> {</span>
-<span id="cb12-217"><a href="#cb12-217" aria-hidden="true" tabindex="-1"></a>  <span class="dt">value</span><span class="op">:</span> <span class="fl">0.7100</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.0001</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"δt(j): cell prediction"</span><span class="op">,</span> <span class="dt">format</span><span class="op">:</span> x <span class="kw">=&gt;</span> x<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">4</span>)</span>
-<span id="cb12-218"><a href="#cb12-218" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb12-219"><a href="#cb12-219" aria-hidden="true" tabindex="-1"></a>viewof sr_sd <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="fl">0.0001</span><span class="op">,</span> <span class="fl">0.0050</span>]<span class="op">,</span> {</span>
-<span id="cb12-220"><a href="#cb12-220" aria-hidden="true" tabindex="-1"></a>  <span class="dt">value</span><span class="op">:</span> <span class="fl">0.0010</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.0001</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"σt(j): uncertainty"</span><span class="op">,</span> <span class="dt">format</span><span class="op">:</span> x <span class="kw">=&gt;</span> x<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">4</span>)</span>
-<span id="cb12-221"><a href="#cb12-221" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-216"><a href="#cb12-216" aria-hidden="true" tabindex="-1"></a>viewof sr_sd <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="fl">0.0001</span><span class="op">,</span> <span class="fl">0.0050</span>]<span class="op">,</span> {</span>
+<span id="cb12-217"><a href="#cb12-217" aria-hidden="true" tabindex="-1"></a>  <span class="dt">value</span><span class="op">:</span> <span class="fl">0.0010</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.0001</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"σt(j): uncertainty"</span><span class="op">,</span> <span class="dt">format</span><span class="op">:</span> x <span class="kw">=&gt;</span> x<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">4</span>)</span>
+<span id="cb12-218"><a href="#cb12-218" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <div id="ojs-cell-1-1" data-nodetype="declaration">
@@ -579,18 +584,18 @@ Code version
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code hidden" id="cb13" data-startfrom="226" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 225;"><span id="cb13-226"><a href="#cb13-226" aria-hidden="true" tabindex="-1"></a>likelihood <span class="op">=</span> (x<span class="op">,</span> m<span class="op">,</span> s) <span class="kw">=&gt;</span></span>
-<span id="cb13-227"><a href="#cb13-227" aria-hidden="true" tabindex="-1"></a>  <span class="bu">Math</span><span class="op">.</span><span class="fu">exp</span>(<span class="op">-</span>((x <span class="op">-</span> m) <span class="op">**</span> <span class="dv">2</span>) <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> s <span class="op">**</span> <span class="dv">2</span>)) <span class="op">/</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sqrt</span>(<span class="dv">2</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span> <span class="op">*</span> s <span class="op">**</span> <span class="dv">2</span>)</span>
+<div class="sourceCode cell-code hidden" id="cb13" data-startfrom="223" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 222;"><span id="cb13-223"><a href="#cb13-223" aria-hidden="true" tabindex="-1"></a>likelihood <span class="op">=</span> (x<span class="op">,</span> m<span class="op">,</span> s) <span class="kw">=&gt;</span></span>
+<span id="cb13-224"><a href="#cb13-224" aria-hidden="true" tabindex="-1"></a>  <span class="bu">Math</span><span class="op">.</span><span class="fu">exp</span>(<span class="op">-</span>((x <span class="op">-</span> m) <span class="op">**</span> <span class="dv">2</span>) <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> s <span class="op">**</span> <span class="dv">2</span>)) <span class="op">/</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sqrt</span>(<span class="dv">2</span> <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="cn">PI</span> <span class="op">*</span> s <span class="op">**</span> <span class="dv">2</span>)</span>
+<span id="cb13-225"><a href="#cb13-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-226"><a href="#cb13-226" aria-hidden="true" tabindex="-1"></a>value <span class="op">=</span> <span class="fu">likelihood</span>(sr_sample<span class="op">,</span> sr_mean<span class="op">,</span> sr_sd)</span>
+<span id="cb13-227"><a href="#cb13-227" aria-hidden="true" tabindex="-1"></a>n_sd  <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">abs</span>(sr_sample <span class="op">-</span> sr_mean) <span class="op">/</span> sr_sd</span>
 <span id="cb13-228"><a href="#cb13-228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-229"><a href="#cb13-229" aria-hidden="true" tabindex="-1"></a>value <span class="op">=</span> <span class="fu">likelihood</span>(sr_sample<span class="op">,</span> sr_mean<span class="op">,</span> sr_sd)</span>
-<span id="cb13-230"><a href="#cb13-230" aria-hidden="true" tabindex="-1"></a>n_sd  <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">abs</span>(sr_sample <span class="op">-</span> sr_mean) <span class="op">/</span> sr_sd</span>
+<span id="cb13-229"><a href="#cb13-229" aria-hidden="true" tabindex="-1"></a>curve <span class="op">=</span> d3<span class="op">.</span><span class="fu">range</span>(<span class="fl">0.7000</span><span class="op">,</span> <span class="fl">0.7250</span><span class="op">,</span> <span class="fl">0.00002</span>)</span>
+<span id="cb13-230"><a href="#cb13-230" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">map</span>(x <span class="kw">=&gt;</span> ({x<span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="fu">likelihood</span>(x<span class="op">,</span> sr_mean<span class="op">,</span> sr_sd)}))</span>
 <span id="cb13-231"><a href="#cb13-231" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-232"><a href="#cb13-232" aria-hidden="true" tabindex="-1"></a>curve <span class="op">=</span> d3<span class="op">.</span><span class="fu">range</span>(<span class="fl">0.7000</span><span class="op">,</span> <span class="fl">0.7250</span><span class="op">,</span> <span class="fl">0.00002</span>)</span>
-<span id="cb13-233"><a href="#cb13-233" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">map</span>(x <span class="kw">=&gt;</span> ({x<span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="fu">likelihood</span>(x<span class="op">,</span> sr_mean<span class="op">,</span> sr_sd)}))</span>
-<span id="cb13-234"><a href="#cb13-234" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-235"><a href="#cb13-235" aria-hidden="true" tabindex="-1"></a><span class="fu">md</span><span class="vs">`**Likelihood = </span><span class="sc">${</span>value<span class="op">.</span><span class="fu">toLocaleString</span>(<span class="kw">undefined</span><span class="op">,</span> {<span class="dt">maximumSignificantDigits</span><span class="op">:</span> <span class="dv">4</span>})<span class="sc">}</span><span class="vs">**</span></span>
-<span id="cb13-236"><a href="#cb13-236" aria-hidden="true" tabindex="-1"></a><span class="vs">· the butterfly is </span><span class="sc">${</span>n_sd<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">1</span>)<span class="sc">}</span><span class="vs"> SDs from the prediction</span></span>
-<span id="cb13-237"><a href="#cb13-237" aria-hidden="true" tabindex="-1"></a><span class="vs">· the curve's peak is </span><span class="sc">${</span><span class="fu">likelihood</span>(sr_mean<span class="op">,</span> sr_mean<span class="op">,</span> sr_sd)<span class="op">.</span><span class="fu">toLocaleString</span>(<span class="kw">undefined</span><span class="op">,</span> {<span class="dt">maximumFractionDigits</span><span class="op">:</span> <span class="dv">0</span>})<span class="sc">}</span><span class="vs">`</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-232"><a href="#cb13-232" aria-hidden="true" tabindex="-1"></a><span class="fu">md</span><span class="vs">`**Likelihood = </span><span class="sc">${</span>value<span class="op">.</span><span class="fu">toLocaleString</span>(<span class="kw">undefined</span><span class="op">,</span> {<span class="dt">maximumSignificantDigits</span><span class="op">:</span> <span class="dv">4</span>})<span class="sc">}</span><span class="vs">**</span></span>
+<span id="cb13-233"><a href="#cb13-233" aria-hidden="true" tabindex="-1"></a><span class="vs">· the butterfly is </span><span class="sc">${</span>n_sd<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">1</span>)<span class="sc">}</span><span class="vs"> SDs from the prediction</span></span>
+<span id="cb13-234"><a href="#cb13-234" aria-hidden="true" tabindex="-1"></a><span class="vs">· the curve's peak is </span><span class="sc">${</span><span class="fu">likelihood</span>(sr_mean<span class="op">,</span> sr_mean<span class="op">,</span> sr_sd)<span class="op">.</span><span class="fu">toLocaleString</span>(<span class="kw">undefined</span><span class="op">,</span> {<span class="dt">maximumFractionDigits</span><span class="op">:</span> <span class="dv">0</span>})<span class="sc">}</span><span class="vs">`</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <div id="ojs-cell-2-1" data-nodetype="declaration">
@@ -626,20 +631,20 @@ Code version
 </div>
 </div>
 </div>
-<div class="sourceCode cell-code hidden" id="cb14" data-startfrom="239" data-source-offset="-558"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 238;"><span id="cb14-239"><a href="#cb14-239" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
-<span id="cb14-240"><a href="#cb14-240" aria-hidden="true" tabindex="-1"></a>  <span class="dt">height</span><span class="op">:</span> <span class="dv">320</span><span class="op">,</span></span>
-<span id="cb14-241"><a href="#cb14-241" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marginLeft</span><span class="op">:</span> <span class="dv">60</span><span class="op">,</span></span>
-<span id="cb14-242"><a href="#cb14-242" aria-hidden="true" tabindex="-1"></a>  <span class="dt">x</span><span class="op">:</span> {<span class="dt">domain</span><span class="op">:</span> [<span class="fl">0.7000</span><span class="op">,</span> <span class="fl">0.7250</span>]<span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"⁸⁷Sr/⁸⁶Sr"</span><span class="op">,</span> <span class="dt">tickFormat</span><span class="op">:</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">3</span>)}<span class="op">,</span></span>
-<span id="cb14-243"><a href="#cb14-243" aria-hidden="true" tabindex="-1"></a>  <span class="dt">y</span><span class="op">:</span> {<span class="dt">label</span><span class="op">:</span> <span class="st">"P(δs | j)"</span><span class="op">,</span> <span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
-<span id="cb14-244"><a href="#cb14-244" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
-<span id="cb14-245"><a href="#cb14-245" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">areaY</span>(curve<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"x"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"y"</span><span class="op">,</span> <span class="dt">fill</span><span class="op">:</span> <span class="st">"#1f4e6b"</span><span class="op">,</span> <span class="dt">fillOpacity</span><span class="op">:</span> <span class="fl">0.12</span>})<span class="op">,</span></span>
-<span id="cb14-246"><a href="#cb14-246" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">line</span>(curve<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"x"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"y"</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"#1f4e6b"</span><span class="op">,</span> <span class="dt">strokeWidth</span><span class="op">:</span> <span class="dv">2</span>})<span class="op">,</span></span>
-<span id="cb14-247"><a href="#cb14-247" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleX</span>([sr_mean]<span class="op">,</span> {<span class="dt">stroke</span><span class="op">:</span> <span class="st">"grey"</span><span class="op">,</span> <span class="dt">strokeDasharray</span><span class="op">:</span> <span class="st">"4,4"</span>})<span class="op">,</span></span>
-<span id="cb14-248"><a href="#cb14-248" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleX</span>([sr_sample]<span class="op">,</span> {<span class="dt">y1</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">y2</span><span class="op">:</span> value<span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"#8a3b12"</span><span class="op">,</span> <span class="dt">strokeWidth</span><span class="op">:</span> <span class="dv">2</span>})<span class="op">,</span></span>
-<span id="cb14-249"><a href="#cb14-249" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">dot</span>([{<span class="dt">x</span><span class="op">:</span> sr_sample<span class="op">,</span> <span class="dt">y</span><span class="op">:</span> value}]<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"x"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"y"</span><span class="op">,</span> <span class="dt">fill</span><span class="op">:</span> <span class="st">"#8a3b12"</span><span class="op">,</span> <span class="dt">r</span><span class="op">:</span> <span class="dv">6</span>})<span class="op">,</span></span>
-<span id="cb14-250"><a href="#cb14-250" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])</span>
-<span id="cb14-251"><a href="#cb14-251" aria-hidden="true" tabindex="-1"></a>  ]</span>
-<span id="cb14-252"><a href="#cb14-252" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code hidden" id="cb14" data-startfrom="236" data-source-offset="-558"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 235;"><span id="cb14-236"><a href="#cb14-236" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<span id="cb14-237"><a href="#cb14-237" aria-hidden="true" tabindex="-1"></a>  <span class="dt">height</span><span class="op">:</span> <span class="dv">320</span><span class="op">,</span></span>
+<span id="cb14-238"><a href="#cb14-238" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marginLeft</span><span class="op">:</span> <span class="dv">60</span><span class="op">,</span></span>
+<span id="cb14-239"><a href="#cb14-239" aria-hidden="true" tabindex="-1"></a>  <span class="dt">x</span><span class="op">:</span> {<span class="dt">domain</span><span class="op">:</span> [<span class="fl">0.7000</span><span class="op">,</span> <span class="fl">0.7250</span>]<span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"⁸⁷Sr/⁸⁶Sr"</span><span class="op">,</span> <span class="dt">tickFormat</span><span class="op">:</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">3</span>)}<span class="op">,</span></span>
+<span id="cb14-240"><a href="#cb14-240" aria-hidden="true" tabindex="-1"></a>  <span class="dt">y</span><span class="op">:</span> {<span class="dt">label</span><span class="op">:</span> <span class="st">"P(δs | j)"</span><span class="op">,</span> <span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
+<span id="cb14-241"><a href="#cb14-241" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb14-242"><a href="#cb14-242" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">areaY</span>(curve<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"x"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"y"</span><span class="op">,</span> <span class="dt">fill</span><span class="op">:</span> <span class="st">"#1f4e6b"</span><span class="op">,</span> <span class="dt">fillOpacity</span><span class="op">:</span> <span class="fl">0.12</span>})<span class="op">,</span></span>
+<span id="cb14-243"><a href="#cb14-243" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">line</span>(curve<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"x"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"y"</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"#1f4e6b"</span><span class="op">,</span> <span class="dt">strokeWidth</span><span class="op">:</span> <span class="dv">2</span>})<span class="op">,</span></span>
+<span id="cb14-244"><a href="#cb14-244" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleX</span>([sr_mean]<span class="op">,</span> {<span class="dt">stroke</span><span class="op">:</span> <span class="st">"grey"</span><span class="op">,</span> <span class="dt">strokeDasharray</span><span class="op">:</span> <span class="st">"4,4"</span>})<span class="op">,</span></span>
+<span id="cb14-245"><a href="#cb14-245" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleX</span>([sr_sample]<span class="op">,</span> {<span class="dt">y1</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">y2</span><span class="op">:</span> value<span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"#8a3b12"</span><span class="op">,</span> <span class="dt">strokeWidth</span><span class="op">:</span> <span class="dv">2</span>})<span class="op">,</span></span>
+<span id="cb14-246"><a href="#cb14-246" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">dot</span>([{<span class="dt">x</span><span class="op">:</span> sr_sample<span class="op">,</span> <span class="dt">y</span><span class="op">:</span> value}]<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"x"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"y"</span><span class="op">,</span> <span class="dt">fill</span><span class="op">:</span> <span class="st">"#8a3b12"</span><span class="op">,</span> <span class="dt">r</span><span class="op">:</span> <span class="dv">6</span>})<span class="op">,</span></span>
+<span id="cb14-247"><a href="#cb14-247" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])</span>
+<span id="cb14-248"><a href="#cb14-248" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb14-249"><a href="#cb14-249" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <div id="ojs-cell-2-6" data-nodetype="expression">
@@ -648,8 +653,58 @@ Code version
 </div>
 </div>
 </div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Watch the y-axis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The y-axis rescales as you move the sliders, so a curve can look the same height while its peak changes a lot. Read the numbers above the plot to compare.</p>
+</div>
+</div>
+</section></section><section id="exercises" class="level2"><h2 class="anchored" data-anchor-id="exercises">Exercises</h2>
+<p>Use <code>sr_likelihood()</code> and <code>plot_sr_likelihood()</code> in RStudio, or the sliders above.</p>
+<section id="exercise-1-move-the-butterfly-δs" class="level3"><h3 class="anchored" data-anchor-id="exercise-1-move-the-butterfly-δs">Exercise 1: move the butterfly (δs)</h3>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+🧩 Your turn
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Keep the cell at <code>sr_sample = 0.7100</code> and <code>sr_sd = 0.0010</code>. Calculate the likelihood for sr_mean of 0.7100, 0.7110, 0.7120 and 0.7130.</p>
+<ol type="1">
+<li>Where is the likelihood highest?</li>
+<li>How much smaller is it 1, 2 and 3 SDs away?</li>
+<li>Does it matter whether the butterfly is above or below the prediction?</li>
+</ol>
+</div>
+</div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hint
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The function works on a vector, so you can give it several butterflies at once: <code>sr_likelihood(c(0.7100, 0.7110), 0.7100, 0.0010)</code>.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -658,15 +713,286 @@ Solution
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Solution code here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cells</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.7100</span>, <span class="fl">0.7110</span>, <span class="fl">0.7120</span>, <span class="fl">0.7130</span><span class="op">)</span></span>
+<span><span class="va">lik</span> <span class="op">&lt;-</span> <span class="fu">sr_likelihood</span><span class="op">(</span>sr_sample <span class="op">=</span> <span class="fl">0.7100</span>, sr_mean <span class="op">=</span> <span class="va">cells</span>, sr_sd <span class="op">=</span> <span class="fl">0.0010</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>cells <span class="op">=</span> <span class="va">cells</span>,</span>
+<span>           sds_away  <span class="op">=</span> <span class="op">(</span><span class="va">cells</span> <span class="op">-</span> <span class="fl">0.7100</span><span class="op">)</span> <span class="op">/</span> <span class="fl">0.0010</span>,</span>
+<span>           likelihood <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/math-generics.html">round</a></span><span class="op">(</span><span class="va">lik</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>           relative_to_peak <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/math-generics.html">round</a></span><span class="op">(</span><span class="va">lik</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">lik</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["cells"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["sds_away"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["likelihood"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["relative_to_peak"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"0.710","2":"0","3":"398.9","4":"1.000"},{"1":"0.711","2":"1","3":"242.0","4":"0.607"},{"1":"0.712","2":"2","3":"54.0","4":"0.135"},{"1":"0.713","2":"3","3":"4.4","4":"0.011"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
 </div>
 </div>
 </div>
+<p>The likelihood is highest when the butterfly matches the prediction exactly. It falls to about 61% one SD away, 14% two SDs away and 1% three SDs away. The difference is squared, so a butterfly 0.0010 <em>below</em> the prediction gets exactly the same value as one 0.0010 above.</p>
 </div>
-<section id="summary" class="level2"><h2 class="anchored" data-anchor-id="summary">Summary</h2>
+</div>
+</div>
+</section><section id="exercise-2-change-the-uncertainty-σt" class="level3"><h3 class="anchored" data-anchor-id="exercise-2-change-the-uncertainty-σt">Exercise 2: change the uncertainty (σt)</h3>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+🧩 Your turn
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Keep the butterfly at 0.7105 and the cell at 0.7100. Try <code>sr_sd</code> values of 0.0002, 0.0005, 0.0010 and 0.0030.</p>
+<ol type="1">
+<li>Which uncertainty gives the highest likelihood? Is that what you expected?</li>
+<li>Some of these values are much larger than 1. How can a probability be bigger than 1?</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hint
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>For each <code>sr_sd</code>, work out how many SDs the butterfly is from the prediction. Then compare that with the peak height of each curve, <code>sr_likelihood(0.7100, 0.7100, sr_sd)</code>.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">sds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.0002</span>, <span class="fl">0.0005</span>, <span class="fl">0.0010</span>, <span class="fl">0.0030</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>sr_sd      <span class="op">=</span> <span class="va">sds</span>,</span>
+<span>           sds_away   <span class="op">=</span> <span class="fl">0.0005</span> <span class="op">/</span> <span class="va">sds</span>,</span>
+<span>           peak       <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/math-generics.html">round</a></span><span class="op">(</span><span class="fu">sr_likelihood</span><span class="op">(</span><span class="fl">0.7100</span>, <span class="fl">0.7100</span>, <span class="va">sds</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>           likelihood <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/math-generics.html">round</a></span><span class="op">(</span><span class="fu">sr_likelihood</span><span class="op">(</span><span class="fl">0.7105</span>, <span class="fl">0.7100</span>, <span class="va">sds</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["sr_sd"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["sds_away"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["peak"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["likelihood"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"2e-04","2":"2.5000000","3":"1994.7","4":"87.6"},{"1":"5e-04","2":"1.0000000","3":"797.9","4":"483.9"},{"1":"1e-03","2":"0.5000000","3":"398.9","4":"352.1"},{"1":"3e-03","2":"0.1666667","3":"133.0","4":"131.1"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>There are two effects pulling against each other. A small uncertainty makes a tall peak, but the 0.0005 difference then counts as many SDs, so the butterfly falls far down the curve. With <code>sr_sd = 0.0002</code> it is 2.5 SDs away, and its likelihood is the lowest of the four. The best value here is <code>sr_sd = 0.0005</code>, where the difference is exactly 1 SD.</p>
+<p>The values are <strong>probability densities</strong>, not probabilities. A density can be larger than 1, especially for ⁸⁷Sr/⁸⁶Sr, where the uncertainties are tiny numbers. Only the area under the curve has to equal 1.</p>
+</div>
+</div>
+</div>
+</section><section id="exercise-3-a-precise-cell-vs-an-uncertain-cell" class="level3"><h3 class="anchored" data-anchor-id="exercise-3-a-precise-cell-vs-an-uncertain-cell">Exercise 3: a precise cell vs an uncertain cell</h3>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+🧩 Your turn
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A butterfly measures 0.7100. Which cell is the more likely origin?</p>
+<ul>
+<li>
+<strong>Cell A:</strong> prediction 0.7104, uncertainty 0.0002 (precise, but a bit off)</li>
+<li>
+<strong>Cell B:</strong> prediction 0.7100, uncertainty 0.0020 (a perfect match, but uncertain)</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cell_b</span> <span class="op">&lt;-</span> <span class="fu">sr_likelihood</span><span class="op">(</span><span class="fl">0.7100</span>, sr_mean <span class="op">=</span> <span class="fl">0.7100</span>, sr_sd <span class="op">=</span> <span class="fl">0.0020</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>cell_A_0.7104 <span class="op">=</span> <span class="fu">sr_likelihood</span><span class="op">(</span><span class="fl">0.7100</span>, <span class="fl">0.7104</span>, <span class="fl">0.0002</span><span class="op">)</span>,</span>
+<span>  cell_A_0.7106 <span class="op">=</span> <span class="fu">sr_likelihood</span><span class="op">(</span><span class="fl">0.7100</span>, <span class="fl">0.7106</span>, <span class="fl">0.0002</span><span class="op">)</span>,</span>
+<span>  cell_B        <span class="op">=</span> <span class="va">cell_b</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>cell_A_0.7104 cell_A_0.7106        cell_B 
+    269.95483      22.15924     199.47114 </code></pre>
+</div>
+</div>
+<p>At 0.7104, Cell A is 2 SDs off but still wins, because its curve is ten times taller.</p>
+</div>
+</div>
+</div>
+</section></section><section id="from-likelihood-to-posterior-probability" class="level2"><h2 class="anchored" data-anchor-id="from-likelihood-to-posterior-probability">From likelihood to posterior probability</h2>
+<p>The likelihood tells us how well each cell <em>explains</em> the butterfly’s value. What we really want is the reverse: how probable is it that the butterfly came from cell <span class="math inline">\(j\)</span>? Bayes’ rule gets us there:</p>
+<p><span class="math display">\[
+P(j \mid \delta_s) = \frac{P(j)\,P(\delta_s \mid j)}{\sum P(j)\,P(\delta_s \mid j)}
+\]</span></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 50%">
+</colgroup>
+<thead><tr class="header">
+<th>Term</th>
+<th>Name</th>
+<th>In plain words</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(P(\delta_s \mid j)\)</span></td>
+<td>likelihood</td>
+<td>How well cell <span class="math inline">\(j\)</span> matches the butterfly (Equation 3)</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(P(j)\)</span></td>
+<td>prior</td>
+<td>What we believed about cell <span class="math inline">\(j\)</span> <em>before</em> measuring Sr</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\sum P(j)\,P(\delta_s \mid j)\)</span></td>
+<td>normalising constant</td>
+<td>The same product, added up over every cell in the map</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(P(j \mid \delta_s)\)</span></td>
+<td>posterior</td>
+<td>The probability the butterfly came from cell <span class="math inline">\(j\)</span>
+</td>
+</tr>
+</tbody>
+</table>
+<p>In words: multiply each cell’s likelihood by its prior, then divide by the total across the map. Dividing by the total makes the posterior values add up to 1, so each one is a share of the probability for the whole map.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+What do we assume when there is no prior?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If every cell has the same prior, <span class="math inline">\(P(j)\)</span> cancels out of the top and bottom of the equation. The posterior is then just each cell’s likelihood divided by the sum of all likelihoods. This is what <code><a href="https://rdrr.io/pkg/assignR/man/pdRaster.html">pdRaster()</a></code> does when you don’t supply a prior.</p>
+</div>
+</div>
+<section id="think-pair-share" class="level3 think-pair-share"><h3 class="anchored" data-anchor-id="think-pair-share">🦋 Think · Pair · Share</h3>
+<div class="tps-steps">
+<div class="tps-step">
+<p><strong>💭 Think</strong> <span class="tps-time">1 min</span></p>
+<div class="cell">
+<details class="code-fold"><summary>Show the mapping code</summary><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://dieghernan.github.io/tidyterra/reference/geom_spatraster.html">geom_spatraster</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">Sr_iso_mean</span><span class="op">)</span><span class="op">+</span> <span class="co"># isoscape - mean prediction</span></span>
+<span>  <span class="fu"><a href="https://dieghernan.github.io/tidyterra/reference/ggspatvector.html">geom_spatvector</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">SA_outline</span>,fill<span class="op">=</span><span class="cn">NA</span>,colour<span class="op">=</span><span class="st">"black"</span><span class="op">)</span><span class="op">+</span> <span class="co"># country outline</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">unknownxy</span>,pch<span class="op">=</span><span class="fl">1</span>, col<span class="op">=</span><span class="st">"red3"</span>,cex<span class="op">=</span><span class="fl">2</span><span class="op">)</span><span class="op">+</span>  <span class="co"># butterfly collection sites</span></span>
+<span>  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html">scale_fill_viridis</a></span><span class="op">(</span>option<span class="op">=</span><span class="st">"turbo"</span>, na.value <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span><span class="op">+</span> <span class="co">#pretty colors</span></span>
+<span>  <span class="fu"><a href="https://jrnold.github.io/ggthemes/reference/theme_map.html">theme_map</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span> <span class="co"># cute map theme</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position<span class="op">=</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.key.width<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html">unit</a></span><span class="op">(</span><span class="fl">2</span>, <span class="st">"cm"</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_colourbar.html">guide_colourbar</a></span><span class="op">(</span>direction <span class="op">=</span> <span class="st">'horizontal'</span>, <span class="co">##transform legend</span></span>
+<span>                                title<span class="op">=</span><span class="st">"87Sr/86Sr"</span>,  <span class="co">##rename default legend</span></span>
+<span>                                title.position<span class="op">=</span><span class="st">'top'</span>,</span>
+<span>                                title.hjust<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span>                                ticks.colour<span class="op">=</span><span class="st">'#f5f5f2'</span>,</span>
+<span>                                ticks.linewidth<span class="op">=</span><span class="fl">2</span>,</span>
+<span>                                barwidth <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>                                barheight <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="01-section-template_files/figure-html/maps again-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold"><summary>Show the mapping code</summary><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://dieghernan.github.io/tidyterra/reference/geom_spatraster.html">geom_spatraster</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">Sr_iso_sd</span><span class="op">)</span><span class="op">+</span> <span class="co"># isoscape - mean prediction</span></span>
+<span>  <span class="fu"><a href="https://dieghernan.github.io/tidyterra/reference/ggspatvector.html">geom_spatvector</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">SA_outline</span>,fill<span class="op">=</span><span class="cn">NA</span>,colour<span class="op">=</span><span class="st">"black"</span><span class="op">)</span><span class="op">+</span> <span class="co"># country outline</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">unknownxy</span>,pch<span class="op">=</span><span class="fl">1</span>, col<span class="op">=</span><span class="st">"red3"</span>,cex<span class="op">=</span><span class="fl">2</span><span class="op">)</span><span class="op">+</span>  <span class="co"># butterfly collection sites</span></span>
+<span>  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html">scale_fill_viridis</a></span><span class="op">(</span>option<span class="op">=</span><span class="st">"magma"</span>, na.value <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span><span class="op">+</span> <span class="co">#pretty colors</span></span>
+<span>  <span class="fu"><a href="https://jrnold.github.io/ggthemes/reference/theme_map.html">theme_map</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span> <span class="co"># cute map theme</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position<span class="op">=</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.key.width<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html">unit</a></span><span class="op">(</span><span class="fl">2</span>, <span class="st">"cm"</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_colourbar.html">guide_colourbar</a></span><span class="op">(</span>direction <span class="op">=</span> <span class="st">'horizontal'</span>, <span class="co">##transform legend</span></span>
+<span>                                title<span class="op">=</span><span class="st">"sd"</span>,  <span class="co">##rename default legend</span></span>
+<span>                                title.position<span class="op">=</span><span class="st">'top'</span>,</span>
+<span>                                title.hjust<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span>                                ticks.colour<span class="op">=</span><span class="st">'#f5f5f2'</span>,</span>
+<span>                                ticks.linewidth<span class="op">=</span><span class="fl">2</span>,</span>
+<span>                                barwidth <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>                                barheight <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="01-section-template_files/figure-html/maps again-2.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>On your own: Look at both maps. Find one region where you’d trust an assignment, and one where you wouldn’t. For each, ask yourself:</p>
+<ul>
+<li>Does ⁸⁷Sr/⁸⁶Sr change a lot over short distances, or stay similar across a big area?</li>
+<li>Is the uncertainty (SD) low or high?</li>
+</ul>
+</div>
+<div class="tps-step">
+<p><strong>🤝 Pair</strong> <span class="tps-time">3 min</span></p>
+<p>With your neighbour, place your regions in the grid below. Can you find an example for every box? Which box would you most like your study area to be in?</p>
+</div>
+<div class="tps-step">
+<p><strong>📣 Share</strong> <span class="tps-time">3 min</span></p>
+<p>Tell the room about one region, which box it’s in, and what a probability map would look like for a butterfly from there.</p>
+</div>
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 26%">
+<col style="width: 36%">
+<col style="width: 37%">
+</colgroup>
+<thead><tr class="header">
+<th></th>
+<th style="text-align: center;">
+<strong>Varied geology</strong> (values change fast)</th>
+<th style="text-align: center;">
+<strong>Uniform geology</strong> (values change slowly)</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>low SD</td>
+<td style="text-align: center;">🎯 ?</td>
+<td style="text-align: center;">🌫️ ?</td>
+</tr>
+<tr class="even">
+<td>high SD</td>
+<td style="text-align: center;">🤔 ?</td>
+<td style="text-align: center;">🙈 ?</td>
+</tr>
+</tbody>
+</table></section><p>low uncertainty may be due to sampling biases (areas with more samples have lower uncertainty) or bedrock type (carbonate areas have lower uncertainty) ## Summary</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -678,18 +1004,18 @@ Key takeaways
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>First key point</li>
-<li>Second key point</li>
+<li>The likelihood is highest when the sample matches the prediction, and drops fast beyond about 2 SDs.</li>
+<li>Smaller uncertainty makes a taller, narrower curve. A precise cell can be the best match, or rule itself out.</li>
 </ul>
 </div>
 </div>
-<p><strong>Next:</strong> <a href="./02-section-priors.html">Section 2 →</a></p>
+</section></section><section id="next-section-2" class="level1"><h1>
+<strong>Next:</strong> <a href="./02-section-priors.html">Section 2 →</a>
+</h1>
+<p>:::::</p>
 
 
-</section>
-</div>
-</div>
-</section></section></section><a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main><!-- /main --><script type="ojs-module-contents">
+</section><a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main><!-- /main --><script type="ojs-module-contents">
 eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6InZpZXdvZiBzcl9zYW1wbGUgPSBJbnB1dHMucmFuZ2UoWzAuNzAwMCwgMC43MjUwXSwge1xuICB2YWx1ZTogMC43MTA1LCBzdGVwOiAwLjAwMDEsIGxhYmVsOiBcIs60czogYnV0dGVyZmx5XCIsIGZvcm1hdDogeCA9PiB4LnRvRml4ZWQoNClcbn0pXG52aWV3b2Ygc3JfbWVhbiA9IElucHV0cy5yYW5nZShbMC43MDAwLCAwLjcyNTBdLCB7XG4gIHZhbHVlOiAwLjcxMDAsIHN0ZXA6IDAuMDAwMSwgbGFiZWw6IFwizrR0KGopOiBjZWxsIHByZWRpY3Rpb25cIiwgZm9ybWF0OiB4ID0+IHgudG9GaXhlZCg0KVxufSlcbnZpZXdvZiBzcl9zZCA9IElucHV0cy5yYW5nZShbMC4wMDAxLCAwLjAwNTBdLCB7XG4gIHZhbHVlOiAwLjAwMTAsIHN0ZXA6IDAuMDAwMSwgbGFiZWw6IFwiz4N0KGopOiB1bmNlcnRhaW50eVwiLCBmb3JtYXQ6IHggPT4geC50b0ZpeGVkKDQpXG59KVxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0IiwiY2VsbE5hbWUiOiJvanMtY2VsbC0yIiwiaW5saW5lIjpmYWxzZSwic291cmNlIjoibGlrZWxpaG9vZCA9ICh4LCBtLCBzKSA9PlxuICBNYXRoLmV4cCgtKCh4IC0gbSkgKiogMikgLyAoMiAqIHMgKiogMikpIC8gTWF0aC5zcXJ0KDIgKiBNYXRoLlBJICogcyAqKiAyKVxuXG52YWx1ZSA9IGxpa2VsaWhvb2Qoc3Jfc2FtcGxlLCBzcl9tZWFuLCBzcl9zZClcbm5fc2QgID0gTWF0aC5hYnMoc3Jfc2FtcGxlIC0gc3JfbWVhbikgLyBzcl9zZFxuXG5jdXJ2ZSA9IGQzLnJhbmdlKDAuNzAwMCwgMC43MjUwLCAwLjAwMDAyKVxuICAubWFwKHggPT4gKHt4LCB5OiBsaWtlbGlob29kKHgsIHNyX21lYW4sIHNyX3NkKX0pKVxuXG5tZGAqKkxpa2VsaWhvb2QgPSAke3ZhbHVlLnRvTG9jYWxlU3RyaW5nKHVuZGVmaW5lZCwge21heGltdW1TaWduaWZpY2FudERpZ2l0czogNH0pfSoqXG7CtyB0aGUgYnV0dGVyZmx5IGlzICR7bl9zZC50b0ZpeGVkKDEpfSBTRHMgZnJvbSB0aGUgcHJlZGljdGlvblxuwrcgdGhlIGN1cnZlJ3MgcGVhayBpcyAke2xpa2VsaWhvb2Qoc3JfbWVhbiwgc3JfbWVhbiwgc3Jfc2QpLnRvTG9jYWxlU3RyaW5nKHVuZGVmaW5lZCwge21heGltdW1GcmFjdGlvbkRpZ2l0czogMH0pfWBcblxuUGxvdC5wbG90KHtcbiAgaGVpZ2h0OiAzMjAsXG4gIG1hcmdpbkxlZnQ6IDYwLFxuICB4OiB7ZG9tYWluOiBbMC43MDAwLCAwLjcyNTBdLCBsYWJlbDogXCLigbjigbdTci/igbjigbZTclwiLCB0aWNrRm9ybWF0OiBkID0+IGQudG9GaXhlZCgzKX0sXG4gIHk6IHtsYWJlbDogXCJQKM60cyB8IGopXCIsIGdyaWQ6IHRydWV9LFxuICBtYXJrczogW1xuICAgIFBsb3QuYXJlYVkoY3VydmUsIHt4OiBcInhcIiwgeTogXCJ5XCIsIGZpbGw6IFwiIzFmNGU2YlwiLCBmaWxsT3BhY2l0eTogMC4xMn0pLFxuICAgIFBsb3QubGluZShjdXJ2ZSwge3g6IFwieFwiLCB5OiBcInlcIiwgc3Ryb2tlOiBcIiMxZjRlNmJcIiwgc3Ryb2tlV2lkdGg6IDJ9KSxcbiAgICBQbG90LnJ1bGVYKFtzcl9tZWFuXSwge3N0cm9rZTogXCJncmV5XCIsIHN0cm9rZURhc2hhcnJheTogXCI0LDRcIn0pLFxuICAgIFBsb3QucnVsZVgoW3NyX3NhbXBsZV0sIHt5MTogMCwgeTI6IHZhbHVlLCBzdHJva2U6IFwiIzhhM2IxMlwiLCBzdHJva2VXaWR0aDogMn0pLFxuICAgIFBsb3QuZG90KFt7eDogc3Jfc2FtcGxlLCB5OiB2YWx1ZX1dLCB7eDogXCJ4XCIsIHk6IFwieVwiLCBmaWxsOiBcIiM4YTNiMTJcIiwgcjogNn0pLFxuICAgIFBsb3QucnVsZVkoWzBdKVxuICBdXG59KVxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJzaGlueUlucHV0KCdzcl9zYW1wbGUnKSJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoic2hpbnlJbnB1dCgnc3JfbWVhbicpIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJzaGlueUlucHV0KCdzcl9zZCcpIn1dfQ==
 </script><script type="module">
 if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }

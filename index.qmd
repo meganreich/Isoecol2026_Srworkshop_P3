@@ -51,4 +51,4 @@ install.packages(c("tidyverse", "assignR","terra","isocat","rnaturalearth", "sf"
 
 ## Getting help
 
-During the workshop, put up your hand or ask Megan, Clement, or Chris for help. Afterwards, contact Megan Reich at [mreich\@uow.edu.au](mailto:mreich@uow.edu.au).
+During the workshop, put up your hand or ask Megan, Clement, or Chris for help. Afterwards, contact Megan Reich at [meganreich13\@gmail.com](mailto:meganreich13@gmail.com).

@@ -1,7 +1,6 @@
 ---
 title: "2. Combining geolocation tools"
 subtitle: "multiple isotopes and priors"
-description: "multiple isotopes and priors"
 date-modified: last-modified
 ---
 
@@ -10,7 +9,7 @@ date-modified: last-modified
 
 -   **You'll learn:** how to combine multiple isotopes and add priors
 -   **You'll need:** everything from earlier today
--   **Time:** about 30 minutes
+-   **Time:** about 45 minutes
 :::
 
 ## Overview
@@ -28,7 +27,6 @@ library(rnaturalearth)
 library(sf)
 library(tidyterra)
 library(viridis)
-library(ggthemes)
 ```
 ```{r}
 unknown <- read.csv("Module3_assignment/unknown.csv")

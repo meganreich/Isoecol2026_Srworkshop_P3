@@ -38,7 +38,6 @@ library(rnaturalearth)
 library(sf)
 library(tidyterra)
 library(viridis)
-library(ggthemes)
 ```
 
 ## Unknown origin data
@@ -87,8 +86,7 @@ ggplot()+
   geom_spatvector(data=SA_outline,fill=NA,colour="black")+ # country outline
   geom_sf(data=unknownxy,pch=1, col="red3",cex=2)+  # butterfly collection sites
   scale_fill_viridis(option="turbo", na.value = NA)+ #pretty colors
-  theme_map()+ # cute map theme
-  theme_minimal()+
+  theme_minimal()+ # cute map theme
   theme(legend.position="bottom")+
   theme(legend.key.width=unit(2, "cm"))+
   guides(fill = guide_colourbar(direction = 'horizontal', ##transform legend
@@ -362,7 +360,7 @@ P(j \mid \delta_s) = \frac{P(j)\,P(\delta_s \mid j)}{\sum P(j)\,P(\delta_s \mid 
 $$
 
 | Term | Name | In plain words |
-|----|----|----|
+|------------------|------------------|------------------------------------|
 | $P(\delta_s \mid j)$ | likelihood | How well cell $j$ matches the butterfly (Equation 3) |
 | $P(j)$ | prior | What we believed about cell $j$ *before* measuring Sr |
 | $\sum P(j)\,P(\delta_s \mid j)$ | normalising constant | The same product, added up over every cell in the map |
@@ -394,7 +392,6 @@ ggplot()+
   geom_spatvector(data=SA_outline,fill=NA,colour="black")+ # country outline
   geom_sf(data=unknownxy,pch=1, col="red3",cex=2)+  # butterfly collection sites
   scale_fill_viridis(option="turbo", na.value = NA)+ #pretty colors
-  theme_map()+ # cute map theme
   theme_minimal()+
   theme(legend.position="bottom")+
   theme(legend.key.width=unit(2, "cm"))+
@@ -412,7 +409,6 @@ ggplot()+
   geom_spatvector(data=SA_outline,fill=NA,colour="black")+ # country outline
   geom_sf(data=unknownxy,pch=1, col="red3",cex=2)+  # butterfly collection sites
   scale_fill_viridis(option="magma", na.value = NA)+ #pretty colors
-  theme_map()+ # cute map theme
   theme_minimal()+
   theme(legend.position="bottom")+
   theme(legend.key.width=unit(2, "cm"))+
@@ -446,7 +442,7 @@ Tell the room about one region, which box it's in, and what a probability map wo
 ::::::
 
 |   | **Varied geology** (values change fast) | **Uniform geology** (values change slowly) |
-|----|:--:|:--:|
+|-------------------|:------------------------:|:-------------------------:|
 | low SD | 🎯 ? | 🌫️ ? |
 | high SD | 🤔 ? | 🙈 ? |
 :::::::

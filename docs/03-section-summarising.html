@@ -4,8 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.7.32">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="description" content="Summarize posterior probability surfaces">
-<title>3. Summarizing outputs – Strontium isotope geolocation for terrestrial ecology: Part 3</title>
+<title>3. Summarizing outputs – Strontium isotope geolocation for terrestrial ecology: Module 3</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -107,7 +106,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <header id="quarto-header" class="headroom fixed-top"><nav class="navbar navbar-expand-lg " data-bs-theme="dark"><div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">Strontium isotope geolocation for terrestrial ecology: Part 3</span>
+    <span class="navbar-title">Strontium isotope geolocation for terrestrial ecology: Module 3</span>
     </a>
   </div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -201,10 +200,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
 <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
   <li><a href="#setting-up" id="toc-setting-up" class="nav-link" data-scroll-target="#setting-up">Setting up</a></li>
-  <li><a href="#odds-ratio" id="toc-odds-ratio" class="nav-link" data-scroll-target="#odds-ratio">Odds ratio</a></li>
-  <li><a href="#cluster-analysis" id="toc-cluster-analysis" class="nav-link" data-scroll-target="#cluster-analysis">Cluster analysis</a></li>
-  <li><a href="#spatial-similarity-with-isocat" id="toc-spatial-similarity-with-isocat" class="nav-link" data-scroll-target="#spatial-similarity-with-isocat">Spatial similarity with isocat</a></li>
-  <li><a href="#odds-ratio-1" id="toc-odds-ratio-1" class="nav-link" data-scroll-target="#odds-ratio-1">Odds ratio</a></li>
+  <li>
+<a href="#stacked-maps" id="toc-stacked-maps" class="nav-link" data-scroll-target="#stacked-maps">Stacked maps</a>
+  <ul class="collapse">
+<li><a href="#map-it" id="toc-map-it" class="nav-link" data-scroll-target="#map-it">map it!</a></li>
+  <li><a href="#think-pair-share-reading-the-stacked-map" id="toc-think-pair-share-reading-the-stacked-map" class="nav-link" data-scroll-target="#think-pair-share-reading-the-stacked-map">🗺️ Think · Pair · Share: reading the stacked map</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#cluster-analysis" id="toc-cluster-analysis" class="nav-link" data-scroll-target="#cluster-analysis">Cluster analysis</a>
+  <ul class="collapse">
+<li><a href="#spatial-similarity-with-isocat" id="toc-spatial-similarity-with-isocat" class="nav-link" data-scroll-target="#spatial-similarity-with-isocat">Spatial similarity with isocat</a></li>
+  </ul>
+</li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul></nav>
     </div>
@@ -214,11 +222,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p class="subtitle lead">Summarize posterior probability surfaces</p>
 </div>
 
-<div>
-  <div class="description">
-    Summarize posterior probability surfaces
-  </div>
-</div>
 
 
 <div class="quarto-title-meta">
@@ -228,7 +231,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">October 3, 2026</p>
+      <p class="date-modified">October 9, 2026</p>
     </div>
   </div>
     
@@ -248,34 +251,107 @@ In this section
 <div class="callout-body-container callout-body">
 <ul>
 <li>
-<strong>You’ll learn:</strong> the key idea or skill</li>
+<strong>You’ll learn:</strong> a few ways to summarize your results</li>
 <li>
-<strong>You’ll need:</strong> packages or data from earlier sections</li>
+<strong>You’ll need:</strong> the same packages and data from earlier sections</li>
 <li>
 <strong>Time:</strong> about 30 minutes</li>
 </ul>
 </div>
 </div>
 <section id="overview" class="level2"><h2 class="anchored" data-anchor-id="overview">Overview</h2>
-<p>A short introduction to the topic: why it matters and what we’re going to do.</p>
+<p>Your isoscapes are optimized and your study species/material are confidently assigned to origin, but now you’re left with all these posterior probability surfaces! Let’s explore some ways you can interpret and summarize your results.</p>
 </section><section id="setting-up" class="level2"><h2 class="anchored" data-anchor-id="setting-up">Setting up</h2>
 <div class="cell">
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">assignR</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster">raster</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">isocat</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/">terra</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://docs.ropensci.org/rnaturalearth/">rnaturalearth</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dieghernan.github.io/tidyterra/">tidyterra</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/">viridis</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/cjcampbell/isocat">isocat</a></span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section><section id="odds-ratio" class="level2"><h2 class="anchored" data-anchor-id="odds-ratio">Odds ratio</h2>
-<p>Explain the idea in a sentence or two, then show the code.</p>
+<div data-collapse="true">
 <div class="cell">
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">mtcars</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>mean_mpg <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/summarize-generics.html">mean</a></span><span class="op">(</span><span class="va">mpg</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">unknown</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"Module3_assignment/unknown.csv"</span><span class="op">)</span></span>
+<span><span class="va">Sr_iso_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html">rast</a></span><span class="op">(</span><span class="st">"Module3_assignment/rf_all_pred.tif"</span><span class="op">)</span></span>
+<span><span class="va">Sr_iso_sd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html">rast</a></span><span class="op">(</span><span class="st">"Module3_assignment/rf_all_sd.tif"</span><span class="op">)</span></span>
+<span><span class="va">Sr_iso</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">Sr_iso_mean</span>, <span class="va">Sr_iso_sd</span><span class="op">)</span></span>
+<span><span class="va">d2Hw_isoscape</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html">rast</a></span><span class="op">(</span><span class="st">"Module3_assignment/d2Hw_isoscape.tif"</span><span class="op">)</span></span>
+<span><span class="va">ENM_Sept</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html">rast</a></span><span class="op">(</span><span class="st">"Module3_assignment/ENM_Sept.tif"</span><span class="op">)</span></span>
+<span><span class="va">iso_vals</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/values.html">values</a></span><span class="op">(</span><span class="va">d2Hw_isoscape</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">iso_range</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html">range</a></span><span class="op">(</span><span class="va">iso_vals</span><span class="op">)</span></span>
+<span><span class="va">unknown_dual</span> <span class="op">&lt;-</span> <span class="va">unknown</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>in_range <span class="op">=</span> <span class="va">d2H</span> <span class="op">&gt;=</span> <span class="va">iso_range</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">&amp;</span> <span class="va">d2H</span> <span class="op">&lt;=</span> <span class="va">iso_range</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">in_range</span> <span class="op">==</span> <span class="cn">T</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">Sample_ID</span> <span class="op">!=</span> <span class="st">"RVcoll14B025"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">Sample_ID</span>, <span class="va">Sr8786</span>, <span class="va">d2H</span><span class="op">)</span></span>
+<span><span class="va">dual_isoscapes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/assignR/man/isoStack.html">isoStack</a></span><span class="op">(</span><span class="va">Sr_iso</span>, <span class="va">d2Hw_isoscape</span><span class="op">)</span></span>
+<span><span class="va">prior_probsurfaces</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/assignR/man/pdRaster.html">pdRaster</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">dual_isoscapes</span>, unknown <span class="op">=</span> <span class="va">unknown_dual</span>, prior <span class="op">=</span> <span class="va">ENM_Sept</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div data-pagedtable="false">
-  <script data-pagedtable-source="" type="application/json">
-{"columns":[{"label":["cyl"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["mean_mpg"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"4","2":"26.66364"},{"1":"6","2":"19.74286"},{"1":"8","2":"15.10000"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
+<div>
+<figure class="figure"><p><img src="03-section-summarising_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>NULL</code></pre>
+</div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">eck</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/crs.html">crs</a></span><span class="op">(</span><span class="va">Sr_iso_mean</span><span class="op">)</span></span>
+<span><span class="va">WGS84</span> <span class="op">&lt;-</span> <span class="st">'+init=EPSG:4326'</span></span>
+<span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/ext.html">ext</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">16.5</span>, <span class="fl">35</span>, <span class="op">-</span><span class="fl">36</span>, <span class="op">-</span><span class="fl">22</span><span class="op">)</span><span class="op">)</span> <span class="co">#(xmin, xmax, ymin, ymax</span></span>
+<span><span class="va">SA_outline</span> <span class="op">&lt;-</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/rnaturalearth/reference/ne_countries.html">ne_countries</a></span><span class="op">(</span></span>
+<span>  country <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"South Africa"</span>, <span class="st">"Lesotho"</span>, <span class="st">"Eswatini"</span><span class="op">)</span>,returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span><span class="va">.</span>, crs<span class="op">=</span><span class="va">WGS84</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crop.html">st_crop</a></span><span class="op">(</span><span class="va">sa</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span>crs<span class="op">=</span><span class="va">eck</span><span class="op">)</span> </span>
+<span><span class="va">unknown_dualxy</span><span class="op">&lt;-</span><span class="va">unknown</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>in_range <span class="op">=</span> <span class="va">d2H</span> <span class="op">&gt;=</span> <span class="va">iso_range</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">&amp;</span> <span class="va">d2H</span> <span class="op">&lt;=</span> <span class="va">iso_range</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">in_range</span> <span class="op">==</span> <span class="cn">T</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">Sample_ID</span> <span class="op">!=</span> <span class="st">"RVcoll14B025"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span><span class="va">.</span>, coords<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Lon"</span>,<span class="st">"Lat"</span><span class="op">)</span>, crs<span class="op">=</span><span class="va">WGS84</span><span class="op">)</span><span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span>crs<span class="op">=</span><span class="va">eck</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section><section id="stacked-maps" class="level2"><h2 class="anchored" data-anchor-id="stacked-maps">Stacked maps</h2>
+<p>One classic way we could choose to deal with the large amount of information contained in a probability surface is to make the surface binary: areas of “low” and “high” probability.</p>
+<div class="cell">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">prior_binary</span> <span class="op">&lt;-</span> <span class="fu">assignR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/assignR/man/qtlRaster.html">qtlRaster</a></span><span class="op">(</span>pdR <span class="op">=</span> <span class="va">prior_probsurfaces</span>, threshold <span class="op">=</span> <span class="fl">0.333</span>, thresholdType <span class="op">=</span> <span class="st">"prob"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="03-section-summarising_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="03-section-summarising_files/figure-html/unnamed-chunk-2-2.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="03-section-summarising_files/figure-html/unnamed-chunk-2-3.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="03-section-summarising_files/figure-html/unnamed-chunk-2-4.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="03-section-summarising_files/figure-html/unnamed-chunk-2-5.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="03-section-summarising_files/figure-html/unnamed-chunk-2-6.png" class="img-fluid figure-img" width="768"></p>
+</figure>
 </div>
 </div>
 </div>
@@ -289,35 +365,190 @@ Tip
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>A helpful shortcut or good-practice note.</p>
+<p>It’s become traditional to use a 2:1 odds ratio, but you can explore and optimize the odds ratio used (check out the assignR:QA function for inspiration)</p>
+</div>
+</div>
+<section id="map-it" class="level3"><h3 class="anchored" data-anchor-id="map-it">map it!</h3>
+<p>A stacked map is the sum of the binary surfaces.</p>
+<div class="cell">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">prior_stacked</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">prior_binary</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://dieghernan.github.io/tidyterra/reference/geom_spatraster.html">geom_spatraster</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">prior_stacked</span><span class="op">)</span><span class="op">+</span> <span class="co"># stacked map</span></span>
+<span>  <span class="fu"><a href="https://dieghernan.github.io/tidyterra/reference/ggspatvector.html">geom_spatvector</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">SA_outline</span>,fill<span class="op">=</span><span class="cn">NA</span>,colour<span class="op">=</span><span class="st">"black"</span><span class="op">)</span><span class="op">+</span> <span class="co"># country outline</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">unknown_dualxy</span>,pch<span class="op">=</span><span class="fl">1</span>, col<span class="op">=</span><span class="st">"red3"</span>,cex<span class="op">=</span><span class="fl">2.5</span><span class="op">)</span><span class="op">+</span>  <span class="co"># butterfly collection sites</span></span>
+<span>  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html">scale_fill_viridis</a></span><span class="op">(</span>option<span class="op">=</span><span class="st">"turbo"</span>, na.value <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span><span class="op">+</span> <span class="co">#pretty colors</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position<span class="op">=</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.key.width<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html">unit</a></span><span class="op">(</span><span class="fl">2</span>, <span class="st">"cm"</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_colourbar.html">guide_colourbar</a></span><span class="op">(</span>direction <span class="op">=</span> <span class="st">'horizontal'</span>, <span class="co">##transform legend</span></span>
+<span>                                title<span class="op">=</span> <span class="st">"what do you think the legend title should be?"</span>, <span class="co">##rename default legend</span></span>
+<span>                                title.position<span class="op">=</span><span class="st">'top'</span>,</span>
+<span>                                title.hjust<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span>                                ticks.colour<span class="op">=</span><span class="st">'#f5f5f2'</span>,</span>
+<span>                                ticks.linewidth<span class="op">=</span><span class="fl">2</span>,</span>
+<span>                                barwidth <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>                                barheight <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span><span class="op">)</span>  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="03-section-summarising_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</section><section id="think-pair-share-reading-the-stacked-map" class="level3 think-pair-share"><h3 class="anchored" data-anchor-id="think-pair-share-reading-the-stacked-map">🗺️ Think · Pair · Share: reading the stacked map</h3>
+<div class="tps-steps">
+<div class="tps-step">
+<p><strong>💭 Think</strong> <span class="tps-time">3 min</span></p>
+<p>Your map has no legend title yet. On your own:</p>
+<ul>
+<li>What does each layer of <code>prior_binary</code> hold, and what happens when we <code><a href="https://rdrr.io/r/base/sum.html">sum()</a></code> them?</li>
+<li>What is the smallest and largest value a cell could have?</li>
+<li>Write a legend title that would make sense to someone who hasn’t done this workshop.</li>
+</ul>
+</div>
+<div class="tps-step">
+<p><strong>🤝 Pair</strong> <span class="tps-time">3 min</span></p>
+<p>Before you look closely at your map, predict what it would look like if:</p>
+<ul>
+<li>🎯 all the butterflies came from the same place</li>
+<li>🌍 the butterflies came from many different places</li>
+</ul>
+</div>
+<div class="tps-step">
+<p><strong>📣 Share</strong> <span class="tps-time">3 min</span></p>
+<p>Now look at your map. Which prediction is it closer to?</p>
+<ul>
+<li>Where are the hotspots, and how do they compare with the collection sites (red circles)?</li>
+<li>What can this map tell you, and what can’t it tell you?</li>
+</ul>
+</div>
+</div>
+</section><div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hint: check the numbers
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html">nlyr</a></span><span class="op">(</span><span class="va">prior_binary</span><span class="op">)</span>                            <span class="co"># how many butterflies?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6</code></pre>
+</div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/global.html">global</a></span><span class="op">(</span><span class="va">prior_binary</span>, <span class="st">"sum"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>     <span class="co"># how many cells each butterfly selected</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["sum"],"name":[1],"type":["dbl"],"align":["right"]}],"data":[{"1":"155018","_rn_":"RVcoll07F538"},{"1":"108362","_rn_":"RVcoll07F540"},{"1":"161950","_rn_":"RVcoll07F541"},{"1":"103054","_rn_":"RVcoll07F542"},{"1":"143304","_rn_":"RVcoll07F554"},{"1":"131714","_rn_":"RVcoll07F555"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/global.html">global</a></span><span class="op">(</span><span class="va">prior_stacked</span>, <span class="va">range</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>        <span class="co"># range of the stacked map</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["X1"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["X2"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"0","2":"4","_rn_":"sum"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </section><section id="cluster-analysis" class="level2"><h2 class="anchored" data-anchor-id="cluster-analysis">Cluster analysis</h2>
-<p>Hydrogen isotopes are commonly used for geographic assignment. Spatial variation in hydrogen isotopes is largely driven by patterns of precipitation. Since this pattern is independent of strontium isotopes, the two isotopes are great complementary geolocation tools.</p>
-<p>How does the hydrogen isoscape compare to the strontium isoscape?</p>
-<div class="cell">
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#d2H_insect_isoscape &lt;- raster::rast("")</span></span>
-<span><span class="co"># how does the spatial pattern compare to strontium isotopes?</span></span>
-<span><span class="co">#plot(d2H_insect_isoscape)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>For single isotope analyses, clustering with k-means etc works well. However, once you move to combining multiple geolocation tools, you may want to compare the spatial patterns of the probability surfaces directly.</p>
+<section id="spatial-similarity-with-isocat" class="level3"><h3 class="anchored" data-anchor-id="spatial-similarity-with-isocat">Spatial similarity with isocat</h3>
+<p>The package <em>isocat</em> has been specifically designed for this purpose! Let’s check it out!</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
 </div>
-<p>It is important to use a hydrogen isoscape that has been calibrated to the material of interest. Here, I am giving you a hydrogen isoscape that has already been calibrated to insect wings.</p>
-</section><section id="spatial-similarity-with-isocat" class="level2"><h2 class="anchored" data-anchor-id="spatial-similarity-with-isocat">Spatial similarity with isocat</h2>
-<p>For simplicity, we will append d2H values for each butterfly and assume the measurement uncertainty is 2 permille.</p>
+<div class="callout-title-container flex-fill">
+More resources
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Campbell, C. J., Fitzpatrick, M. C., Vander Zanden, H. B., &amp; Nelson, D. M. (2020). Advancing interpretation of stable isotope assignment maps: Comparing and summarizing origins of known-provenance migratory bats. Animal Migration, 7(1), 27–41. <a href="https://doi.org/10.1515/ami-2020-0004" class="uri">https://doi.org/10.1515/ami-2020-0004</a>
+</li>
+<li><a href="https://github.com/cjcampbell/isocat" class="uri">https://github.com/cjcampbell/isocat</a></li>
+</ul>
+</div>
+</div>
 <div class="cell">
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># append d2H values for each butterfly</span></span>
-<span><span class="co">#d2H &lt;- c( )</span></span>
-<span><span class="co">#d2H.sd &lt;- c()</span></span>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#Applies pairwise comparisons of Schoener's D-metric between each layer in a spatraster to populate a similarity matrix.</span></span>
+<span><span class="va">prior_simmatrix</span> <span class="op">&lt;-</span> <span class="fu">isocat</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/isocat/man/surfaceSimilarityMatrix.html">surfaceSimilarityMatrix</a></span><span class="op">(</span><span class="va">prior_probsurfaces</span><span class="op">)</span></span>
+<span><span class="va">prior_simmatrix</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             RVcoll07F538 RVcoll07F540 RVcoll07F541 RVcoll07F542 RVcoll07F554
+RVcoll07F538    1.0000000    0.3176013    0.2803937    0.3653906    0.2696932
+RVcoll07F540    0.3176013    1.0000000    0.5974350    0.8910694    0.5254899
+RVcoll07F541    0.2803937    0.5974350    1.0000000    0.5535833    0.9112226
+RVcoll07F542    0.3653906    0.8910694    0.5535833    1.0000000    0.4911790
+RVcoll07F554    0.2696932    0.5254899    0.9112226    0.4911790    1.0000000
+RVcoll07F555    0.2772339    0.4013909    0.7444744    0.3755019    0.8053080
+             RVcoll07F555
+RVcoll07F538    0.2772339
+RVcoll07F540    0.4013909
+RVcoll07F541    0.7444744
+RVcoll07F542    0.3755019
+RVcoll07F554    0.8053080
+RVcoll07F555    1.0000000</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># wrapper for pvclust that applies hierarchical clustering analysis to similarity matrix</span></span>
+<span><span class="va">prior_cS</span> <span class="op">&lt;-</span> <span class="fu">isocat</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/isocat/man/clusterSimmatrix.html">clusterSimmatrix</a></span><span class="op">(</span>simmatrix <span class="op">=</span> <span class="va">prior_simmatrix</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Bootstrap (r = 0.67)... Done.
+Bootstrap (r = 0.83)... Done.
+Bootstrap (r = 1.0)... Done.
+Bootstrap (r = 1.17)... Done.
+Bootstrap (r = 1.33)... Done.</code></pre>
+</div>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">prior_cS</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="03-section-summarising_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#choose a cutoff value</span></span>
+<span><span class="va">myheight</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></span>
+<span><span class="va">unknown_dual</span><span class="op">$</span><span class="va">cluster</span> <span class="op">&lt;-</span> <span class="fu">dendextend</span><span class="fu">::</span><span class="fu">cutree</span><span class="op">(</span><span class="va">prior_cS</span><span class="op">$</span><span class="va">hclust</span>, h <span class="op">=</span> <span class="va">myheight</span><span class="op">)</span></span>
+<span><span class="va">unknown_dual</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["Sample_ID"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Sr8786"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["d2H"],"name":[3],"type":["int"],"align":["right"]},{"label":["cluster"],"name":[4],"type":["int"],"align":["right"]}],"data":[{"1":"RVcoll07F538","2":"0.72384","3":"-36","4":"1"},{"1":"RVcoll07F540","2":"0.71247","3":"-31","4":"2"},{"1":"RVcoll07F541","2":"0.71355","3":"-50","4":"3"},{"1":"RVcoll07F542","2":"0.71165","3":"-32","4":"2"},{"1":"RVcoll07F554","2":"0.71341","3":"-54","4":"3"},{"1":"RVcoll07F555","2":"0.71524","3":"-56","4":"3"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>For each cluster, you could make stacked maps or a map of the average probability</p>
+<div class="cell">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># summary maps of each cluster</span></span>
+<span><span class="va">prior_meanSurfaces</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/isocat/man/meanAggregateClusterProbability.html">meanAggregateClusterProbability</a></span><span class="op">(</span>indivIDs <span class="op">=</span> <span class="va">unknown_dual</span><span class="op">$</span><span class="va">Sample_ID</span>, </span>
+<span>  clusters <span class="op">=</span> <span class="va">unknown_dual</span><span class="op">$</span><span class="va">cluster</span>, </span>
+<span>  surfaces <span class="op">=</span> <span class="va">prior_probsurfaces</span>, </span>
+<span>  nClust <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># arrange dataframe to assignR specifications</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">prior_meanSurfaces</span><span class="op">)</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="03-section-summarising_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
 </div>
-</section><section id="odds-ratio-1" class="level2"><h2 class="anchored" data-anchor-id="odds-ratio-1">Odds ratio</h2>
-<div class="cell">
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#dual &lt;- pdraster()</span></span>
-<span><span class="co">#dual</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>How do these posterior probability surfaces compare to the ones generated with strontium isotopes alone? Is there a smaller area of high probability? ::: panel-tabset ## tidyverse</p>
-<div class="cell">
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#plot(dual)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -325,53 +556,32 @@ Tip
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-🧩 Your turn
+🧩 Food for thought
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<ol type="1">
-<li>First task</li>
-<li>Second task</li>
-<li>
-<strong>Stretch:</strong> an extra challenge for students who finish early</li>
-</ol>
+<p>How else could you explore the probability surfaces? Was anything flagged in the exploratory data analysis? By date? By collection site? By sex?</p>
 </div>
 </div>
-<div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
-<i class="callout-icon"></i>
+<i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Hint
+🧩 Other post-hoc analyses
 </div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>A nudge in the right direction, hidden until clicked.</p>
+<p>There are many other follow up analyses for you to explore and consider for your own studies! Here are a few:</p>
+<ul>
+<li><p>isotope-based distance metrics</p></li>
+<li><p>direction</p></li>
+<li><p>odds of originated from Region A vs Region B</p></li>
+</ul>
 </div>
 </div>
-</div>
-<div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Solution
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<div class="cell">
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Solution code here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</div>
-</div>
-</div>
-</section><section id="summary" class="level2"><h2 class="anchored" data-anchor-id="summary">Summary</h2>
+</section></section><section id="summary" class="level2"><h2 class="anchored" data-anchor-id="summary">Summary</h2>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -383,13 +593,64 @@ Key takeaways
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>Combining multiple geolocation tools can give spatially constrained estimates of origin</li>
-<li>Each geolocation tool comes with additional assumptions and uncertainty</li>
+<li>Interpreting probability surfaces confidently requires an in-depth understanding of
+<ul>
+<li>the strengths and weaknesses of the underlying isoscapes</li>
+<li>the assumptions of the probability density function</li>
+<li>the ecology of your species</li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
+<p>Thank you so much for your attention; I hope you learned something new!</p>
+<p>For comments, questions, or just to say hi, email Megan Reich at meganreich13@gmail.com</p>
 <div class="cell">
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#**Next:** [Section 2 →](02-next-section.qmd)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>R version 4.5.1 (2025-06-13 ucrt)
+Platform: x86_64-w64-mingw32/x64
+Running under: Windows 11 x64 (build 26200)
+
+Matrix products: default
+  LAPACK version 3.12.1
+
+locale:
+[1] LC_COLLATE=English_Canada.utf8  LC_CTYPE=English_Canada.utf8   
+[3] LC_MONETARY=English_Canada.utf8 LC_NUMERIC=C                   
+[5] LC_TIME=English_Canada.utf8    
+
+time zone: Australia/Sydney
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] isocat_1.0.1        viridis_0.6.5       viridisLite_0.4.2  
+ [4] tidyterra_0.7.2     sf_1.0-21           rnaturalearth_1.1.0
+ [7] terra_1.8-70        assignR_2.4.3.9000  lubridate_1.9.4    
+[10] forcats_1.0.1       stringr_1.5.2       dplyr_1.1.4        
+[13] purrr_1.1.0         readr_2.1.5         tidyr_1.3.1        
+[16] tibble_3.3.0        ggplot2_4.0.0       tidyverse_2.0.0    
+
+loaded via a namespace (and not attached):
+ [1] gtable_0.3.6       xfun_0.53          htmlwidgets_1.6.4  lattice_0.22-7    
+ [5] tzdb_0.5.0         vctrs_0.6.5        tools_4.5.1        generics_0.1.4    
+ [9] proxy_0.4-27       pkgconfig_2.0.3    KernSmooth_2.23-26 data.table_1.17.8 
+[13] RColorBrewer_1.1-3 S7_0.2.0           lifecycle_1.0.5    compiler_4.5.1    
+[17] farver_2.1.2       codetools_0.2-20   htmltools_0.5.8.1  class_7.3-23      
+[21] yaml_2.3.10        pillar_1.11.1      classInt_0.4-11    wk_0.9.4          
+[25] iterators_1.0.14   foreach_1.5.2      tidyselect_1.2.1   digest_0.6.37     
+[29] stringi_1.8.7      labeling_0.4.3     pvclust_2.2-0      fastmap_1.2.0     
+[33] grid_4.5.1         cli_3.6.5          magrittr_2.0.4     e1071_1.7-16      
+[37] withr_3.0.2        scales_1.4.0       sp_2.2-0           timechange_0.3.0  
+[41] rmarkdown_2.30     gridExtra_2.3      hms_1.1.4          mvnfast_0.2.8     
+[45] evaluate_1.0.5     knitr_1.50         s2_1.1.9           rlang_1.1.6       
+[49] dendextend_1.19.1  Rcpp_1.1.0         glue_1.8.0         geosphere_1.5-20  
+[53] DBI_1.2.3          rstudioapi_0.19.0  jsonlite_2.0.0     R6_2.6.1          
+[57] units_1.0-0       </code></pre>
+</div>
 </div>
 
 

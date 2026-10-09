@@ -1,5 +1,5 @@
 ---
-title: "IsoEcol 2026: Sr workshop"
+title: "IsoEcol 2026: Strontium isotope geolocation for terrestrial ecology"
 subtitle: "Module 3: isotope-based geographic assignment"
 author: "Megan Reich"
 date: "2026-10-03"
@@ -30,8 +30,8 @@ By the end of this workshop you will be able to:
 |---------------|--------------------------------------------|
 | In advance    | [Getting started](01-section-template.qmd) |
 | 15:00 – 15:45 | Section 1: Geographic assignment           |
-| 15:45 – 16:15 | Section 2: Combining geolocation tools     |
-| 16:15 – 17:00 | Section 3: Summarizing outputs             |
+| 15:45 – 16:30 | Section 2: Combining geolocation tools     |
+| 16:30 – 17:00 | Section 3: Summarizing outputs             |
 
 ## Before the workshop
 
@@ -46,7 +46,7 @@ By the end of this workshop you will be able to:
 ```{r}
 #| label: install-packages
 #| eval: false
-install.packages(c("tidyverse", "assignR","terra","isocat","rnaturalearth", "sf", "tidyterra", "viridis","ggthemes"))
+install.packages(c("tidyverse", "assignR","terra","isocat","rnaturalearth", "sf", "tidyterra", "viridis"))
 ```
 
 ## Getting help

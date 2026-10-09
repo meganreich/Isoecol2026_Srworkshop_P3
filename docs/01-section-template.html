@@ -336,8 +336,7 @@ More resources
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://docs.ropensci.org/rnaturalearth/">rnaturalearth</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dieghernan.github.io/tidyterra/">tidyterra</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/">viridis</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://jrnold.github.io/ggthemes/">ggthemes</a></span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/">viridis</a></span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section><section id="unknown-origin-data" class="level2"><h2 class="anchored" data-anchor-id="unknown-origin-data">Unknown origin data</h2>
 <p>Today we will be working with painted lady butterflies collected from various locations in South Africa</p>
@@ -379,8 +378,7 @@ More resources
 <span>  <span class="fu"><a href="https://dieghernan.github.io/tidyterra/reference/ggspatvector.html">geom_spatvector</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">SA_outline</span>,fill<span class="op">=</span><span class="cn">NA</span>,colour<span class="op">=</span><span class="st">"black"</span><span class="op">)</span><span class="op">+</span> <span class="co"># country outline</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">unknownxy</span>,pch<span class="op">=</span><span class="fl">1</span>, col<span class="op">=</span><span class="st">"red3"</span>,cex<span class="op">=</span><span class="fl">2</span><span class="op">)</span><span class="op">+</span>  <span class="co"># butterfly collection sites</span></span>
 <span>  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html">scale_fill_viridis</a></span><span class="op">(</span>option<span class="op">=</span><span class="st">"turbo"</span>, na.value <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span><span class="op">+</span> <span class="co">#pretty colors</span></span>
-<span>  <span class="fu"><a href="https://jrnold.github.io/ggthemes/reference/theme_map.html">theme_map</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span> <span class="co"># cute map theme</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span> <span class="co"># cute map theme</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position<span class="op">=</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.key.width<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html">unit</a></span><span class="op">(</span><span class="fl">2</span>, <span class="st">"cm"</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_colourbar.html">guide_colourbar</a></span><span class="op">(</span>direction <span class="op">=</span> <span class="st">'horizontal'</span>, <span class="co">##transform legend</span></span>
@@ -911,7 +909,6 @@ What do we assume when there is no prior?
 <span>  <span class="fu"><a href="https://dieghernan.github.io/tidyterra/reference/ggspatvector.html">geom_spatvector</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">SA_outline</span>,fill<span class="op">=</span><span class="cn">NA</span>,colour<span class="op">=</span><span class="st">"black"</span><span class="op">)</span><span class="op">+</span> <span class="co"># country outline</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">unknownxy</span>,pch<span class="op">=</span><span class="fl">1</span>, col<span class="op">=</span><span class="st">"red3"</span>,cex<span class="op">=</span><span class="fl">2</span><span class="op">)</span><span class="op">+</span>  <span class="co"># butterfly collection sites</span></span>
 <span>  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html">scale_fill_viridis</a></span><span class="op">(</span>option<span class="op">=</span><span class="st">"turbo"</span>, na.value <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span><span class="op">+</span> <span class="co">#pretty colors</span></span>
-<span>  <span class="fu"><a href="https://jrnold.github.io/ggthemes/reference/theme_map.html">theme_map</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span> <span class="co"># cute map theme</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position<span class="op">=</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.key.width<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html">unit</a></span><span class="op">(</span><span class="fl">2</span>, <span class="st">"cm"</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
@@ -934,7 +931,6 @@ What do we assume when there is no prior?
 <span>  <span class="fu"><a href="https://dieghernan.github.io/tidyterra/reference/ggspatvector.html">geom_spatvector</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">SA_outline</span>,fill<span class="op">=</span><span class="cn">NA</span>,colour<span class="op">=</span><span class="st">"black"</span><span class="op">)</span><span class="op">+</span> <span class="co"># country outline</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">unknownxy</span>,pch<span class="op">=</span><span class="fl">1</span>, col<span class="op">=</span><span class="st">"red3"</span>,cex<span class="op">=</span><span class="fl">2</span><span class="op">)</span><span class="op">+</span>  <span class="co"># butterfly collection sites</span></span>
 <span>  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html">scale_fill_viridis</a></span><span class="op">(</span>option<span class="op">=</span><span class="st">"magma"</span>, na.value <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span><span class="op">+</span> <span class="co">#pretty colors</span></span>
-<span>  <span class="fu"><a href="https://jrnold.github.io/ggthemes/reference/theme_map.html">theme_map</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span> <span class="co"># cute map theme</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position<span class="op">=</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.key.width<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html">unit</a></span><span class="op">(</span><span class="fl">2</span>, <span class="st">"cm"</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
@@ -1033,12 +1029,12 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] ggthemes_5.2.0      viridis_0.6.5       viridisLite_0.4.2  
- [4] tidyterra_0.7.2     sf_1.0-21           rnaturalearth_1.1.0
- [7] terra_1.8-70        assignR_2.4.3.9000  lubridate_1.9.4    
-[10] forcats_1.0.1       stringr_1.5.2       dplyr_1.1.4        
-[13] purrr_1.1.0         readr_2.1.5         tidyr_1.3.1        
-[16] tibble_3.3.0        ggplot2_4.0.0       tidyverse_2.0.0    
+ [1] viridis_0.6.5       viridisLite_0.4.2   tidyterra_0.7.2    
+ [4] sf_1.0-21           rnaturalearth_1.1.0 terra_1.8-70       
+ [7] assignR_2.4.3.9000  lubridate_1.9.4     forcats_1.0.1      
+[10] stringr_1.5.2       dplyr_1.1.4         purrr_1.1.0        
+[13] readr_2.1.5         tidyr_1.3.1         tibble_3.3.0       
+[16] ggplot2_4.0.0       tidyverse_2.0.0    
 
 loaded via a namespace (and not attached):
  [1] gtable_0.3.6       xfun_0.53          htmlwidgets_1.6.4  lattice_0.22-7    

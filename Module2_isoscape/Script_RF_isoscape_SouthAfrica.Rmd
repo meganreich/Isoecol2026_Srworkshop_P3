@@ -1,0 +1,1197 @@
+---
+title: "Script_RF_isoscape_SouthAfrica"
+author: "C. Bataille"
+date: "2026-10-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Overview
+
+This script is adapted from the original work of Bataille CP, Crowley BE, Wooller MJ, and GJ Bowen (2020), "Advances in global bioavailable strontium isoscapes." (DOI: https://doi.org/10.1016/j.palaeo.2020.109849)
+
+The purpose of this vignette is to guide you through the steps of building a bioavailable 87Sr/86Sr isoscape using the Caret package. Note that certain steps in the script may take considerable time.
+
+This version was prepared for the ISOECOL 2026 workshop (Hong Kong) and uses South Africa as a case study.
+
+## Objective:
+Build a random forest 87Sr/86Sr isoscape for South Africa.
+
+## What is different from the global / North America version?
+
+1. **Training data**: a harmonised and screened dataset of bioavailable 87Sr/86Sr for South Africa in the ARDUOUS format (prepared in Module 1), mostly from plants.
+2. **Covariates**: the global Eckert IV 1 km rasters have already been clipped to South Africa for you (folder `Project_Raster/clipped_za`). No cropping is needed, and the rasters are small enough to run on a laptop.
+3. **New regional covariates**: in addition to the global covariates, we have high-resolution African soil chemistry (iSDA Africa), the 1:1M geological map of South Africa and the South African vegetation map. We also compute neighbourhood (5, 10, 25 km) means of the bedrock 87Sr/86Sr and geological age (Step 2.8), which substantially improve the predictions in unsampled regions.
+4. **Spatial cross-validation**: we compare random and spatial-block cross-validation (Step 4.2) and we use the spatial cross-validation to prune the predictors selected by VSURF (Step 4.4) and to tune the model (Step 4.6).
+5. **Faster**: The whole script runs in ~15-20 min on a laptop.
+
+## Folder organisation
+
+Put this .Rmd file in your workshop folder, next to:
+
+- `Data/SouthAfrica_bioavailable_Sr_ARDUOUS.csv`
+- `Project_Raster/clipped_za/` (unzip `Project_Raster.zip` here)
+
+## SETUP
+
+```{r}
+# install if necessary
+list.of.packages <- c("terra", "sf", "rnaturalearth", "rnaturalearthdata", "caret", "VSURF", "ranger", "corrplot", "viridis", "patchwork", "ggplot2", "pdp")
+
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+
+if(length(new.packages)) install.packages(new.packages)
+
+  library(parallel)    # detectCores() (part of base R)
+  library(terra)
+  library(sf)
+  library(viridis)
+  library(rnaturalearth)
+  library(rnaturalearthdata)
+  library(caret)
+  library(VSURF)
+  library(ranger)
+  library(corrplot)
+  library(patchwork)
+  library(ggplot2)
+  library(pdp)
+  library(tidyverse)
+
+# Number of cores used by VSURF (ranger uses all the cores by itself)
+n_cores <- max(detectCores() - 1, 1)  # convention to leave 1 core for OS
+
+# caret runs sequentially here (ranger is already multi-threaded). If a parallel
+# cluster is still registered from a previous session (e.g. registerDoParallel()),
+# caret would try to use it and fail with "invalid connection": reset it.
+foreach::registerDoSEQ()
+```
+
+```{r}
+#!! Create or use sub folders to keep things tidy!
+mydir <- getwd()
+
+dir.create(file.path(mydir, "/Output", fsep = .Platform$file.sep), showWarnings = FALSE)
+
+# Folder with the rasters clipped to South Africa (Eckert IV, 1 km)
+# If you have only the zip file, run the commented line below to unzip it
+# unzip("Project_Raster.zip", exdir = "Project_Raster")
+raster_dir <- "Project_Raster/clipped_za"
+
+# Projection used for everything in this script (Eckert IV, equal area, metres)
+eck4 <- "+proj=eck4 +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs"
+```
+
+### STEP 1: TRAINING DATASET
+
+#### 1.1. Import the bioavailable 87Sr/86Sr training data
+
+The training dataset `Data/SouthAfrica_bioavailable_Sr_ARDUOUS.csv` has already been harmonised and screened for you (this is what we did in Module 1 with the ARDUOUS template).
+
+
+**This dataset mostly represents bioavailable 87Sr/86Sr from plants** (608 of 927 records, 66%), complemented by modern fauna with small home ranges (259 records, 28%: rodents, hyraxes, hares, snails, tortoises, small antelopes) and soil leachates (60 records, 6%). It includes 579 distinct sampling locations.
+
+Screening applied:
+
+- only records within South Africa, with coordinates and 0.700 < 87Sr/86Sr < 0.800;
+- waters (rivers, groundwater) removed, because they integrate whole catchments;
+- humans, hominins, primates, elephants and ivory, domestic cattle, fish, birds, large and migratory herbivores and large carnivores removed, because their 87Sr/86Sr does not reflect where they were collected;
+- fossil specimens removed (e.g. the Elandsfontein and Sterkfontein/Swartkrans fossil fauna);
+- duplicated measurements present in both compilations removed.
+
+```{r}
+#Import training data: harmonised and screened bioavailable 87Sr/86Sr dataset for South Africa (ARDUOUS format)
+#Mostly bioavailable Sr data from plants (66%), plus small-home-range fauna (28%) and soils (6%)
+# read.csv() renames the ARDUOUS column "87Sr86Sr" to "X87Sr86Sr" (R names cannot start with a number)
+sr_orig <- read.csv("Data/SouthAfrica_bioavailable_Sr_ARDUOUS.csv")
+
+nrow(sr_orig)
+table(sr_orig$material_type)
+summary(sr_orig$X87Sr86Sr)
+```
+
+#### 1.2. Project the bioavailable 87Sr/86Sr spatially into a global Eckert IV projection
+We will use Eck IV as our reference projection
+
+```{r}
+sr_proj <- st_as_sf(sr_orig, coords = c("collection_decimal_longitude", "collection_decimal_latitude"), crs = st_crs(4326), remove = FALSE) %>%
+  st_transform(crs = eck4)
+plot(sr_proj["X87Sr86Sr"], pch = 16, cex = 0.6)
+```
+
+#### 1.3 Administrative maps
+
+Download accessory maps for figures of country boundaries using open-access naturalearth map library and reproject those maps into Eckert IV
+
+```{r}
+world <- ne_countries(scale = "medium", returnclass = "sf")
+world_p <- st_as_sf(world, crs = st_crs(4326)) %>%
+  st_transform(crs = eck4)
+# Keep South Africa and neighbouring countries for the figures
+za_p <- world_p[world_p$admin %in% c("South Africa", "Lesotho", "eSwatini", "Swaziland", "Namibia", "Botswana", "Zimbabwe", "Mozambique"),]
+plot(st_geometry(za_p))
+```
+
+
+## STEP 2: GLOBAL COVARIATES
+
+In this step, we will load the covariates required to train our random forest model. These covariates encompass potential geological, environmental, and climatological variables that may influence bioavailable 87Sr/86Sr based on the cycling of strontium isotopes
+
+Follow these instructions to obtain and prepare the covariate data:
+
+### 2.1 Download and Reprojection
+
+1. The global rasters are in the Projected_rasters folder of the OSF project (see this link: https://osf.io/a2r7g/).
+2. For this workshop, they have already been clipped to South Africa and are in `Project_Raster.zip`. Unzip the file (use [7-Zip](https://www.7-zip.org/) if Windows complains about the size).
+3. Verify that the unzipped folder is `Project_Raster/clipped_za`. If necessary, change `raster_dir` in the setup chunk.
+
+#### Important Note:
+The geospatial layers must be in the same projection, resolution, and snapped to each other when building the spatial random forest model. These operations are time-consuming due to the large size of the layers, so they have been preprocessed for you.
+
+Now, you should find the preprocessed layers in your Project_Raster/clipped_za folder. Feel free to play with the layers and to plot them (i.e. plot() to look at each of those)
+
+#### Geospatial layers reprojected globally in Eckert IV at 1km resolution, clipped to South Africa
+
+Note: compared with the global script, a few global layers are not in the South Africa set (Bouguer anomaly, permafrost, mean annual temperature and the other WorldClim variables except wind). Permafrost is irrelevant in South Africa anyway!
+
+### 2.2 Load the geological variables
+You will have to change the folder path to your own folder path where you loaded your Project_Raster
+```{r}
+###Global median, Q1 and Q3 bedrock model 87Sr/86Sr (Bataille et al. 2020)
+###(in this clipped set, r.m1 is identical to r.srsrq1)
+
+r.m1 <- terra::rast(file.path(raster_dir, "r.m1.tif"))
+r.srsrq1 <- terra::rast(file.path(raster_dir, "r.srsrq1.tif"))
+r.srsrq3 <- terra::rast(file.path(raster_dir, "r.srsrq3.tif"))
+
+###Global mean, min and max geological age in Myrs from the GLiM Hartman and Moosdorf 2012 and Bataille et al. 2020 for text to numerica age field converstion
+
+r.meanage_geol <- terra::rast(file.path(raster_dir, "r.meanage_geol.tif"))
+r.minage_geol <- terra::rast(file.path(raster_dir, "r.minage_geol.tif"))
+r.maxage_geol <- terra::rast(file.path(raster_dir, "r.maxage_geol.tif"))
+
+###Global mean of terrane age in Myrs (Mooney et al. 1988)
+
+r.age <- terra::rast(file.path(raster_dir, "r.age.tif"))
+
+###Global unconsolidated sediments type (see publications for each class) (Börker et al., 2018)
+
+r.GUM <- terra::rast(file.path(raster_dir, "r.GUM.tif"))
+
+###Global elevation in m ((Jarvis et al., 2008) )
+r.elevation <- terra::rast(file.path(raster_dir, "r.elevation.tif"))
+
+###NEW (regional) - Geological map of South Africa 1:1 000 000 (Council for Geoscience)
+###Categorical: each value is a lithostratigraphic unit (field UQ_SACS_NO of the attribute table)
+r.geomap <- terra::rast(file.path(raster_dir, "r.geomap.tif"))
+```
+
+### 2.3 Load climate variables
+
+```{r}
+### Mean annual precipitation (mm/yr) (Harris et al., 2020)
+
+r.map <- terra::rast(file.path(raster_dir, "r.map.tif"))
+
+###Global Aridity Index Aridity Index <-  Mean annual precipitation÷ Mean annual evapotranspiration (Trabuco & Zomer, 2019)
+
+r.ai <- terra::rast(file.path(raster_dir, "r.ai.tif"))
+
+### Global Potential Evapo-Transpiration (mm day-1) (Trabuco & Zomer, 2019)
+r.pet <- terra::rast(file.path(raster_dir, "r.pet.tif"))
+
+### Potential evapotranspiration, climatology version (mm/yr) [CHECK REFERENCE - not in the global script]
+r.pet_clim <- terra::rast(file.path(raster_dir, "r.pet_clim.tif"))
+
+###World clim data (wind speed, m/s)
+
+r.wind  <- terra::rast(file.path(raster_dir, "r.wind.tif"))
+```
+
+### 2.4 Load atmospheric deposition variables
+
+Important: these layers come from global atmospheric models with a coarse resolution (~1 to 2 degrees). They have been resampled to 1 km but, inside a single country, they are smooth gradients (you can see the large "blocks" if you plot them). We will come back to this in Step 3.5.
+
+```{r}
+###Multi-models average of dust deposition (g/m²/year) (Chien et al., 2016; Brahney et al., 2015)
+
+r.dust <- terra::rast(file.path(raster_dir, "r.dust.tif"))
+
+###Simulation of sea salt aerosol deposition (g/m2/year) (Chien et al., 2016)
+
+r.salt <- terra::rast(file.path(raster_dir, "r.salt.tif"))
+
+###Simulation of distance (distance to the coastline)
+
+r.distance <- terra::rast(file.path(raster_dir, "r.distance.tif"))
+
+###Volcanos (S) (kg/m2/s) (Brahney et al., 2015)
+
+r.volc <- terra::rast(file.path(raster_dir, "r.volc.tif"))
+
+###Black carbon deposition (kg/m2/s) (Chien et al., 2016)
+
+r.fire <- terra::rast(file.path(raster_dir, "r.fire.tif"))
+
+### Fossil Fuel (Black Carbon) (kg/m2/s) (Chien et al., 2016)
+r.foss <- terra::rast(file.path(raster_dir, "r.foss.tif"))
+
+### Biofuel and primary biogenic particle deposition (kg/m2/s) [CHECK REFERENCE - not in the global script; presumably same model set as above (Chien et al., 2016)]
+r.biofuels <- terra::rast(file.path(raster_dir, "r.biofuels.tif"))
+r.biogenic <- terra::rast(file.path(raster_dir, "r.biogenic.tif"))
+```
+
+### 2.5 Load soil properties variables
+
+```{r}
+### Downloaded from SoilGrids for 5cm to 15cm soil depth include
+
+###Clay fraction (%), ph, Cation Exchange Capacity (cmol+ /kg) , bulk density, organic carbon content (Hengl et al., 2021)
+r.clay <- terra::rast(file.path(raster_dir, "r.clay.tif"))
+r.ph <- terra::rast(file.path(raster_dir, "r.ph.tif"))
+r.cec <- terra::rast(file.path(raster_dir, "r.cec.tif"))
+r.bulk <- terra::rast(file.path(raster_dir, "r.bulk.tif"))
+r.ocs <- terra::rast(file.path(raster_dir, "r.ocs.tif"))
+r.w0033 <- terra::rast(file.path(raster_dir, "r.w0033.tif"))
+r.w1500 <- terra::rast(file.path(raster_dir, "r.w1500.tif"))
+r.w0010_30 <- terra::rast(file.path(raster_dir, "r.w0010_30.tif"))
+
+###Soil organic content, organic carbon density and nitrogen content between 5-15cm in soil (Hengl et al., 2023)
+
+r.soc <- terra::rast(file.path(raster_dir, "r.soc.tif"))
+r.ocd <- terra::rast(file.path(raster_dir, "r.ocd.tif"))
+r.nitrogen <- terra::rast(file.path(raster_dir, "r.nitrogen.tif"))
+
+###Global soil moisture map(Guevara et al., 2020)
+r.sw <- terra::rast(file.path(raster_dir, "r.sw.tif"))
+
+###Global wetland(Fluet-Chouinard et al., 2023)
+r.wetland <- terra::rast(file.path(raster_dir, "r.wetland.tif"))
+
+### Phosphorus fertilizer application [CHECK REFERENCE - not in the global script]
+r.pfert <- terra::rast(file.path(raster_dir, "r.pfert.tif"))
+```
+
+### 2.6 Load the African soil chemistry variables (NEW - regional)
+
+iSDA Africa soil maps, originally at 30 m and aggregated to 1 km (Hengl et al., 2021, Scientific Reports 11: 6130). Two depths: `.0` = 0-20 cm and `.20` = 20-50 cm.
+Extractable elements are in ppm (Mehlich-3 extraction); eCEC = effective cation exchange capacity (cmol+/kg); texture = USDA texture class.
+
+```{r}
+###Extractable Ca, Mg, K (major cations of the exchange complex, controls on Sr)
+r.africa.Ca.0 <- terra::rast(file.path(raster_dir, "r.africa.Ca.0.tif"))
+r.africa.Ca.20 <- terra::rast(file.path(raster_dir, "r.africa.Ca.20.tif"))
+r.africa.Mg.0 <- terra::rast(file.path(raster_dir, "r.africa.Mg.0.tif"))
+r.africa.Mg.20 <- terra::rast(file.path(raster_dir, "r.africa.Mg.20.tif"))
+r.africa.K.0 <- terra::rast(file.path(raster_dir, "r.africa.K.0.tif"))
+r.africa.K.20 <- terra::rast(file.path(raster_dir, "r.africa.K.20.tif"))
+
+###Extractable Al, Fe (weathering intensity), P, S, Zn
+r.africa.Al.0 <- terra::rast(file.path(raster_dir, "r.africa.Al.0.tif"))
+r.africa.Al.20 <- terra::rast(file.path(raster_dir, "r.africa.Al.20.tif"))
+r.africa.Fe.0 <- terra::rast(file.path(raster_dir, "r.africa.Fe.0.tif"))
+r.africa.Fe.20 <- terra::rast(file.path(raster_dir, "r.africa.Fe.20.tif"))
+r.africa.P.0 <- terra::rast(file.path(raster_dir, "r.africa.P.0.tif"))
+r.africa.P.20 <- terra::rast(file.path(raster_dir, "r.africa.P.20.tif"))
+r.africa.S.0 <- terra::rast(file.path(raster_dir, "r.africa.S.0.tif"))
+r.africa.S.20 <- terra::rast(file.path(raster_dir, "r.africa.S.20.tif"))
+r.africa.Zn.0 <- terra::rast(file.path(raster_dir, "r.africa.Zn.0.tif"))
+r.africa.Zn.20 <- terra::rast(file.path(raster_dir, "r.africa.Zn.20.tif"))
+
+###Effective cation exchange capacity
+r.africa.eCEC.0 <- terra::rast(file.path(raster_dir, "r.africa.eCEC.0.tif"))
+r.africa.eCEC.20 <- terra::rast(file.path(raster_dir, "r.africa.eCEC.20.tif"))
+
+###Sand, silt and texture class
+r.africa.sand.0 <- terra::rast(file.path(raster_dir, "r.africa.sand.0.tif"))
+r.africa.sand.20 <- terra::rast(file.path(raster_dir, "r.africa.sand.20.tif"))
+r.africa.silt.0 <- terra::rast(file.path(raster_dir, "r.africa.silt.0.tif"))
+r.africa.silt.20 <- terra::rast(file.path(raster_dir, "r.africa.silt.20.tif"))
+r.africa.texture.0 <- terra::rast(file.path(raster_dir, "r.africa.texture.0.tif"))
+r.africa.texture.20 <- terra::rast(file.path(raster_dir, "r.africa.texture.20.tif"))
+```
+
+### 2.7 Load vegetation variables (NEW - regional)
+
+```{r}
+###Vegetation map of South Africa, Lesotho and Swaziland (Mucina & Rutherford, 2006; SANBI VegMap)
+###Categorical: each value is a vegetation unit (field T_Name of the attribute table)
+r.vegmap <- terra::rast(file.path(raster_dir, "r.vegmap.tif"))
+```
+
+### 2.8 Neighbourhood geology covariates (NEW)
+
+The bedrock 87Sr/86Sr model (`r.srsrq1`) and the age of the geological units (`r.meanage_geol`) describe the rock **directly under each 1 km pixel**, with sharp boundaries between units. But bioavailable Sr at a site does not come only from the rock under it:
+
+- soils form on sediments, colluvium and alluvium transported from the surrounding hills;
+- dust and runoff mix material from the surrounding area;
+- plants and animals integrate Sr over their root zone or home range;
+- the sample coordinates and the geological contacts both have location errors of hundreds of metres to kilometres.
+
+To represent this, we compute the **mean of the bedrock 87Sr/86Sr and of the geological age within circles of 5, 10 and 25 km** around each pixel (moving-window or "focal" mean). The random forest can then learn at which scale the geology best predicts bioavailable 87Sr/86Sr.
+
+In the training data, adding these six layers improves the spatial cross-validation R2 from ~0.5 to ~0.7. It does not help to go beyond 25 km: at 50 km the layers become so smooth that they behave like coordinates (see Step 3.5).
+
+The computation takes ~1 min; the rasters are saved in `Project_Raster/neighbourhood/` and re-used the next time.
+
+```{r}
+focal_dir <- "Project_Raster/neighbourhood"
+dir.create(focal_dir, showWarnings = FALSE)
+
+focal_names <- c()
+for (v in c("r.srsrq1", "r.meanage_geol")) {
+  for (km in c(5, 10, 25)) {
+    name <- sprintf("%s.f%02d", v, km)               # e.g. r.srsrq1.f05 = mean within 5 km
+    file <- file.path(focal_dir, paste0(name, ".tif"))
+    if (!file.exists(file)) {
+      r <- get(v)
+      w <- focalMat(r, km * 1000, type = "circle")   # circular window, radius in metres
+      w[w > 0] <- 1                                   # simple (unweighted) mean
+      f <- focal(r, w = w, fun = "mean", na.rm = TRUE)
+      f <- mask(f, r)                                 # keep the land mask of the original raster
+      writeRaster(f, file, overwrite = TRUE)
+    }
+    assign(name, terra::rast(file))
+    focal_names <- c(focal_names, name)
+  }
+}
+focal_names
+plot(c(r.srsrq1, r.srsrq1.f05, r.srsrq1.f10, r.srsrq1.f25), nc = 4)
+```
+
+### 2.9 Put all covariates in a list
+
+Instead of handling each raster separately, we store all of them in a single stack. `predictor_names` is the list of all the covariates we just loaded.
+
+```{r}
+predictor_names <- c("r.m1", "r.srsrq1", "r.srsrq3",
+                     "r.meanage_geol", "r.minage_geol", "r.maxage_geol",
+                     "r.age", "r.GUM", "r.elevation", "r.geomap",
+                     "r.map", "r.ai", "r.pet", "r.pet_clim", "r.wind",
+                     "r.dust", "r.salt", "r.distance", "r.volc", "r.fire", "r.foss", "r.biofuels", "r.biogenic",
+                     "r.clay", "r.ph", "r.cec", "r.bulk", "r.ocs", "r.w0033", "r.w1500", "r.w0010_30",
+                     "r.soc", "r.ocd", "r.nitrogen", "r.sw", "r.wetland", 
+                     "r.africa.Ca.0", "r.africa.Ca.20", "r.africa.Mg.0", "r.africa.Mg.20",
+                     "r.africa.K.0", "r.africa.K.20", "r.africa.Al.0", "r.africa.Al.20",
+                     "r.africa.Fe.0", "r.africa.Fe.20", "r.africa.P.0", "r.africa.P.20",
+                     "r.africa.S.0", "r.africa.S.20", "r.africa.Zn.0", "r.africa.Zn.20",
+                     "r.africa.eCEC.0", "r.africa.eCEC.20",
+                     "r.africa.sand.0", "r.africa.sand.20", "r.africa.silt.0", "r.africa.silt.20",
+                     "r.africa.texture.0", "r.africa.texture.20",
+                     "r.vegmap",
+                     focal_names)
+
+# Convert character names to actual objects dynamically and combine into a single SpatRaster
+stack_all <- do.call(c, lapply(predictor_names, get))
+names(stack_all) <- predictor_names
+
+# The two categorical maps come with an attribute table (unit names). For the
+# regression matrix we only need the numeric code of each class, so we drop the
+# attribute table (otherwise the unit names, with spaces and apostrophes, end up
+# in the table and break the median aggregation)
+for (p in c("r.geomap", "r.vegmap")) levels(stack_all[[p]]) <- NULL
+
+# Have a look at some of them
+plot(stack_all[[c("r.srsrq1", "r.meanage_geol", "r.distance", "r.map", "r.dust", "r.africa.Ca.0")]])
+```
+
+## STEP 3: EXTRACTION AND AMALGAMATION OF BASE DATA
+
+Now that you have a training set, consisting of projected points with 87Sr/86Sr in Eck IV, and spatial covariates also projected in Eck IV, you can overlay the points over the maps and extract the pixel value of each covariate under the point. Follow these steps:
+
+1. Overlay the points over the maps.
+2. Extract the pixel value of each covariate under the point.
+3. Store these values for each covariate into a list.
+4. Amalgamate the lists into one large regression matrix containing all 87Sr/86Sr points and the values of the predictors.
+5. Store this matrix into a vector.
+
+### Common Issue: Handling Nodata Values
+One common issue in spatial extraction is that points may fall on a pixel with a nodata value. This often occurs around coastlines, rivers, and lakes, where points may fall in the ocean. To mitigate data loss, a function has been coded to extract the nearest non-NA value of the covariate.
+
+### 3.1 Extract
+```{r}
+# Extract the values of all layers under the points; for points falling on a NA
+# pixel, take the nearest non-NA pixel within max_dist (in map units, here metres)
+extract_nearest_non_na <- function(points, r, max_dist = 5000) {
+  v <- terra::extract(r, vect(points), ID = FALSE)
+  xy <- st_coordinates(points)
+  for (i in which(!complete.cases(v))) {
+    # small window of rasters around the point
+    rr <- crop(r, ext(xy[i, 1] - max_dist, xy[i, 1] + max_dist, xy[i, 2] - max_dist, xy[i, 2] + max_dist))
+    vals <- values(rr)
+    cxy <- xyFromCell(rr, 1:ncell(rr))
+    d <- sqrt((cxy[, 1] - xy[i, 1])^2 + (cxy[, 2] - xy[i, 2])^2)
+    # for each layer with a NA, take the value of the nearest non-NA pixel
+    for (j in which(is.na(v[i, ]))) {
+      ok <- !is.na(vals[, j])
+      if (any(ok)) v[i, j] <- vals[ok, j][which.min(d[ok])]
+    }
+  }
+  v
+}
+```
+
+```{r warning = FALSE}
+# For each covariate extract values under points (all covariates at once)
+s_proj <- sr_proj
+extracted <- extract_nearest_non_na(s_proj, stack_all)
+
+# Number of points that still have NA (no valid pixel within 5 km)
+sum(!complete.cases(extracted))
+
+s_xy <- data.frame(st_coordinates(s_proj))
+```
+
+### 3.2 Amalgamate into a regression matrix
+```{r}
+### Create the regression matrix. Append all extracted data and change names of column
+
+s_proj_xy <- data.frame(Latitude = s_proj$collection_decimal_latitude,
+                        Longitude = s_proj$collection_decimal_longitude,
+                        X87Sr86Sr = s_proj$X87Sr86Sr,
+                        s_xy,
+                        as.data.frame(extracted))
+
+# the column names are the names of the covariates ("r.m1", "r.srsrq1", ...)
+colnames(s_proj_xy) <- c("Latitude", "Longitude", "X87Sr86Sr", "X", "Y", predictor_names)
+```
+
+### 3.2.1 Save table
+
+```{r}
+#Save table into directory for future use
+write.table(s_proj_xy, "Output/sr_proj_xy_all.txt", sep = "\t",col.names = T, row.names = F, quote = F)
+```
+
+### 3.3 Save and Reload
+If you want to bypass the time-consuming Step 3.1, you can directly run the following line to load the table.
+
+```{r}
+# Load table from previous chunk
+sr_proj_xy <- read.table("Output/sr_proj_xy_all.txt", sep = "\t", h = T)
+```
+
+
+### 3.4 Clean Regression Matrix
+
+Follow these steps to clean and prepare your regression matrix for analysis:
+
+#### 3.4.1 Remove Rows with NA Values
+Remove all rows from your regression matrix that contain NA values. Although there shouldn't be many due to the function used to search for the nearest available value, it's good practice to eliminate any remaining NA values.
+
+Handle Outliers
+Decide if you want to filter your bioavailable dataset for potential outliers. While Random Forest prediction is not sensitive to outliers, model performance metrics can be affected. As in the global dataset, we remove values >0.8 based on the distribution of 87Sr/86Sr.
+
+Aggregate Site 87Sr/86Sr using Median Values
+Consider aggregating 87Sr/86Sr values for sites with multiple samples. While it's fine to estimate intra-site uncertainty, having multiple samples per site introduces non-independence in the training model. Here, I decided to aggregate site 87Sr/86Sr using median values.
+
+Now, your regression matrix is cleaned and ready for further analysis.
+
+Feel free to visualize it in your environment
+```{r}
+# remove NA values cases if any from the dataset
+sr_proj_xy <- sr_proj_xy[!is.na(sr_proj_xy$r.srsrq1),]
+
+# Optional. Filter 'sr_proj_xy' to exclude rows with super high or zero values
+sr_proj_xy1 <- sr_proj_xy[sr_proj_xy$X87Sr86Sr <= 0.8, ]
+sr_proj_xy2 <- sr_proj_xy1[!(sr_proj_xy1$X87Sr86Sr == 0), ]
+
+#Aggregate all samples by latitude and longitude to avoid having multiple samples per site
+#(the categorical maps, r.geomap and r.vegmap, are aggregated with the median too; this is fine
+# because all samples of one site fall in the same class)
+sr_agg1 <- aggregate(sr_proj_xy2, by = list(sr_proj_xy2$Latitude, sr_proj_xy2$Longitude), FUN = median, na.rm = TRUE)
+sr_agg1 <- sr_agg1[,3:ncol(sr_agg1)]   # remove the two grouping columns added by aggregate()
+nrow(sr_agg1)
+```
+
+### 3.5 Choose the candidate covariates
+
+Before any statistics, think about the processes! Three groups of covariates need care in South Africa:
+
+1. **Coarse atmospheric deposition layers** (`r.dust`, `r.salt`, `r.volc`, `r.fire`, `r.foss`, `r.biofuels`, `r.biogenic`). They come from global models at ~1-2 degree resolution. Inside South Africa they are smooth gradients that the random forest can use as a proxy for latitude and longitude: the model "memorises" where the samples are. The random cross-validation looks good but the model does not transfer to regions without data (see Steps 4.2 to 4.5). Sea-salt input is better captured here by distance to the coast (`r.distance`).
+2. **Categorical maps with hundreds of classes** (`r.geomap`, `r.vegmap`). Most classes contain no training sample, and the model cannot say anything about a class it has never seen. Their information is largely carried by the continuous geology layers (`r.srsrq1`, `r.srsrq3`, `r.*age_geol`).
+3. **Duplicated layers**: `r.m1` is identical to `r.srsrq1` in this clipped set.
+
+The switch below lets you choose. Good exercise: run the whole script with `"all"` and with `"no_coarse"` and compare the random and spatial cross-validation (Steps 4.5 and 4.6) and the maps.
+
+```{r}
+candidate_set <- "all"    # "no_coarse" or "all"
+
+coarse_layers      <- c("r.dust", "r.salt", "r.volc", "r.fire", "r.foss", "r.biofuels", "r.biogenic")
+categorical_layers <- c("r.geomap", "r.vegmap")
+
+drop_layers <- c("r.m1", categorical_layers)
+if (candidate_set == "no_coarse") drop_layers <- c(drop_layers, coarse_layers)
+
+candidates <- setdiff(predictor_names, drop_layers)
+length(candidates)
+```
+
+### 3.6 Check for Highly Correlated Variables
+
+Before building the model, it's essential to examine potential issues with highly correlated variables in the regression matrix. While random forest can handle collinear variables to some extent, excessive collinearity can complicate model interpretation. We will use the VSURF package to address collinearity, but first, we'll identify and remove variables with a Pearson correlation greater than 0.9. This step ensures that the regression matrix is free from variables with strong Pearson correlations, setting the stage for more effective model building.
+
+In the global script the correlated variables were removed by hand (column numbers). Here we do it automatically: `findCorrelation()` (caret) looks at the correlation matrix and, for each pair with |R| > 0.9, removes the variable with the largest mean correlation with all the others.
+
+Now, you're ready to proceed with model development.
+
+```{r}
+#check correlation between covariates and remove redundant variables
+cor_mat <- cor(sr_agg1[, candidates], use = "pairwise.complete.obs")
+corrplot(cor_mat, method = "color", type = "upper", tl.cex = 0.5, tl.col = "black")
+
+high_cor <- findCorrelation(cor_mat, cutoff = 0.9, names = TRUE)
+high_cor   # variables removed because R > 0.9 with another variable
+
+kept <- setdiff(candidates, high_cor)
+
+sr_agg <- sr_agg1[, c("X87Sr86Sr", "X", "Y", kept)]
+# Remove incomplete cases with NA in covariates
+sr_agg <- sr_agg[complete.cases(sr_agg),]
+# Save table on directory
+write.table(sr_agg,"Output/sr_agg_all.txt",sep = "\t",col.names = T, row.names = F, quote = F)
+```
+
+# PART 2: Training a Model with All Bioavailable 87Sr/86Sr Data
+
+## Objective 1: Build a Random Forest 87Sr/86Sr Isoscape for South Africa
+
+As the initial step toward achieving our objective, we will use all the bioavailable data filtered in the previous steps to train our first random forest model. This process will help us become familiar with the random forest regression framework, interpretation, and visualization tools.
+
+### Load Cleaned and Prepared Data
+
+Load the cleaned and prepared regression matrix obtained after handling NA values, outliers, and collinear variables.
+
+
+## STEP 4: Train Random Forest Model
+
+### 4.1 Training Set
+
+If you encountered challenges in completing Steps 1 to 3 or if the processing time was too long, you can directly upload the training set to start from here.
+This allows you to continue with the subsequent steps using the provided training set, saving you time and effort.
+
+Now, proceed with training your random forest model.
+```{r}
+sr_agg <- read.table("Output/sr_agg_all.txt", sep = "\t", h = T)
+
+# Training sites as sf points (Eckert IV), used for maps and distances below
+sites_sf <- st_as_sf(sr_agg, coords = c("X", "Y"), crs = eck4, remove = FALSE)
+
+# Small helper used throughout Step 4: cross-validated predictions of a ranger
+# model for a set of predictors and a vector of fold numbers (one per site).
+# It returns RMSE and R2 of the out-of-fold predictions.
+cv_ranger <- function(vars, folds, data = sr_agg, num.trees = 300) {
+  pred <- rep(NA_real_, nrow(data))
+  for (k in unique(folds)) {
+    test <- folds == k
+    m <- ranger(x = data[!test, vars, drop = FALSE], y = data$X87Sr86Sr[!test],
+                num.trees = num.trees, seed = 1)
+    pred[test] <- predict(m, data[test, vars, drop = FALSE])$predictions
+  }
+  c(RMSE = sqrt(mean((data$X87Sr86Sr - pred)^2)), R2 = cor(data$X87Sr86Sr, pred)^2)
+}
+```
+
+### 4.2 Random vs. spatial cross-validation: why it matters (NEW)
+
+Before selecting predictors and training the model, we need to decide **how we will evaluate it**, because the evaluation drives the predictor selection and the tuning.
+
+In a regular (random) k-fold cross-validation, the sites are split at random into 10 folds. Each fold is predicted by a model trained on the other 9. But 87Sr/86Sr data are spatially clustered (in South Africa, most sites are in the south-western Cape): a test site almost always has a training site a few hundred metres away, with the same geology and the same 87Sr/86Sr. Random cross-validation therefore measures how well the model **interpolates between nearby sites**, not how well it predicts **the large unsampled regions** of the map.
+
+In a spatial-block cross-validation, the folds are geographical clusters of sites (here 10 clusters made with k-means on the X/Y coordinates). The model is always tested on a region it has not seen.
+
+**Key Graphical Outputs:**
+1. **Fold maps:** random folds are mixed everywhere; spatial folds are blocks.
+2. **Nearest-neighbour distances (Meyer & Pebesma, 2022):** the distance between each test site and its nearest training site in cross-validation, compared with the distance between each pixel of the map and its nearest training site. A good cross-validation should mimic the prediction situation, i.e. its distance distribution should look like the one of the map.
+
+```{r}
+# Random folds (10-fold)
+set.seed(1)
+random_folds <- sample(rep(1:10, length.out = nrow(sr_agg)))
+
+# Spatial folds: 10 geographical clusters of sites (k-means on the coordinates)
+# (more advanced alternatives: blockCV package, or CAST::knndm, Linnenbrink et al., 2024)
+set.seed(1)
+spatial_folds <- kmeans(sr_agg[, c("X", "Y")], centers = 10, nstart = 20)$cluster
+
+# Map of the two fold designs
+par(mfrow = c(1, 2), mar = c(0, 0, 2, 0))
+plot(st_geometry(za_p), main = "Random 10-fold CV", border = "grey50")
+points(sr_agg$X, sr_agg$Y, col = rainbow(10)[random_folds], pch = 16, cex = 0.6)
+plot(st_geometry(za_p), main = "Spatial-block 10-fold CV", border = "grey50")
+points(sr_agg$X, sr_agg$Y, col = rainbow(10)[spatial_folds], pch = 16, cex = 0.6)
+```
+
+```{r}
+# Distance (km) from each point of 'from' to its nearest point in 'to'
+nn_dist <- function(from, to) {
+  idx <- st_nearest_feature(from, to)
+  as.numeric(st_distance(from, to[idx, ], by_element = TRUE)) / 1000
+}
+
+# 1. Prediction situation: 5000 random pixels of the map -> nearest training site
+map_pts <- st_as_sf(spatSample(r.srsrq1, size = 5000, method = "random", na.rm = TRUE, as.points = TRUE))
+map_pts <- suppressWarnings(st_set_crs(map_pts, st_crs(sites_sf)))   # same Eckert IV projection, harmonise the CRS label
+d_map <- nn_dist(map_pts, sites_sf)
+
+# 2. Cross-validation situation: each test site -> nearest training site of the other folds
+cv_dist <- function(folds) {
+  unlist(lapply(unique(folds), function(k) nn_dist(sites_sf[folds == k, ], sites_sf[folds != k, ])))
+}
+d_random  <- cv_dist(random_folds)
+d_spatial <- cv_dist(spatial_folds)
+
+dist_df <- rbind(data.frame(type = "Map pixels -> training sites (prediction)", dist = d_map),
+                 data.frame(type = "Random CV: test -> training sites", dist = d_random),
+                 data.frame(type = "Spatial CV: test -> training sites", dist = d_spatial))
+
+p_dist <- ggplot(dist_df, aes(x = dist + 0.1, colour = type, fill = type)) +
+  geom_density(alpha = 0.2) +
+  scale_x_log10(breaks = c(0.1, 1, 10, 100, 1000), labels = c("0", "1", "10", "100", "1000")) +
+  labs(x = "Distance to nearest training site (km, log scale)", y = "Density", colour = NULL, fill = NULL) +
+  theme_minimal() + theme(legend.position = "bottom", legend.direction = "vertical")
+p_dist
+ggsave("Output/FigS5_distances_CV.pdf", p_dist, width = 8, height = 6)
+
+# Median distances (km)
+round(c(map = median(d_map), random_CV = median(d_random), spatial_CV = median(d_spatial)), 1)
+```
+
+Look at this figure carefully: in random cross-validation, the test sites are typically less than 1 km from a training site, whereas most pixels of the map are tens of km away from any data. The spatial cross-validation is much closer to the real prediction situation. **This is why we will use the spatial cross-validation for predictor selection (Step 4.4) and for tuning (Step 4.6).**
+
+### 4.3 Predictor Selection with VSURF
+
+In this step, we will employ the VSURF package to select the most important predictors from our regression matrix. Variable Selection Using Random Forests (VSURF) is a powerful method that combines the strengths of Random Forests with an effective variable selection strategy.
+
+**VSURF Overview:**
+1. A Random Forest is initially built using the entire set of predictor variables. This involves creating multiple decision trees, each trained on a bootstrap sample of the data.
+2. The algorithm ranks predictors based on their variable importance measures.
+3. An iterative process begins to refine variable selection. Less important variables are progressively removed, and a new Random Forest is fitted on the reduced set of predictors in each iteration.
+4. The process continues until a stopping criterion is met, such as a predefined number of iterations or achieving a specific level of performance.
+5. Throughout the iterations, model performance is monitored, and the impact of variable removal on predictive accuracy is considered.
+
+VSURF returns three nested sets of variables:
+
+- `varselect.thres` (**thresholding step**): removes the variables whose importance is not distinguishable from noise. Keeps most variables.
+- `varselect.interp` (**interpretation step**): all the variables related to 87Sr/86Sr, including correlated ones. Intermediate size.
+- `varselect.pred` (**prediction step**): the smallest set that gives the best prediction, removing redundant variables. Very restrictive.
+
+In the global script we used `varselect.pred`. Here we use `varselect.interp` by default: it keeps more variables (and therefore more processes) for nearly the same accuracy. Then, in Step 4.4, we prune it with the spatial cross-validation.
+
+**User Inputs:**
+- Choice of stopping criteria.
+- Number of iterations.
+- Which VSURF step to use (`vsurf_step` below).
+
+**Important Note:**
+- Interpret the results cautiously. VSURF uses the out-of-bag error, which behaves like a **random** cross-validation: it does not know about spatial autocorrelation.
+- We use 1000 trees per forest (3000 in the global script): with ~800 sites the results are the same and it runs ~3 times faster.
+
+```{r}
+ # Set a random seed for reproducibility
+ set.seed(1)
+ # Create a copy of 'sr_agg'
+ sr_agg0 <- sr_agg
+
+ # Apply VSURF algorithm to select relevant variables for predicting 'X87Sr86Sr'
+ # Using the 'ranger' implementation with parallelization
+ # Columns 1 to 3 are X87Sr86Sr, X and Y: the covariates start at column 4
+ sr_agg1.vsurf <- VSURF(
+   sr_agg0[, 4:ncol(sr_agg0)],
+   sr_agg0$X87Sr86Sr,
+   mtry = max(floor((ncol(sr_agg0) - 3)/3), 1),
+  ntree.thres = 1000,
+  nfor.thres = 20,
+  nmin = 1,
+  ntree.interp = 1000,
+  nfor.interp = 10,
+  nsd = 1,
+  ntree.pred = 1000,
+  nfor.pred = 10,
+  nmj = 1,
+   RFimplem = "ranger",
+   parallel = TRUE,
+   ncores = n_cores,
+   clusterType = "PSOCK"
+ )
+
+ save(sr_agg1.vsurf, file = "Output/VSURF_all")
+```
+
+#### Explore Variable Importance with VSURF
+
+**Key Graphical Outputs:**
+1. **Variable Importance Ranking:** A graph displaying the ranking of predictors based on their variable importance measures.
+2. **Performance Metrics:** VSURF provides insightful graphs that showcase how model performance metrics evolve as variables are sequentially removed.
+
+**Interpretation Guidelines:**
+- **Variable Importance:** Higher-ranking variables are deemed more important. Pay attention to the descending order of importance.
+- **Performance Metrics:** Evaluate how the removal of variables impacts performance metrics. A balance between fewer predictors and optimal predictive accuracy is sought.
+
+**Direct Access:**
+If you faced processing time issues, load the saved VSURF output (`load("Output/VSURF_all")`) to continue.
+
+```{r}
+#Plot VSURF results
+plot(sr_agg1.vsurf)
+
+# Names of the covariates (columns 4 to end)
+covariate_names <- names(sr_agg0)[4:ncol(sr_agg0)]
+
+# Variables selected at each of the three VSURF steps
+vsurf_sets <- list(thres  = covariate_names[sr_agg1.vsurf$varselect.thres],
+                   interp = covariate_names[sr_agg1.vsurf$varselect.interp],
+                   pred   = covariate_names[sr_agg1.vsurf$varselect.pred])
+lengths(vsurf_sets)
+vsurf_sets
+
+# Choose the VSURF step used for the next steps: "interp" (default) or "pred" (as in the global script)
+vsurf_step <- "interp"
+vars_vsurf <- vsurf_sets[[vsurf_step]]
+```
+
+### 4.4 Spatial pruning of the predictors (NEW)
+
+VSURF ranks the predictors with the out-of-bag error, i.e. with a random cross-validation. Some predictors help to "recognise" the places where the training sites are (they act as a proxy for coordinates) but do not help to predict unsampled regions. To find them, we do a **backward elimination with the spatial cross-validation**:
+
+1. Compute the spatial-CV RMSE with all the VSURF variables.
+2. Remove each variable in turn and recompute the spatial-CV RMSE.
+3. If removing one variable improves the RMSE by more than `tol` (2%), remove the one that improves it most and go back to 2. Otherwise stop.
+
+A variable is removed only if it clearly **degrades** the predictions in new regions, so we keep as many variables as possible. Why 2%? The spatial-CV RMSE changes by ~0.5-1% just by changing the random seed of the forest, so smaller "improvements" are noise. We also use 1000 trees here to reduce this noise. Decrease `tol` to prune more aggressively, increase it to keep even more variables; set `spatial_pruning <- FALSE` to skip this step.
+
+(For a more systematic approach, see the forward feature selection with spatial CV of Meyer et al., 2018, in the CAST package.)
+
+```{r}
+spatial_pruning <- TRUE
+tol <- 0.02
+ntree_pruning <- 1000
+
+vars_final <- vars_vsurf
+best <- cv_ranger(vars_final, spatial_folds, num.trees = ntree_pruning)["RMSE"]
+pruning_path <- data.frame(step = 0, n_vars = length(vars_final), RMSE = best, removed = "start (VSURF set)")
+
+if (spatial_pruning) {
+  repeat {
+    if (length(vars_final) <= 2) break
+    # spatial-CV RMSE after removing each variable in turn
+    rmse_without <- sapply(vars_final, function(v) cv_ranger(setdiff(vars_final, v), spatial_folds, num.trees = ntree_pruning)["RMSE"])
+    if (min(rmse_without) < best * (1 - tol)) {
+      worst <- vars_final[which.min(rmse_without)]
+      vars_final <- setdiff(vars_final, worst)
+      best <- min(rmse_without)
+      pruning_path <- rbind(pruning_path, data.frame(step = nrow(pruning_path), n_vars = length(vars_final),
+                                                     RMSE = best, removed = worst))
+    } else break
+  }
+}
+pruning_path
+vars_final
+
+# Training dataset for random forest: 87Sr/86Sr + selected predictors
+training_rf <- sr_agg[, c("X87Sr86Sr", vars_final)]
+```
+
+### 4.5 Random vs. spatial cross-validation of the predictor sets (NEW)
+
+Now we compare, for each set of predictors, the R2 obtained with random and with spatial cross-validation.
+
+**Discussion points:**
+- Random CV gives almost the same (high) R2 whatever the predictor set: it cannot tell a good predictor set from a bad one.
+- Spatial CV reveals large differences: some predictor sets "memorise" the location of the training sites.
+
+
+```{r}
+sets <- list("All candidates" = names(sr_agg)[4:ncol(sr_agg)],
+             "VSURF thres" = vsurf_sets$thres,
+             "VSURF interp" = vsurf_sets$interp,
+             "VSURF pred" = vsurf_sets$pred,
+             "Final (spatially pruned)" = vars_final)
+
+set_compare <- do.call(rbind, lapply(names(sets), function(s) {
+  data.frame(set = s, n_vars = length(sets[[s]]),
+             CV = c("Random CV", "Spatial CV"),
+             R2 = c(cv_ranger(sets[[s]], random_folds)["R2"], cv_ranger(sets[[s]], spatial_folds)["R2"]))
+}))
+set_compare$set <- factor(paste0(set_compare$set, "\n(", set_compare$n_vars, " var.)"),
+                          levels = unique(paste0(set_compare$set, "\n(", set_compare$n_vars, " var.)")))
+set_compare
+
+p_sets <- ggplot(set_compare, aes(x = set, y = R2, fill = CV)) +
+  geom_col(position = "dodge") +
+  geom_text(aes(label = round(R2, 2)), position = position_dodge(0.9), vjust = -0.3, size = 3) +
+  scale_fill_manual(values = c("Random CV" = "grey60", "Spatial CV" = "darkorange")) +
+  labs(x = NULL, y = "Cross-validated R2", fill = NULL, title = "Random CV hides what spatial CV reveals") +
+  theme_minimal()
+p_sets
+ggsave("Output/FigS6_predictor_sets_CV.pdf", p_sets, width = 10, height = 5)
+
+# Path of the spatial pruning
+if (nrow(pruning_path) > 1) {
+  ggplot(pruning_path, aes(x = step, y = RMSE)) +
+    geom_line() + geom_point() +
+    geom_text(aes(label = removed), vjust = -0.8, size = 3) +
+    labs(x = "Pruning step", y = "Spatial-CV RMSE", title = "Spatial pruning of the VSURF variables") +
+    theme_minimal()
+}
+```
+
+
+### 4.6 Tuning and Training the Random Forest Model
+
+In this step, we optimize the hyperparameters of the random forest and train the final model with the caret package.
+
+**Changes from the global script (to run faster):**
+1. We use the **ranger** implementation (`method = "ranger"`) instead of randomForest. Ranger is much faster and uses all the cores of your computer by itself, so we do not need to set up a parallel cluster.
+2. We tune `mtry` (number of variables randomly sampled at each split) **and** `min.node.size` (minimum number of sites in a terminal node) directly in caret, instead of tuneRF.
+3. The tuning uses the **spatial folds**: we choose the hyperparameters that predict new regions best.
+4. The model is trained with `quantreg = TRUE` (quantile regression forest, Meinshausen 2006). The **same model** gives the mean isoscape and its uncertainty in Step 5: no need to fit a second model.
+
+**Key Operations:**
+1. **fitControl Configuration:** `index` (training sites) and `indexOut` (test sites) tell caret to use exactly our 10 spatial blocks. (Note: caret's `groupKFold()` does not guarantee one block per fold, it can merge several blocks into one fold, so we build the folds ourselves.)
+2. **Tuning grid:** all the combinations of mtry and min.node.size are tested.
+3. **Random CV for comparison:** we also run the classic repeated 10-fold cross-validation with the best hyperparameters, to compare.
+
+Keep in mind that a higher number of trees can make the training process longer but may contribute to a more stable model. 500 trees are enough here; the global script used 3000.
+
+```{r}
+# Spatial-block cross-validation: one spatial cluster is left out at a time
+# index    = for each fold, the rows used for training (all the other blocks)
+# indexOut = for each fold, the rows used for testing (the block left out)
+blocks <- sort(unique(spatial_folds))
+fitControl_spatial <- trainControl(
+   method = "cv",
+   index    = lapply(blocks, function(k) which(spatial_folds != k)),
+   indexOut = lapply(blocks, function(k) which(spatial_folds == k)),
+   savePredictions = "final",
+   verboseIter = FALSE,
+   allowParallel = FALSE)   # ranger is already multi-threaded
+
+# Tuning grid: mtry and min.node.size (splitrule fixed to "variance" for regression)
+n_pred <- length(vars_final)
+tunegrid <- expand.grid(mtry = unique(pmax(1, round(n_pred * c(0.2, 0.33, 0.5, 0.75)))),
+                        splitrule = "variance",
+                        min.node.size = c(5, 10, 20))
+
+set.seed(1)
+RF_all <- train(X87Sr86Sr ~ ., data = training_rf,
+                method = "ranger", metric = "RMSE",
+                tuneGrid = tunegrid, trControl = fitControl_spatial,
+                num.trees = 500, quantreg = TRUE, importance = "permutation", seed = 1)
+
+save(RF_all, file = "Output/RF_all")
+
+# Note: in this table, Rsquared is the mean of the R2 computed within each spatial
+# block. It is low because each block covers a small range of 87Sr/86Sr. The
+# tuning uses RMSE; the pooled R2 of all out-of-block predictions is computed below.
+# The spatial blocks have different sizes (one contains most of the Cape sites).
+RF_all
+RF_all$bestTune
+```
+
+```{r}
+# Classic random repeated 10-fold cross-validation with the same hyperparameters (for comparison)
+fitControl_random <- trainControl(
+   method = "repeatedcv",  # 10-fold Crossvalidation
+   number = 10,
+   repeats = 5,            # Repeated five times
+   savePredictions = "final",
+   allowParallel = FALSE)
+
+set.seed(1)
+RF_random <- train(X87Sr86Sr ~ ., data = training_rf,
+                   method = "ranger", metric = "RMSE",
+                   tuneGrid = RF_all$bestTune, trControl = fitControl_random,
+                   num.trees = 500, seed = 1)
+
+cv_compare <- rbind(
+  Random_CV  = postResample(RF_random$pred$pred, RF_random$pred$obs),
+  Spatial_CV = postResample(RF_all$pred$pred, RF_all$pred$obs))
+cv_compare
+write.csv(cv_compare, "Output/cross_validation_random_vs_spatial.csv")
+```
+
+### 4.7 Plot Cross-Validation Results
+
+In this step, we will generate and examine several plots, including cross-validation results. Take a moment to ponder the meaning of these graphs and consider their interpretation.
+
+**Key Graphical Outputs:**
+1. **Cross-Validation Plot:** observed vs. predicted 87Sr/86Sr for the random and for the spatial cross-validation, with the residuals.
+2. **Residual map:** where are the large errors of the spatial cross-validation?
+
+```{r}
+cv_pred <- rbind(data.frame(RF_random$pred[, c("obs", "pred")], CV = "Random 10-fold CV (repeated 5 times)"),
+                 data.frame(RF_all$pred[, c("obs", "pred")],    CV = "Spatial-block 10-fold CV"))
+
+# Axis limits adapted to the South African 87Sr/86Sr range
+sr_lim <- range(c(cv_pred$obs, cv_pred$pred))
+
+p1 <- ggplot(cv_pred, aes(x = obs, y = pred)) +
+    geom_bin_2d(binwidth = 0.001) +
+    geom_abline(slope = 1, intercept = 0, linetype = 3) +
+    geom_smooth(method = "lm", colour = "black") +
+    scale_fill_viridis_c(option = "magma", direction = -1, trans = "sqrt") +
+    coord_cartesian(xlim = sr_lim, ylim = sr_lim) +
+    facet_wrap(~ CV) +
+    labs(fill = "Count") +
+    xlab("87Sr/86Srobs") +
+    ylab("87Sr/86Srmod")
+
+p2 <- ggplot(cv_pred, aes(x = obs, y = pred - obs)) +
+    geom_bin_2d(binwidth = 0.001, show.legend = FALSE) +
+    scale_fill_viridis_c(option = "magma", direction = -1, trans = "sqrt") +
+    facet_wrap(~ CV) +
+    xlab("87Sr/86Srobs") +
+    ylab("Residuals")
+
+p3 <- p1 / p2 + plot_annotation(
+    title = "Model performance: random vs. spatial cross-validation"
+  )
+p3
+ggsave("Output/FigS2.pdf", p3, width = 14, height = 12)
+```
+
+```{r}
+# Map of the spatial-CV residuals (observed - predicted) at each site
+res_sp <- RF_all$pred[order(RF_all$pred$rowIndex), ]
+sites_sf$resid_spatial <- res_sp$obs - res_sp$pred
+
+p_res <- ggplot() +
+  geom_sf(data = za_p, fill = "grey95", colour = "grey60") +
+  geom_sf(data = sites_sf[order(abs(sites_sf$resid_spatial)), ], aes(colour = resid_spatial), size = 1.5) +
+  scale_colour_gradient2(low = "blue", mid = "grey90", high = "red", midpoint = 0,
+                         limits = c(-0.015, 0.015), oob = scales::squish, name = "obs - pred") +
+  coord_sf(xlim = range(sr_agg$X) + c(-1e5, 1e5), ylim = range(sr_agg$Y) + c(-1e5, 1e5)) +
+  ggtitle("Spatial-CV residuals") +
+  theme_minimal()
+p_res
+ggsave("Output/FigS7_residual_map.pdf", p_res, width = 8, height = 7)
+```
+
+### 4.8 Plot Feature Importance and Partial Dependence
+
+In Random Forest models, understanding feature importance and exploring partial dependence plots are crucial steps in interpreting model behavior. These visualizations offer insights into the impact of predictor variables on predictions.
+
+**Key Graphical Outputs:**
+1. **Feature Importance Plot:** This bar chart visually represents the importance of each predictor variable in influencing the model's predictive accuracy. Each bar corresponds to the importance value of a variable.
+2. **Partial Dependence Plot:** This plot illustrates the relationship between a specific predictor variable and the predicted outcome while holding other variables constant.
+
+Reflect on the feature importance plot. Consider which variables are more important and why.
+Examine the partial dependence plot. Think about the relationship between the predictor variable and the predicted outcome.
+
+Bring any questions or observations you have about these plots to the workshop discussion, where we'll delve into detailed discussions on their interpretation.
+```{r}
+# Compute the variable importance using caret
+var_imp <- varImp(RF_all, scale = TRUE)
+
+# Convert the results into a data frame
+imp_df <- as.data.frame(var_imp$importance)
+
+# Create the importance plot
+imp <- ggplot(imp_df, aes(x = reorder(rownames(imp_df), Overall), y = Overall)) +
+  geom_bar(stat = "identity", fill = "lightblue", color = "black") +
+  coord_flip() +  # Flip the axes for better readability
+  labs(x = "Predictor Variables", y = "Importance", title = "Variable Importance Plot") +
+  theme_minimal() +
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 14),
+        plot.title = element_text(size = 16, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10))
+imp
+ggsave("Output/FigS3.pdf", imp, width = 14, height = 12)
+```
+
+```{r}
+# List of predictors to plot
+predictors <- vars_final
+
+# Generate partial dependence data for all predictors
+# (grid.resolution = 25 points per variable: fast and smooth enough)
+partial_data_list <- lapply(predictors, function(predictor) {
+  pdp::partial(RF_all$finalModel, pred.var = predictor, train = training_rf[, predictors], grid.resolution = 25)
+})
+
+# Name each list element by the predictor variable
+names(partial_data_list) <- predictors
+
+# Common y-axis range for all the PDPs (adapted automatically to the data)
+pdp_range <- range(unlist(lapply(partial_data_list, function(d) d$yhat)))
+
+# Create ggplot for each partial dependence plot (PDP) and histogram
+plots <- lapply(names(partial_data_list), function(predictor) {
+  partial_data <- partial_data_list[[predictor]]
+
+  # Extract data for the predictor variable (for histogram)
+x_data <- training_rf[[predictor]]
+
+  # Create the PDP plot (Partial Dependence Plot)
+pdp_plot <- ggplot() +
+    geom_line(data = partial_data, aes(x = .data[[predictor]], y = .data[["yhat"]]), color = "blue", linewidth = 1.2) +
+    geom_point(data = partial_data, aes(x = .data[[predictor]], y = .data[["yhat"]]), color = "blue", size = 2) +
+    coord_cartesian(xlim = range(x_data), ylim = pdp_range) +  # Same y-axis range for all predictors
+    labs(x = NULL, y = "Predicted Value") +             # Remove x-axis title
+    theme_minimal() +
+    theme(
+      axis.text = element_text(size = 8),               # Smaller axis numbers
+      axis.title = element_text(size = 10),             # Smaller axis titles
+      plot.title = element_blank(),
+      panel.grid = element_blank(),
+      axis.text.x = element_blank(),                    # Remove x-axis numbers
+      axis.title.x = element_blank(),                   # Remove x-axis title
+      axis.ticks.x = element_blank()
+    )
+
+  # Create the Histogram for the predictor distribution
+hist_plot <- ggplot() +
+    geom_histogram(data = data.frame(x = x_data), aes(x = x, y = after_stat(density)),
+                   bins = 30, fill = "lightblue", color = "darkblue", alpha = 0.5) +
+    coord_cartesian(xlim = range(x_data)) +  # Align x-axis with the PDP
+    labs(x = predictor, y = "Density") +
+    theme_minimal() +
+    theme(
+      axis.text = element_text(size = 8),           # Smaller axis numbers
+      axis.title = element_text(size = 10),         # Smaller axis titles
+      plot.title = element_blank(),
+      panel.grid = element_blank(),
+      axis.text.x = element_text(size = 8),         # Smaller x-axis numbers
+      axis.ticks.x = element_blank()
+    )
+
+  # Return the combined plot as a list (PDP + histogram)
+  list(pdp_plot = pdp_plot, hist_plot = hist_plot)
+})
+
+# Combine both plots (PDP and histogram) into a single plot with aligned x-axes
+combined_plots <- lapply(plots, function(p) {
+  p$pdp_plot + p$hist_plot + plot_layout(ncol = 1, heights = c(2, 1))
+})
+
+# Combine all plots into a single layout (adjust ncol to 3 or any number for better arrangement)
+final_plot <- wrap_plots(combined_plots, ncol = 4)
+final_plot
+# Save the final plot as a PDF
+ggsave("Output/FigS4.pdf", final_plot, width = 16, height = 14)
+```
+
+## STEP 5. Apply the Trained Model Spatially to Produce an Isoscape and its Uncertainty
+
+**Key Operations:**
+### 5.1. Create a Predictor Stack:
+Assemble all geospatial predictors into a stack for spatial application of the trained model.
+Ensure the predictor stack includes all necessary geospatial variables used during model training.
+Note: you'll need to have done Step 2 to have these maps. The rasters are already clipped to South Africa, so no cropping is needed.
+
+```{r}
+# Stack of the selected predictors (same names as in the training table)
+stack_sel <- stack_all[[predictors]]
+stack_sel
+```
+
+### 5.2 Mean isoscape and uncertainty in a single pass (quantile random forest)
+
+Random forest gives one prediction per pixel (the mean of all trees). Because the model was trained as a quantile random forest (`quantreg = TRUE`), the **same model** can also predict quantiles of the distribution in each pixel. The 15.9% and 84.1% quantiles bracket 68% of the predictions (±1 SD if the distribution is normal). Half of this range is our uncertainty (1 SD), which is what we need for Bayesian assignment (e.g. assignR).
+
+In the global script, a second model was fitted and the pixels were converted to a table and predicted chunk by chunk in a loop. Here `terra::predict()` does all of this for us: it reads the rasters block by block (so memory is not a problem), calls our small function on each block, and writes the three layers (mean, Q15.9, Q84.1) directly to a GeoTIFF.
+
+This is the slowest step of Step 5 (a few minutes). If memory is limited, increase `steps`.
+
+```{r}
+# For a block of pixels: mean prediction + 15.9% and 84.1% quantiles
+predict_mean_quantiles <- function(model, data, ...) {
+  q <- predict(model, data = data, type = "quantiles", quantiles = c(0.159, 0.841))$predictions
+  cbind(mean = predict(model, data = data)$predictions, q159 = q[, 1], q841 = q[, 2])
+}
+
+rf_pred <- terra::predict(stack_sel, RF_all$finalModel, fun = predict_mean_quantiles, na.rm = TRUE,
+                          filename = "Output/rf_all_pred_quantiles1.tif", overwrite = TRUE,
+                          wopt = list(steps = 20, names = c("mean", "q159", "q841")))
+
+# Mean isoscape and uncertainty (1 SD = half of the 68% interval)
+rf_sr    <- rf_pred[["mean"]]
+rf_sr_sd <- (rf_pred[["q841"]] - rf_pred[["q159"]]) / 2
+
+writeRaster(rf_sr,    filename = "Output/rf_all_pred.tif", overwrite = TRUE)
+writeRaster(rf_sr_sd, filename = "Output/rf_all_sd.tif",   overwrite = TRUE)
+```
+
+We can then plot our isoscape for South Africa.
+Be ready for discussions on interpreting and visualizing the isoscape during the workshop.
+
+```{r}
+###Create breakpoints for random forest prediction map (adapted to the South African range)
+breakpoints <- c(0.705, 0.708, 0.710, 0.712, 0.714, 0.716, 0.718, 0.720, 0.725, 0.730, 0.740, 0.760, 0.800)
+s_proj$Col <- viridis_pal(option = "viridis")(12)[as.numeric(cut(s_proj$X87Sr86Sr, breaks = breakpoints))]
+
+#Plot the mean prediction of the isoscape using viridis colorscale
+par(mfrow = c(1,1))
+plot(rf_sr, col = viridis_pal(option = "viridis")(12), breaks = breakpoints, axes = FALSE)
+plot(st_geometry(za_p), add = TRUE, border = "grey30")
+points(st_coordinates(s_proj), pch = 21, col = "black", bg = s_proj$Col, cex = 0.8)
+sbar(200000, xy = "bottomright", type = "bar", divs = 2, below = "km", labels = c(0, 100, 200), cex = 0.7)
+```
+
+### 5.3 Figures
+
+We can then plot our study area with the training sites
+```{r}
+pdf("Output/Fig1.pdf", width = 8, height = 7)
+# Elevation as a background and training sites coloured by sample type
+s_proj$type <- ifelse(grepl("plant", s_proj$material_type), "plant",
+                ifelse(grepl("soil", s_proj$material_type), "soil", "fauna"))
+par(mfrow = c(1, 1), mar = c(1, 1, 1, 1))
+breaks <- c(0, 100, 250, 500, 750, 1000, 1250, 1500, 2000, 2500, 3500)
+plot(r.elevation, col = terrain.colors(10), breaks = breaks, axes = FALSE)
+plot(st_geometry(za_p), add = TRUE, border = "black", lwd = 0.5)
+type_col <- c(plant = "forestgreen", soil = "sienna", fauna = "steelblue")
+points(st_coordinates(s_proj), pch = 21, bg = type_col[s_proj$type], cex = 0.9, lwd = 0.4)
+legend("topleft", inset = c(0.08, 0.02), legend = names(type_col),
+       pt.bg = type_col, pch = 21, pt.cex = 1.3, bty = "n", cex = 0.8, title = "Training data")
+sbar(200000, xy = "bottomright", type = "bar", divs = 2, below = "km", labels = c(0, 100, 200), cex = 0.7)
+dev.off()
+```
+
+```{r}
+rf_sr_sd <- terra::rast("Output/rf_all_sd.tif")
+
+####Figure for 87Sr/86Sr isoscape with all data
+###Create breakpoints for the uncertainty map (adapted to the South African range)
+breakpoints2 <- c(0, 0.0005, 0.001, 0.0015, 0.002, 0.0025, 0.003, 0.004, 0.005, 0.0075, 0.01, 0.015, 0.02, 0.05)
+
+pdf("Output/Fig2.pdf", width = 12, height = 5)
+# Set up the plotting area with adjusted margins
+par(mfrow = c(1, 2), mar = c(0, 0.2, 0, 4), oma = c(0, 0, 0, 4))  # Adjust outer margins (oma) and plot margins (mar)
+
+plot(rf_sr, col = viridis_pal(option = "viridis")(12),
+  breaks = breakpoints, axes = FALSE)
+plot(st_geometry(za_p), add = TRUE, border = "grey30", lwd = 0.5)
+points(st_coordinates(s_proj),pch = 21,col = "white",bg = s_proj$Col,lwd = 0.1,cex = 0.5)
+sbar(200000, xy = "bottomright", type = "bar", divs = 2, below = "km", labels = c(0, 100, 200), cex = 0.7)
+
+plot(rf_sr_sd, col = viridis_pal(option = "turbo")(13), breaks = breakpoints2, axes = FALSE)
+plot(st_geometry(za_p), add = TRUE, border = "grey30", lwd = 0.5)
+points(st_coordinates(s_proj),pch = 21,col = "black",bg = "white",lwd = 0.1,cex = 0.3)
+sbar(200000, xy = "bottomright", type = "bar", divs = 2, below = "km", labels = c(0, 100, 200), cex = 0.7)
+dev.off()
+```
+
+```{r}
+# Same figure in the notebook
+par(mfrow = c(1, 2), mar = c(0, 0.2, 1.5, 4))
+plot(rf_sr, col = viridis_pal(option = "viridis")(12), breaks = breakpoints, axes = FALSE, main = "Bioavailable 87Sr/86Sr")
+plot(st_geometry(za_p), add = TRUE, border = "grey30", lwd = 0.5)
+plot(rf_sr_sd, col = viridis_pal(option = "turbo")(13), breaks = breakpoints2, axes = FALSE, main = "Uncertainty (1 SD)")
+plot(st_geometry(za_p), add = TRUE, border = "grey30", lwd = 0.5)
+```
+
+## Additional exercises
+
+1. **Sample types**: train the model with plants only (`sr_orig <- sr_orig[grepl("plant", sr_orig$material_type), ]` in Step 1.1). Where does the isoscape change? Why?
+2. **Candidate covariates**: run the script with `candidate_set <- "no_coarse"` (Step 3.5). Compare Fig. S6 (random vs. spatial CV of the predictor sets) and the maps. Look at the shape of the patterns created by the coarse deposition layers. =
+3. **VSURF step**: use `vsurf_step <- "pred"` (as in the global script) instead of `"interp"`. How many variables are kept? Does the spatial CV change?
+4. **Pruning tolerance**: change `tol` (Step 4.4) to 0.005 and to 0.05. How many variables are kept? How does the spatial CV change?
+5. **Spatial folds**: change the number of spatial clusters (`centers = 10` in Step 4.2) to 5 or 20. How do the distance distributions (Fig. S5) and the spatial R2 change?
+6. **Uncertainty**: where is the uncertainty highest? Is it where there are no data, where the geology is complex, or both?
+7. **Assignment**: use `Output/rf_all_pred.tif` and `Output/rf_all_sd.tif` as the isoscape and its uncertainty in a Bayesian assignment (e.g. `assignR::pdRaster`).

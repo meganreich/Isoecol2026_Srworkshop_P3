@@ -48,7 +48,7 @@
     "href": "index.html#before-the-workshop",
     "title": "IsoEcol 2026: Strontium isotope geolocation for terrestrial ecology",
     "section": "Before the workshop",
-    "text": "Before the workshop\n\n\n\n\n\n\nPlease set up before you arrive\n\n\n\n\nInstall a recent version of R.\nInstall RStudio Desktop.\nRun the code below in the RStudio console to install the packages we’ll use.\n\n\n\n\ninstall.packages(c(\"tidyverse\", \"assignR\",\"terra\",\"isocat\",\"rnaturalearth\", \"sf\", \"tidyterra\", \"viridis\"))",
+    "text": "Before the workshop\n\n\n\n\n\n\nPlease set up before you arrive\n\n\n\n\nInstall a recent version of R.\nInstall RStudio Desktop.\nDownload the input data: https://github.com/meganreich/Isoecol2026_Srworkshop_P3/tree/master\n\nRun the code below in the RStudio console to install the packages we’ll use.\n\n\n\n\ninstall.packages(c(\"tidyverse\", \"assignR\",\"terra\",\"isocat\",\"rnaturalearth\", \"sf\", \"tidyterra\", \"viridis\"))",
     "crumbs": [
       "Home",
       "Welcome"

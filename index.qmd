@@ -26,12 +26,12 @@ By the end of this workshop you will be able to:
 
 ## Schedule
 
-| Time          | Section                                    |
-|---------------|--------------------------------------------|
-| In advance    | [Getting started](01-section-template.qmd) |
-| 15:00 – 15:45 | Section 1: Geographic assignment           |
-| 15:45 – 16:30 | Section 2: Combining geolocation tools     |
-| 16:30 – 17:00 | Section 3: Summarizing outputs             |
+| Time | Section |
+|----|----|
+| In advance | [Getting started](https://github.com/meganreich/Isoecol2026_Srworkshop_P3/tree/master) |
+| 15:00 – 15:45 | Section 1: Geographic assignment |
+| 15:45 – 16:30 | Section 2: Combining geolocation tools |
+| 16:30 – 17:00 | Section 3: Summarizing outputs |
 
 ## Before the workshop
 
@@ -40,7 +40,8 @@ By the end of this workshop you will be able to:
 
 1.  Install a recent version of [R](https://cran.r-project.org/).
 2.  Install [RStudio Desktop](https://posit.co/download/rstudio-desktop/).
-3.  Run the code below in the RStudio console to install the packages we'll use.
+3.  Download the input data: <https://github.com/meganreich/Isoecol2026_Srworkshop_P3/tree/master>
+4.  Run the code below in the RStudio console to install the packages we'll use.
 :::
 
 ```{r}

@@ -27,7 +27,7 @@ By the end of this workshop you will be able to:
 ## Schedule
 
 | Time | Section |
-|----|----|
+|-------------------|-----------------------------------------------------|
 | In advance | [Getting started](https://github.com/meganreich/Isoecol2026_Srworkshop_P3/tree/master) |
 | 15:00 – 15:45 | Section 1: Geographic assignment |
 | 15:45 – 16:30 | Section 2: Combining geolocation tools |
